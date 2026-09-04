@@ -54,13 +54,13 @@ export default function SocialEventsPage() {
     <>
       <Navbar />
 
-      <main className="bg-white text-black font-serif">
+      <main className="bg-[#3d0202] text-white font-serif">
 
         {/* Hero */}
-        <section className="border-b border-black">
+        <section className="border-b border-[#d4af37]">
           <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-28">
 
-            <p className="text-xs sm:text-sm uppercase tracking-widest mb-6">
+            <p className="text-xs sm:text-sm uppercase tracking-widest mb-6 text-[#d4af37]">
               Beyond Debate
             </p>
 
@@ -70,7 +70,7 @@ export default function SocialEventsPage() {
               events.
             </h1>
 
-            <p className="mt-10 max-w-2xl text-base sm:text-lg leading-relaxed">
+            <p className="mt-10 max-w-2xl text-base sm:text-lg leading-relaxed text-white/85">
               Debate is only half the story. From pub crawls to film nights,
               the Union is a place to meet people, make friends and spend time
               outside the chamber.
@@ -80,15 +80,15 @@ export default function SocialEventsPage() {
         </section>
 
         {/* Upcoming events */}
-        <section className="border-b border-black">
+        <section className="border-b border-[#d4af37]">
           <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
 
-            <div className="flex items-end justify-between border-b border-black pb-4 mb-0">
+            <div className="flex items-end justify-between border-b border-[#d4af37] pb-4 mb-0">
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
                 Upcoming events
               </h2>
 
-              <span className="hidden sm:block text-xs sm:text-sm text-gray-500">
+              <span className="hidden sm:block text-xs sm:text-sm text-white/60">
                 What's next
               </span>
             </div>
@@ -97,13 +97,13 @@ export default function SocialEventsPage() {
               {upcomingEvents.map((event, index) => (
                 <article
                   key={event.title}
-                  className="border-b border-black py-7 sm:py-9"
+                  className="border-b border-[#d4af37] py-7 sm:py-9"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-8">
 
                     {/* Number */}
                     <div className="md:col-span-1">
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-[#d4af37]">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                     </div>
@@ -114,18 +114,18 @@ export default function SocialEventsPage() {
                         {event.title}
                       </h3>
 
-                      <p className="mt-2 text-xs sm:text-sm text-gray-500">
+                      <p className="mt-2 text-xs sm:text-sm text-white/60">
                         {event.date} · {event.time}
                       </p>
                     </div>
 
                     {/* Description */}
                     <div className="md:col-span-5">
-                      <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+                      <p className="text-sm sm:text-base text-white/75 leading-relaxed">
                         {event.description}
                       </p>
 
-                      <p className="mt-4 text-xs sm:text-sm font-semibold">
+                      <p className="mt-4 text-xs sm:text-sm font-semibold text-[#d4af37]">
                         {event.location}
                       </p>
                     </div>
@@ -139,13 +139,13 @@ export default function SocialEventsPage() {
         </section>
 
         {/* Social philosophy */}
-        <section className="border-b border-black">
+        <section className="border-b border-[#d4af37]">
           <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-24">
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
 
               <div>
-                <p className="text-xs sm:text-sm uppercase tracking-widest mb-5">
+                <p className="text-xs sm:text-sm uppercase tracking-widest mb-5 text-[#d4af37]">
                   Outside the chamber
                 </p>
 
@@ -158,7 +158,7 @@ export default function SocialEventsPage() {
                 </h2>
               </div>
 
-              <div className="space-y-6 text-base sm:text-lg leading-relaxed">
+              <div className="space-y-6 text-base sm:text-lg leading-relaxed text-white/85">
                 <p>
                   The Union is as much a social community as it is a debating
                   society. Our events are designed to give members a chance to
@@ -184,11 +184,11 @@ export default function SocialEventsPage() {
         </section>
 
         {/* Past events */}
-        <section className="border-b border-black">
+        <section className="border-b border-[#d4af37]">
           <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
 
             <div className="mb-10 sm:mb-14">
-              <p className="text-xs sm:text-sm uppercase tracking-widest mb-4">
+              <p className="text-xs sm:text-sm uppercase tracking-widest mb-4 text-[#d4af37]">
                 The archive
               </p>
 
@@ -202,9 +202,9 @@ export default function SocialEventsPage() {
               {pastEvents.map((event) => (
                 <article
                   key={event.title}
-                  className="border-t border-black pt-4"
+                  className="border-t border-[#d4af37] pt-4"
                 >
-                  <p className="text-xs text-gray-500 mb-3">
+                  <p className="text-xs text-white/60 mb-3">
                     {event.date}
                   </p>
 
@@ -212,7 +212,7 @@ export default function SocialEventsPage() {
                     {event.title}
                   </h3>
 
-                  <p className="mt-3 text-sm text-gray-700 leading-relaxed">
+                  <p className="mt-3 text-sm text-white/70 leading-relaxed">
                     {event.description}
                   </p>
                 </article>
@@ -230,7 +230,7 @@ export default function SocialEventsPage() {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
 
               <div>
-                <p className="text-xs sm:text-sm uppercase tracking-widest mb-4">
+                <p className="text-xs sm:text-sm uppercase tracking-widest mb-4 text-[#d4af37]">
                   Get involved
                 </p>
 
@@ -241,7 +241,7 @@ export default function SocialEventsPage() {
 
               <a
                 href="contact"
-                className="inline-flex items-center justify-center border border-black px-6 py-3 text-sm font-bold hover:bg-black hover:text-white transition-colors"
+                className="inline-flex items-center justify-center border border-[#d4af37] px-6 py-3 text-sm font-bold text-white hover:bg-[#d4af37] hover:text-[#3d0202] transition-colors duration-200"
               >
                 Join the Union →
               </a>

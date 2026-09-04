@@ -6,13 +6,13 @@ export default function SupportUsPage() {
     <>
       <Navbar />
 
-      <main className="bg-white text-black font-serif">
+      <main className="bg-[#3d0202] text-white font-serif">
 
         {/* Hero */}
-        <section className="border-b border-black">
+        <section className="border-b border-[#d4af37]">
           <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-28">
 
-            <p className="text-xs sm:text-sm uppercase tracking-widest mb-6">
+            <p className="text-xs sm:text-sm uppercase tracking-widest mb-6 text-[#d4af37]">
               Support the Union
             </p>
 
@@ -22,7 +22,7 @@ export default function SupportUsPage() {
               debate alive.
             </h1>
 
-            <p className="mt-10 max-w-2xl text-base sm:text-lg leading-relaxed">
+            <p className="mt-10 max-w-2xl text-base sm:text-lg leading-relaxed text-white/85">
               The King’s Union exists to provide a space for open discussion,
               disagreement and intellectual curiosity. Your support helps us
               keep that space thriving.
@@ -32,7 +32,7 @@ export default function SupportUsPage() {
         </section>
 
         {/* Why support us */}
-        <section className="border-b border-black">
+        <section className="border-b border-[#d4af37]">
           <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
@@ -43,7 +43,7 @@ export default function SupportUsPage() {
                 </h2>
               </div>
 
-              <div className="lg:col-span-7 lg:col-start-6 space-y-6 text-base sm:text-lg leading-relaxed">
+              <div className="lg:col-span-7 lg:col-start-6 space-y-6 text-base sm:text-lg leading-relaxed text-white/85">
 
                 <p>
                   Great debates require more than a room and a motion. They
@@ -71,14 +71,13 @@ export default function SupportUsPage() {
           </div>
         </section>
 
-       
         {/* Main donation CTA */}
-        <section className="border-b border-black">
+        <section className="border-b border-[#d4af37]">
           <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-28">
 
             <div className="max-w-4xl">
 
-              <p className="text-xs sm:text-sm uppercase tracking-widest mb-5">
+              <p className="text-xs sm:text-sm uppercase tracking-widest mb-5 text-[#d4af37]">
                 Make a contribution
               </p>
 
@@ -88,7 +87,7 @@ export default function SupportUsPage() {
                 generation of debate.
               </h2>
 
-              <p className="mt-7 max-w-2xl text-sm sm:text-base text-gray-700 leading-relaxed">
+              <p className="mt-7 max-w-2xl text-sm sm:text-base text-white/70 leading-relaxed">
                 Contributions from supporters help the Union continue to host
                 debates, develop its outreach and create a welcoming community
                 for students at King's.
@@ -96,7 +95,7 @@ export default function SupportUsPage() {
 
               <a
                 href="#"
-                className="mt-8 inline-flex items-center justify-center border border-black px-7 py-4 text-sm font-bold hover:bg-black hover:text-white transition-colors"
+                className="mt-8 inline-flex items-center justify-center border border-[#d4af37] px-7 py-4 text-sm font-bold text-white hover:bg-[#d4af37] hover:text-[#3d0202] transition-colors duration-200"
               >
                 Support the Union →
               </a>
@@ -107,13 +106,13 @@ export default function SupportUsPage() {
         </section>
 
         {/* Other ways to support */}
-        <section className="border-b border-black">
+        <section className="border-b border-[#d4af37]">
           <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20">
 
               <div>
-                <p className="text-xs sm:text-sm uppercase tracking-widest mb-4">
+                <p className="text-xs sm:text-sm uppercase tracking-widest mb-4 text-[#d4af37]">
                   Not just money
                 </p>
 
@@ -126,55 +125,55 @@ export default function SupportUsPage() {
 
               <div className="space-y-8">
 
-                <div className="border-t border-black pt-4">
+                <div className="border-t border-[#d4af37] pt-4">
                   <h3 className="text-xl font-bold">
                     Join us
                   </h3>
 
-                  <p className="mt-2 text-sm sm:text-base text-gray-700 leading-relaxed">
+                  <p className="mt-2 text-sm sm:text-base text-white/70 leading-relaxed">
                     Become a member and help make the Union's events and
                     debates what they are.
                   </p>
 
                   <a
                     href="contact"
-                    className="inline-block mt-3 text-sm font-bold hover:underline"
+                    className="inline-block mt-3 text-sm font-bold text-[#d4af37] hover:text-white transition-colors"
                   >
                     Join the Union →
                   </a>
                 </div>
 
-                <div className="border-t border-black pt-4">
+                <div className="border-t border-[#d4af37] pt-4">
                   <h3 className="text-xl font-bold">
                     Speak at a debate
                   </h3>
 
-                  <p className="mt-2 text-sm sm:text-base text-gray-700 leading-relaxed">
+                  <p className="mt-2 text-sm sm:text-base text-white/70 leading-relaxed">
                     Have something worth arguing about? Get involved in one of
                     our debates as a speaker or guest.
                   </p>
 
                   <a
                     href="contact"
-                    className="inline-block mt-3 text-sm font-bold hover:underline"
+                    className="inline-block mt-3 text-sm font-bold text-[#d4af37] hover:text-white transition-colors"
                   >
                     Get in touch →
                   </a>
                 </div>
 
-                <div className="border-t border-black pt-4">
+                <div className="border-t border-[#d4af37] pt-4">
                   <h3 className="text-xl font-bold">
                     Spread the word
                   </h3>
 
-                  <p className="mt-2 text-sm sm:text-base text-gray-700 leading-relaxed">
+                  <p className="mt-2 text-sm sm:text-base text-white/70 leading-relaxed">
                     Follow us, share our events and bring someone along to the
                     next debate.
                   </p>
 
                   <a
                     href="/#follow"
-                    className="inline-block mt-3 text-sm font-bold hover:underline"
+                    className="inline-block mt-3 text-sm font-bold text-[#d4af37] hover:text-white transition-colors"
                   >
                     Follow us →
                   </a>
@@ -199,7 +198,7 @@ export default function SupportUsPage() {
                 backing the Union.
               </h2>
 
-              <p className="mt-6 text-sm sm:text-base text-gray-700 leading-relaxed">
+              <p className="mt-6 text-sm sm:text-base text-white/70 leading-relaxed">
                 Every contribution helps us create a stronger culture of debate
                 at King's and beyond.
               </p>

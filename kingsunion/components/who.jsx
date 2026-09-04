@@ -1,8 +1,9 @@
 export default function WhoWeAre() {
   return (
-    <section className="bg-white text-black font-serif border-t border-black">
+    <section className="bg-[#3d0202] text-white font-serif border-t border-[#d4af37]">
       <div className="px-4 sm:px-6 md:px-8 py-10 sm:py-12 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20">
+
           {/* Main content */}
           <div>
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight mb-8">
@@ -45,8 +46,8 @@ export default function WhoWeAre() {
           </div>
 
           {/* Quote */}
-          <div className="lg:border-l lg:border-black lg:pl-10 xl:pl-16 flex items-center">
-            <blockquote className="border-t border-b border-black py-8">
+          <div className="lg:border-l lg:border-[#d4af37] lg:pl-10 xl:pl-16 flex items-center">
+            <blockquote className="border-t border-b border-[#d4af37] py-8">
               <p className="text-xl sm:text-2xl md:text-3xl leading-snug font-bold">
                 “The Union exists, above all else, to serve the College’s body
                 of students, staff, and alumni. It’s a place where you can
@@ -56,10 +57,11 @@ export default function WhoWeAre() {
 
               <footer className="mt-6 text-sm sm:text-base">
                 <span className="font-bold">— Mustafa Dassu</span>
-                <span className="text-gray-600">, Founder & President</span>
+                <span className="text-white/60">, Founder & President</span>
               </footer>
             </blockquote>
           </div>
+
         </div>
       </div>
     </section>

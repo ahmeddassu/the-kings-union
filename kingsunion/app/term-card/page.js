@@ -6,10 +6,10 @@ export default function TermCardPage() {
     <>
       <Navbar />
 
-      <main className="bg-white text-black font-serif">
+      <main className="bg-[#3d0202] text-white font-serif">
 
         {/* Header */}
-        <section className="border-b border-black">
+        <section className="border-b border-[#D4AF37]">
           <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
             <p className="text-xs sm:text-sm uppercase tracking-widest mb-4">
               King's Union
@@ -19,7 +19,7 @@ export default function TermCardPage() {
               Term Card
             </h1>
 
-            <p className="mt-5 max-w-xl text-sm sm:text-base text-gray-700 leading-relaxed">
+            <p className="mt-5 max-w-xl text-sm sm:text-base text-white/70 leading-relaxed">
               Our programme of debates and events for the term.
             </p>
           </div>

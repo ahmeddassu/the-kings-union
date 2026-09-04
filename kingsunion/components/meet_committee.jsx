@@ -9,15 +9,17 @@ const committee = [
 
 export default function MeetTheCommittee() {
   return (
-    <section className="bg-white text-black font-serif border-t border-black">
+    <section className="bg-[#3d0202] text-white font-serif border-t border-[#d4af37]">
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
+
       <div className="px-4 sm:px-6 md:px-8 py-8 sm:py-10 md:py-12">
- <a
+
+        <a
           href="#"
-          className="inline-block text-xl sm:text-2xl md:text-3xl font-bold tracking-tight hover:underline mb-6 sm:mb-8"
+          className="inline-block text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white hover:text-[#d4af37] mb-6 sm:mb-8 transition-colors duration-200"
         >
           Meet the Committee
         </a>
@@ -33,15 +35,18 @@ export default function MeetTheCommittee() {
                 alt=""
                 className="w-full aspect-square object-cover mb-3 rounded-lg"
               />
-              <p className="text-sm sm:text-base font-bold leading-snug">
+
+              <p className="text-sm sm:text-base font-bold leading-snug text-white">
                 {member.name}
               </p>
-              <p className="text-xs sm:text-sm text-gray-700">
+
+              <p className="text-xs sm:text-sm text-white/70">
                 {member.title}
               </p>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

@@ -2,33 +2,27 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 
 const debates = [
-    {
+  {
     title: "This House Supports the Ongoing American Intervention In Venezuela",
     date: "20 January 2026",
-    description:
-      "???",
+    description: "???",
     proposition: 30,
-    opposition: 43
-     
+    opposition: 43,
   },
-    {
+  {
     title: "This House Believes that Britain Needs More Immigration",
     date: "9 December 2025",
-    description:
-      "I dont know what to write as a desc",
+    description: "I dont know what to write as a desc",
     proposition: 30,
-    opposition: 43
-     
+    opposition: 43,
   },
   {
     title: "This House Would Rejoin the European Union",
     date: "26 November 2025",
-    description:
-      "A tight defeat for the motion",
+    description: "A tight defeat for the motion",
     proposition: 30,
-    opposition: 43
-       },
-  
+    opposition: 43,
+  },
 ];
 
 export default function DebatesPage() {
@@ -36,12 +30,12 @@ export default function DebatesPage() {
     <>
       <Navbar />
 
-      <main className="bg-white text-black font-serif">
+      <main className="bg-[#3d0202] text-white font-serif">
 
         {/* Hero */}
-        <section className="border-b border-black">
+        <section className="border-b border-[#d4af37]">
           <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-28">
-            <p className="text-xs sm:text-sm uppercase tracking-widest mb-6">
+            <p className="text-xs sm:text-sm uppercase tracking-widest mb-6 text-[#d4af37]">
               The Archive
             </p>
 
@@ -51,7 +45,7 @@ export default function DebatesPage() {
               debates.
             </h1>
 
-            <p className="mt-10 max-w-2xl text-base sm:text-lg leading-relaxed">
+            <p className="mt-10 max-w-2xl text-base sm:text-lg leading-relaxed text-white/85">
               A record of motions debated by the King’s Union, from the
               controversial to the constitutional.
             </p>
@@ -62,12 +56,12 @@ export default function DebatesPage() {
         <section>
           <div className="px-4 sm:px-6 md:px-8 py-10 sm:py-12 md:py-16">
 
-            <div className="flex items-end justify-between border-b border-black pb-4 mb-0">
+            <div className="flex items-end justify-between border-b border-[#d4af37] pb-4 mb-0">
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
                 Debate Archive
               </h2>
 
-              <span className="text-xs sm:text-sm text-gray-500">
+              <span className="text-xs sm:text-sm text-white/60">
                 {debates.length} debates
               </span>
             </div>
@@ -76,13 +70,13 @@ export default function DebatesPage() {
               {debates.map((debate, index) => (
                 <article
                   key={debate.title}
-                  className="border-b border-black py-7 sm:py-9"
+                  className="border-b border-[#d4af37] py-7 sm:py-9"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-8">
 
                     {/* Number */}
                     <div className="md:col-span-1">
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-[#d4af37]">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                     </div>
@@ -91,16 +85,16 @@ export default function DebatesPage() {
                     <div className="md:col-span-7">
                       <a
                         href="#"
-                        className="inline-block text-xl sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight hover:underline"
+                        className="inline-block text-xl sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight text-white hover:text-[#d4af37] transition-colors duration-200"
                       >
                         {debate.title}
                       </a>
 
-                      <p className="text-xs sm:text-sm text-gray-500 mt-2 mb-4">
+                      <p className="text-xs sm:text-sm text-white/60 mt-2 mb-4">
                         {debate.date}
                       </p>
 
-                      <p className="text-sm sm:text-base text-gray-700 leading-relaxed max-w-2xl">
+                      <p className="text-sm sm:text-base text-white/75 leading-relaxed max-w-2xl">
                         {debate.description}
                       </p>
                     </div>
@@ -110,27 +104,27 @@ export default function DebatesPage() {
                       <div className="w-full md:w-56">
 
                         <div className="flex justify-between items-end mb-2">
-                          <span className="text-xs uppercase tracking-wide">
+                          <span className="text-xs uppercase tracking-wide text-[#d4af37]">
                             Result
                           </span>
 
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-white/60">
                             {debate.proposition > debate.opposition
                               ? "Proposition"
                               : "Opposition"}
                           </span>
                         </div>
 
-                        <div className="flex h-10 border border-black">
+                        <div className="flex h-10 border border-[#d4af37]">
                           <div
-                            className="bg-black"
+                            className="bg-[#d4af37]"
                             style={{
                               width: `${debate.proposition}%`,
                             }}
                           />
 
                           <div
-                            className="bg-white"
+                            className="bg-[#6b2929]"
                             style={{
                               width: `${debate.opposition}%`,
                             }}
@@ -139,11 +133,17 @@ export default function DebatesPage() {
 
                         <div className="flex justify-between mt-2 text-xs sm:text-sm">
                           <span>
-                            <strong>{debate.proposition}%</strong> Prop
+                            <strong className="text-[#d4af37]">
+                              {debate.proposition}%
+                            </strong>{" "}
+                            Prop
                           </span>
 
                           <span>
-                            <strong>{debate.opposition}%</strong> Opp
+                            <strong className="text-white">
+                              {debate.opposition}%
+                            </strong>{" "}
+                            Opp
                           </span>
                         </div>
 
@@ -159,13 +159,13 @@ export default function DebatesPage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="border-t border-black">
+        <section className="border-t border-[#d4af37]">
           <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-24">
 
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
 
               <div>
-                <p className="text-xs sm:text-sm uppercase tracking-widest mb-4">
+                <p className="text-xs sm:text-sm uppercase tracking-widest mb-4 text-[#d4af37]">
                   Next debate
                 </p>
 
@@ -178,7 +178,7 @@ export default function DebatesPage() {
 
               <a
                 href="term-card"
-                className="inline-flex items-center justify-center border border-black px-6 py-3 text-sm font-bold hover:bg-black hover:text-white transition-colors"
+                className="inline-flex items-center justify-center border border-[#d4af37] px-6 py-3 text-sm font-bold text-white hover:bg-[#d4af37] hover:text-[#3d0202] transition-colors duration-200"
               >
                 View Term Card →
               </a>

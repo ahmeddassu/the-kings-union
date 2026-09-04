@@ -38,12 +38,13 @@ const debateFormat = [
 
 export default function AboutPage() {
   return (
-    <main className="bg-white text-black font-serif">
-    <Navbar/>
+    <main className="bg-[#3d0202] text-white font-serif">
+      <Navbar />
+
       {/* Hero */}
-      <section className="border-b border-black">
+      <section className="border-b border-[#d4af37]">
         <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-28">
-          <p className="text-xs sm:text-sm uppercase tracking-widest mb-6">
+          <p className="text-xs sm:text-sm uppercase tracking-widest mb-6 text-[#d4af37]">
             About the Union
           </p>
 
@@ -53,7 +54,7 @@ export default function AboutPage() {
             public debate.
           </h1>
 
-          <div className="mt-10 max-w-2xl text-base sm:text-lg leading-relaxed">
+          <div className="mt-10 max-w-2xl text-base sm:text-lg leading-relaxed text-white/85">
             <p>
               The King’s Union was established in November 2025 as a chamber
               for public debate within King’s College London.
@@ -63,16 +64,17 @@ export default function AboutPage() {
       </section>
 
       {/* Introduction */}
-      <section className="border-b border-black">
+      <section className="border-b border-[#d4af37]">
         <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+
             <div className="lg:col-span-4">
               <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
                 What is the Union?
               </h2>
             </div>
 
-            <div className="lg:col-span-7 lg:col-start-6 space-y-6 text-base sm:text-lg leading-relaxed">
+            <div className="lg:col-span-7 lg:col-start-6 space-y-6 text-base sm:text-lg leading-relaxed text-white/90">
               <p>
                 The King’s Union is a student society dedicated to the practice
                 of public debate. We bring together students, staff, alumni and
@@ -94,17 +96,18 @@ export default function AboutPage() {
                 willing to listen, question and contribute.
               </p>
             </div>
+
           </div>
         </div>
       </section>
 
       {/* How debates work */}
-      <section className="border-b border-black">
+      <section className="border-b border-[#d4af37]">
         <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
 
             <div>
-              <p className="text-xs sm:text-sm uppercase tracking-widest mb-4">
+              <p className="text-xs sm:text-sm uppercase tracking-widest mb-4 text-[#d4af37]">
                 The format
               </p>
 
@@ -116,7 +119,7 @@ export default function AboutPage() {
                 One vote.
               </h2>
 
-              <p className="mt-6 text-sm sm:text-base text-gray-700 leading-relaxed max-w-lg">
+              <p className="mt-6 text-sm sm:text-base text-white/70 leading-relaxed max-w-lg">
                 Our debates follow a traditional chamber format designed to
                 give both sides of a motion the opportunity to make their case,
                 while allowing the audience to challenge and question them.
@@ -124,13 +127,13 @@ export default function AboutPage() {
             </div>
 
             <div>
-              <div className="border-t border-black">
+              <div className="border-t border-[#d4af37]">
                 {debateFormat.map((item, index) => (
                   <div
                     key={item}
-                    className="flex items-center gap-5 border-b border-black py-5"
+                    className="flex items-center gap-5 border-b border-[#d4af37] py-5"
                   >
-                    <span className="text-xs text-gray-500 w-6">
+                    <span className="text-xs text-[#d4af37] w-6">
                       0{index + 1}
                     </span>
 
@@ -147,11 +150,11 @@ export default function AboutPage() {
       </section>
 
       {/* Principles */}
-      <section className="border-b border-black">
+      <section className="border-b border-[#d4af37]">
         <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
 
           <div className="mb-10 sm:mb-14">
-            <p className="text-xs sm:text-sm uppercase tracking-widest mb-4">
+            <p className="text-xs sm:text-sm uppercase tracking-widest mb-4 text-[#d4af37]">
               What we stand for
             </p>
 
@@ -160,14 +163,14 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0 border-t border-black">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0 border-t border-[#d4af37]">
             {principles.map((principle) => (
               <article
                 key={principle.number}
-                className="border-b border-black py-7 sm:py-8"
+                className="border-b border-[#d4af37] py-7 sm:py-8"
               >
                 <div className="flex gap-5">
-                  <span className="text-xs text-gray-500 pt-1">
+                  <span className="text-xs text-[#d4af37] pt-1">
                     {principle.number}
                   </span>
 
@@ -176,7 +179,7 @@ export default function AboutPage() {
                       {principle.title}
                     </h3>
 
-                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+                    <p className="text-sm sm:text-base text-white/70 leading-relaxed">
                       {principle.description}
                     </p>
                   </div>
@@ -189,7 +192,7 @@ export default function AboutPage() {
       </section>
 
       {/* Beyond debate */}
-      <section className="border-b border-black">
+      <section className="border-b border-[#d4af37]">
         <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
 
@@ -201,7 +204,7 @@ export default function AboutPage() {
               </h2>
             </div>
 
-            <div className="lg:col-span-6 lg:col-start-7 space-y-6 text-base sm:text-lg leading-relaxed">
+            <div className="lg:col-span-6 lg:col-start-7 space-y-6 text-base sm:text-lg leading-relaxed text-white/90">
               <p>
                 The Union also serves as a focal point for student social life
                 at King’s. Debate is only one part of what we do.
@@ -225,7 +228,7 @@ export default function AboutPage() {
       </section>
 
       {/* Founder quote */}
-      <section className="border-b border-black">
+      <section className="border-b border-[#d4af37]">
         <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-28">
           <blockquote className="max-w-5xl mx-auto text-center">
             <p className="text-2xl sm:text-3xl md:text-5xl font-bold leading-tight tracking-tight">
@@ -237,7 +240,7 @@ export default function AboutPage() {
 
             <footer className="mt-8 text-sm sm:text-base">
               <span className="font-bold">Mustafa Dassu</span>
-              <span className="text-gray-500">
+              <span className="text-white/60">
                 {" "}
                 — Founder & President
               </span>
@@ -252,7 +255,7 @@ export default function AboutPage() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
 
             <div>
-              <p className="text-xs sm:text-sm uppercase tracking-widest mb-4">
+              <p className="text-xs sm:text-sm uppercase tracking-widest mb-4 text-[#d4af37]">
                 Join the conversation
               </p>
 
@@ -263,7 +266,7 @@ export default function AboutPage() {
 
             <a
               href="debates"
-              className="inline-flex items-center justify-center border border-black px-6 py-3 text-sm font-bold hover:bg-black hover:text-white transition-colors"
+              className="inline-flex items-center justify-center border border-[#d4af37] px-6 py-3 text-sm font-bold text-white hover:bg-[#d4af37] hover:text-[#3d0202] transition-colors duration-200"
             >
               Find an upcoming debate →
             </a>
@@ -271,7 +274,8 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-<Footer/>
+
+      <Footer />
     </main>
   );
 }
