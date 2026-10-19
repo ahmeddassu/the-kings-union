@@ -1,7 +1,6 @@
 import { EB_Garamond, Playfair_Display, Playfair_Display_SC } from "next/font/google";
 import "./globals.css";
 import { siteMetadata } from "@/lib/site";
-import TicketBar from "@/components/ticket_bar";
 
 const garamond = EB_Garamond({
   variable: "--font-garamond",
@@ -29,7 +28,6 @@ export default function RootLayout({ children }) {
       className={`${garamond.variable} ${playfair.variable} ${playfairSC.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <TicketBar />
         {children}
       </body>
     </html>

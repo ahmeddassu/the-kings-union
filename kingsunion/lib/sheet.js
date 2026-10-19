@@ -5,6 +5,7 @@
 // If the sheet can't be reached, the site falls back to the list in lib/events.js.
 
 import { events as fallbackEvents, details as fallbackDetails } from "@/lib/events";
+import { getPublishedResults } from "@/lib/published";
 
 export const SHEET_ID =
   process.env.TERM_CARD_SHEET_ID || "1JBGICsFV02p-wfAqchynnfdaKHHUf5fd5-c03-JlGTA";
@@ -86,7 +87,19 @@ function fromFallback() {
   });
 }
 
+// Every event, with results from live voting filled in where the sheet has none.
 export async function getEvents() {
+  const events = await loadEvents();
+  const published = await getPublishedResults();
+  if (!published.length) return events;
+  return events.map((e) => {
+    if (e.type !== "Debate" || e.result) return e;
+    const hit = published.find((p) => slugify(p.title) === slugify(e.title));
+    return hit ? { ...e, result: { proposition: hit.proposition, opposition: hit.opposition } } : e;
+  });
+}
+
+async function loadEvents() {
   try {
     const res = await fetch(SHEET_URL, { next: { revalidate: REFRESH_SECONDS } });
     if (!res.ok) throw new Error(`Sheet returned ${res.status}`);

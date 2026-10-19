@@ -6,7 +6,8 @@
 // If the vote counts weren't recorded, leave proposition/opposition out and set
 // `outcome` ("carried" or "defeated"), or `resultLabel` for anything else.
 
-import { getEvents } from "@/lib/sheet";
+import { getEvents, slugify } from "@/lib/sheet";
+import { getPublishedResults } from "@/lib/published";
 
 const archive = [
   {
@@ -160,7 +161,13 @@ export async function getPastDebates() {
       speakers: [...(e.proposition || []), ...(e.opposition || [])],
     }));
 
-  return [...fromTermCard, ...archive]
+  // Live-vote results for debates that aren't on the term card.
+  const known = new Set(events.map((e) => slugify(e.title)));
+  const fromVoting = (await getPublishedResults())
+    .filter((p) => p.date && !known.has(slugify(p.title)))
+    .map((p) => ({ title: p.title, date: p.date, description: "", proposition: p.proposition, opposition: p.opposition }));
+
+  return [...fromTermCard, ...fromVoting, ...archive]
     .map((d) => ({ ...d, topics: topicsFor(d.title, d.topic), year: academicYear(d.date) }))
     .sort((a, b) => b.date.localeCompare(a.date));
 }
