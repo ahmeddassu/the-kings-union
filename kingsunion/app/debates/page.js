@@ -3,7 +3,7 @@ import Footer from "@/components/footer";
 import MailingList from "@/components/mailing_list";
 import ProposeMotion from "@/components/propose_motion";
 import ArchiveFilters, { archiveAttrs } from "@/components/archive_filters";
-import { getPastDebates, displayDate, verdict } from "@/lib/debates";
+import { getPastDebates, displayDate, verdict, hasCounts } from "@/lib/debates";
 import { getEvents } from "@/lib/sheet";
 import { longDate } from "@/lib/events";
 
@@ -122,10 +122,12 @@ export default async function DebatesPage() {
                           </span>
 
                           <span className="text-xs text-white/60">
-                            Motion {verdict(debate).toLowerCase()}
+                            {debate.resultLabel ? verdict(debate) : `Motion ${verdict(debate).toLowerCase()}`}
                           </span>
                         </div>
 
+                        {hasCounts(debate) ? (
+                        <>
                         <div className="flex h-10 border border-[#d4af37]">
                           <div
                             className="bg-[#d4af37]"
@@ -157,6 +159,12 @@ export default async function DebatesPage() {
                             Noes
                           </span>
                         </div>
+                        </>
+                        ) : (
+                          <p className="border border-[#d4af37]/60 px-3 py-2.5 text-sm text-white/60">
+                            {debate.resultLabel ? "Decided on the swing in support" : "Vote count not recorded"}
+                          </p>
+                        )}
 
                       </div>
                     </div>

@@ -86,7 +86,7 @@ export async function shareImage(event) {
     );
   } else if (!upcoming && event.result) {
     const { proposition: p, opposition: o } = event.result;
-    const verdict = p > o ? "Motion carried" : p < o ? "Motion defeated" : "Motion tied";
+    const verdict = p > o ? "Motion carried" : "Motion defeated";
     footer = (
       <div style={{ display: "flex", alignItems: "center", gap: 24, fontFamily: "Garamond", fontSize: 32 }}>
         <div style={{ display: "flex", color: GOLD, fontWeight: 700 }}>{verdict}</div>

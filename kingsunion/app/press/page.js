@@ -2,7 +2,7 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { boilerplate, coverage, pressKit } from "@/lib/press";
 import { MEDIA_CONTACT, UNION_EMAIL } from "@/lib/contact";
-import { getPastDebates, displayDate, verdict } from "@/lib/debates";
+import { getPastDebates, displayDate, verdict, hasCounts } from "@/lib/debates";
 import { socialLinks } from "@/lib/nav";
 import { partners } from "@/lib/partners";
 
@@ -120,7 +120,7 @@ export default async function PressPage() {
                     </a>
                     <p className="md:col-span-3 md:text-right text-base">
                       <span className="font-bold text-[#d4af37]">{verdict(d)}</span>
-                      <span className="text-white/70"> · {d.proposition}–{d.opposition}</span>
+                      {hasCounts(d) && <span className="text-white/70"> · {d.proposition}–{d.opposition}</span>}
                     </p>
                   </li>
                 ))}

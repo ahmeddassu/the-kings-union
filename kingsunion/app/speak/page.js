@@ -2,7 +2,7 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import Stats from "@/components/stats";
 import Speakers from "@/components/speakers";
-import { getPastDebates } from "@/lib/debates";
+import { getPastDebates, hasCounts } from "@/lib/debates";
 
 export const metadata = {
   title: "Speak at the Union",
@@ -30,7 +30,7 @@ const format = [
 ];
 
 export default async function SpeakPage() {
-  const recent = (await getPastDebates()).slice(0, 4);
+  const recent = (await getPastDebates()).filter(hasCounts).slice(0, 4);
   const biggest = Math.max(...recent.map((d) => d.proposition + d.opposition));
 
   return (

@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
   let description = parts.join(" · ") + ".";
   if (event.result) {
     const { proposition: p, opposition: o } = event.result;
-    description += ` Ayes ${p}, Noes ${o}: motion ${p > o ? "carried" : p < o ? "defeated" : "tied"}.`;
+    description += ` Ayes ${p}, Noes ${o}: motion ${p > o ? "carried" : "defeated"}.`;
   } else if (event.description) {
     description += ` ${event.description}`;
   }
@@ -251,9 +251,7 @@ export default async function EventPage({ params }) {
                       <span className="block text-xs uppercase tracking-widest text-white/60 mt-1">
                         {info.result.proposition > info.result.opposition
                           ? "Motion carried"
-                          : info.result.proposition < info.result.opposition
-                            ? "Motion defeated"
-                            : "Tied"}
+                          : "Motion defeated"}
                       </span>
                     </span>
                   ) : (

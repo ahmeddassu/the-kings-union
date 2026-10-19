@@ -1,4 +1,4 @@
-import { getPastDebates, displayDate, verdict } from "@/lib/debates";
+import { getPastDebates, displayDate, verdict, hasCounts } from "@/lib/debates";
 
 export default async function PastDebates() {
   const recentDebates = (await getPastDebates()).slice(0, 3);
@@ -56,9 +56,11 @@ export default async function PastDebates() {
                   Result <span className="font-normal text-white/60">· {verdict(debate)}</span>
                 </span>
 
-                <span className="font-bold tabular-nums text-[#d4af37]">
-                  {debate.proposition}–{debate.opposition}
-                </span>
+                {hasCounts(debate) && (
+                  <span className="font-bold tabular-nums text-[#d4af37]">
+                    {debate.proposition}–{debate.opposition}
+                  </span>
+                )}
               </div>
             </article>
           ))}

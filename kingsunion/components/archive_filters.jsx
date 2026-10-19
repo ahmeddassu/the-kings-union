@@ -1,4 +1,4 @@
-import { TOPICS } from "@/lib/debates";
+import { TOPICS, verdict } from "@/lib/debates";
 import ArchiveSearch from "@/components/archive_search";
 
 // Filters for the debate archive on the Debates page. The topic, result and year
@@ -33,7 +33,7 @@ function rules(name, attr, values) {
 
 export default function ArchiveFilters({ debates }) {
   const topics = TOPICS.filter((t) => debates.some((d) => d.topics.includes(t.id)));
-  const results = ["carried", "defeated", "tied"].filter((r) =>
+  const results = ["carried", "defeated"].filter((r) =>
     debates.some((d) => resultOf(d) === r)
   );
   const years = [...new Set(debates.map((d) => d.year))].sort().reverse();
@@ -81,8 +81,9 @@ export default function ArchiveFilters({ debates }) {
   );
 }
 
-export function resultOf({ proposition, opposition }) {
-  return proposition > opposition ? "carried" : proposition < opposition ? "defeated" : "tied";
+export function resultOf(d) {
+  const v = verdict(d).toLowerCase();
+  return v === "carried" || v === "defeated" ? v : "other";
 }
 
 export const yearKey = (y) => y.replace("/", "-");

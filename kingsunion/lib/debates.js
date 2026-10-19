@@ -1,11 +1,69 @@
 // Past debates shown on the homepage and the Debates page.
 // Debates from the current term card appear automatically once both vote counts
 // are filled in (in the Google Sheet, or lib/events.js as a fallback).
-// Older debates from before the sheet existed are listed by hand below.
+// Older debates from before the sheet existed are listed by hand below
+// (2025–26 results copied from the old Squarespace site).
+// If the vote counts weren't recorded, leave proposition/opposition out and set
+// `outcome` ("carried" or "defeated"), or `resultLabel` for anything else.
 
 import { getEvents } from "@/lib/sheet";
 
 const archive = [
+  {
+    title: "Left vs Right: KCLCA vs KCL Your Party",
+    date: "2026-03-19",
+    description:
+      "The KCL Conservative Association won the debate on swing, increasing their support from 47% to 59% between the beginning and end of the debate.",
+    resultLabel: "KCLCA won on swing",
+    topic: "politics",
+  },
+  {
+    title: "This House believes that billionaires should not exist",
+    date: "2026-03-17",
+    description: "",
+    proposition: 38,
+    opposition: 43,
+  },
+  {
+    title: "This House believes in God",
+    date: "2026-03-10",
+    description: "",
+    proposition: 53,
+    opposition: 51,
+  },
+  {
+    title: "This House would abolish the Monarchy",
+    date: "2026-03-03",
+    description: "",
+    proposition: 45,
+    opposition: 30,
+  },
+  {
+    title: "This House believes that abortion should be a human right",
+    date: "2026-02-18",
+    description: "",
+    proposition: 75,
+    opposition: 20,
+  },
+  {
+    title: "This House believes that the British Empire was a national disgrace",
+    date: "2026-02-10",
+    description: "",
+    proposition: 61,
+    opposition: 31,
+  },
+  {
+    title: "This House prefers socialism over capitalism",
+    date: "2026-02-03",
+    description: "",
+    outcome: "carried",
+  },
+  {
+    title: "This House believes that the West should institute regime change in Iran",
+    date: "2026-01-27",
+    description: "",
+    outcome: "defeated",
+  },
   {
     title: "This House Supports the Ongoing American Intervention In Venezuela",
     date: "2026-01-20",
@@ -73,10 +131,17 @@ export function displayDate(iso) {
   });
 }
 
-export function verdict({ proposition, opposition }) {
-  if (proposition > opposition) return "Carried";
-  if (proposition < opposition) return "Defeated";
-  return "Tied";
+// True when both vote counts were recorded.
+export function hasCounts(d) {
+  return typeof d.proposition === "number" && typeof d.opposition === "number";
+}
+
+// "Carried" or "Defeated". A tied vote means the motion falls, so it counts as
+// defeated (as the old site recorded the 16–16 European Union debate).
+export function verdict(d) {
+  if (d.resultLabel) return d.resultLabel;
+  if (!hasCounts(d)) return d.outcome === "carried" ? "Carried" : d.outcome === "defeated" ? "Defeated" : "Result";
+  return d.proposition > d.opposition ? "Carried" : "Defeated";
 }
 
 export async function getPastDebates() {

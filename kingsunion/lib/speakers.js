@@ -37,6 +37,6 @@ export async function getStats() {
     label,
     debates: debates.length,
     speakers: speakers.size,
-    votes: debates.reduce((n, d) => n + d.proposition + d.opposition, 0),
+    votes: debates.reduce((n, d) => n + (d.proposition || 0) + (d.opposition || 0), 0),
   };
 }
