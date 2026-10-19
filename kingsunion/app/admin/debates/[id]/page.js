@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import AdminShell from "@/components/voting/admin_shell";
 import ManageClient from "@/components/voting/manage_client";
 import { requireAdmin } from "@/lib/admin_page";
-import { getDebate, getCounts, votingLink } from "@/lib/voting";
+import { getDebate, getCounts, getCountedVotes, votingLink } from "@/lib/voting";
 import { qrSvg } from "@/lib/qr";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +13,7 @@ export default async function ManageDebate({ params }) {
   const debate = await getDebate(id);
   if (!debate) notFound();
   const counts = await getCounts(debate.id);
+  const counted = await getCountedVotes(debate.id);
 
   return (
     <AdminShell base={base}>
@@ -20,7 +21,7 @@ export default async function ManageDebate({ params }) {
         ← All debates
       </a>
       <div className="mt-4">
-        <ManageClient base={base} initial={{ debate, counts }} qrSvg={await qrSvg(debate.code)} link={votingLink(debate.code)} />
+        <ManageClient base={base} initial={{ debate, counts, counted }} qrSvg={await qrSvg(debate.code)} link={votingLink(debate.code)} />
       </div>
     </AdminShell>
   );

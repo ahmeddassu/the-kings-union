@@ -13,6 +13,8 @@ const danger = `${btn} border border-[#f3c4c4]/60 text-[#f3c4c4] hover:bg-[#f3c4
 export default function ManageClient({ base, initial, qrSvg, link }) {
   const [debate, setDebate] = useState(initial.debate);
   const [counts, setCounts] = useState(initial.counts);
+  const [counted, setCounted] = useState(initial.counted);
+  const [manual, setManual] = useState(null); // { aye, no } while editing
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
@@ -24,31 +26,50 @@ export default function ManageClient({ base, initial, qrSvg, link }) {
       const data = await res.json();
       setDebate(data.debate);
       setCounts(data.counts);
+      setCounted(data.counted);
     }
   };
   usePoll(refresh, 2000, debate.status === "open");
 
-  async function act(action, confirmText) {
-    if (confirmText && !window.confirm(confirmText)) return;
+  async function act(action, confirmText, extra = {}) {
+    if (confirmText && !window.confirm(confirmText)) return false;
     setBusy(action);
     setError("");
     try {
       const res = await fetch(`/api/admin/debates/${debate.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify({ action, ...extra }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.status === 401) return (window.location.href = base || "/");
       if (!res.ok) throw new Error(data.error || "That didn’t work. Please try again.");
       setDebate(data.debate);
       await refresh();
+      return true;
     } catch (err) {
       setError(err.message);
+      return false;
     } finally {
       setBusy("");
     }
   }
+
+  async function saveManual(e) {
+    e.preventDefault();
+    const aye = Number(manual.aye);
+    const no = Number(manual.no);
+    const ok = await act(
+      "setCounts",
+      `Set the result to ${aye} Aye and ${no} No? Everyone watching will see the new numbers. Phone votes cast after this are added on top.`,
+      { aye, no }
+    );
+    if (ok) setManual(null);
+  }
+
+  const adjusted = counted && (counts.aye !== counted.aye || counts.no !== counted.no);
+  const log = [...(debate.adjustments || [])].reverse();
+  const when = (t) => new Date(t).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
   async function remove() {
     if (!window.confirm(`Delete “${debate.title}” and all its votes? This can’t be undone.`)) return;
@@ -149,6 +170,88 @@ export default function ManageClient({ base, initial, qrSvg, link }) {
             Result {debate.hideResults && s !== "closed" ? "(only you can see this)" : ""}
           </p>
           <Results counts={counts} closed={s === "closed"} live={s === "open"} />
+        </div>
+
+        {/* Manual override */}
+        <div className="mt-6 border border-white/25 p-5 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-widest text-[#d4af37]">Adjust result</p>
+              <p className="mt-1 text-sm text-white/70">
+                Phone votes counted: <strong className="text-white">{counted?.aye ?? 0} Aye</strong> ·{" "}
+                <strong className="text-white">{counted?.no ?? 0} No</strong>
+                {adjusted && <span className="ml-2 border border-[#d4af37]/70 px-2 py-0.5 text-xs uppercase tracking-widest text-[#d4af37]">Adjusted</span>}
+              </p>
+            </div>
+            {!manual && (
+              <button type="button" className={outline} disabled={!!busy} onClick={() => setManual({ aye: String(counts.aye), no: String(counts.no) })}>
+                Change numbers
+              </button>
+            )}
+          </div>
+
+          {manual && (
+            <form onSubmit={saveManual} className="mt-5">
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  ["aye", "Ayes"],
+                  ["no", "Noes"],
+                ].map(([key, name]) => (
+                  <label key={key} className="block">
+                    <span className="block text-xs uppercase tracking-widest text-[#d4af37] mb-1">{name}</span>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min="0"
+                      max="100000"
+                      step="1"
+                      required
+                      value={manual[key]}
+                      onChange={(e) => setManual((m) => ({ ...m, [key]: e.target.value }))}
+                      className="w-full border-b border-[#d4af37]/70 bg-transparent py-2 text-3xl font-bold tabular-nums text-white outline-none focus:border-white"
+                    />
+                  </label>
+                ))}
+              </div>
+              <p className="mt-3 text-sm text-white/60">
+                Use this to add paper ballots or correct a mistake. The new totals show everywhere straight away (voters, big screen and, if published, the website).
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <button type="submit" className={primary} disabled={!!busy}>
+                  {busy === "setCounts" ? "Saving…" : "Save result"}
+                </button>
+                <button type="button" className={outline} disabled={!!busy} onClick={() => setManual(null)}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
+
+          {adjusted && !manual && (
+            <button
+              type="button"
+              className={`${outline} mt-4`}
+              disabled={!!busy}
+              onClick={() =>
+                act("restoreCounted", `Go back to the phone votes counted (${counted.aye} Aye, ${counted.no} No)?`)
+              }
+            >
+              Go back to phone votes
+            </button>
+          )}
+
+          {log.length > 0 && (
+            <details className="mt-5 text-sm text-white/70">
+              <summary className="cursor-pointer select-none">Change history ({log.length}) · only admins see this</summary>
+              <ul className="mt-2 space-y-1">
+                {log.map((a) => (
+                  <li key={a.at} className="tabular-nums">
+                    {when(a.at)}: {a.kind === "restore" ? "back to phone votes" : "set by hand"}, {a.from[0]}–{a.from[1]} → {a.to[0]}–{a.to[1]}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
         </div>
 
         {/* Speakers */}

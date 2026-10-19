@@ -21,9 +21,9 @@ export async function PUT(request, { params }) {
 export async function PATCH(request, { params }) {
   if (!(await isAdmin())) return denied();
   const { id } = await params;
-  const { action } = await request.json().catch(() => ({}));
+  const body = await request.json().catch(() => ({}));
   try {
-    const debate = await applyAction(id, action);
+    const debate = await applyAction(id, body.action, body);
     return debate ? Response.json({ debate }) : missing();
   } catch (err) {
     return Response.json({ error: err.message }, { status: 400 });
