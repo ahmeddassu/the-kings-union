@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { navLinks, socialLinks, MEMBERSHIP_URL } from "@/lib/nav";
 
 function YouTubeIcon({ className }) {
   return (
@@ -57,32 +58,36 @@ function TikTokIcon({ className }) {
   );
 }
 
+const icons = { YouTube: YouTubeIcon, Instagram: InstagramIcon, TikTok: TikTokIcon };
+
+function Label({ link }) {
+  return link.italic ? <em>{link.label}</em> : link.label;
+}
+
+function MenuIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-7 h-7" aria-hidden="true">
+      <path className="group-open:hidden" d="M4 7h16M4 12h16M4 17h16" stroke="#d4af37" strokeWidth="1.8" strokeLinecap="round" />
+      <path className="hidden group-open:inline" d="M6 6l12 12M18 6L6 18" stroke="#d4af37" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
-
     window.addEventListener("scroll", onScroll, { passive: true });
-
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const iconSize = scrolled
-    ? "w-5 h-5"
-    : "w-6 h-6 sm:w-7 sm:h-7";
-
-  const logoTextSize = scrolled
-    ? "text-lg"
-    : "text-2xl sm:text-4xl md:text-5xl";
-
-  const rowPad = scrolled
-    ? "py-1.5"
-    : "py-2.5 sm:py-4 md:py-5";
-
-  const sideLinkSize = scrolled
-    ? "text-[11px]"
-    : "text-xs sm:text-sm";
+  const iconSize = scrolled ? "w-5 h-5" : "w-6 h-6 md:w-7 md:h-7";
+  const logoTextSize = scrolled ? "text-xl md:text-lg" : "text-[1.7rem] md:text-5xl";
+  const rowPad = scrolled ? "py-2 md:py-1.5" : "py-3 md:py-5";
+  const sideLinkSize = scrolled ? "text-[11px]" : "text-sm";
+  const linkClass =
+    "text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200";
 
   return (
     <div className="sticky top-0 z-50 bg-[#3d0202] font-serif">
@@ -90,147 +95,112 @@ export default function Navbar() {
       {/* Top row */}
       <header className="border-t border-b border-[#d4af37]">
         <div
-          className={`flex items-center justify-center sm:justify-between gap-3 sm:gap-8 md:gap-10 px-4 sm:px-6 md:px-8 transition-all duration-300 ease-out ${rowPad}`}
+          className={`flex items-center justify-between gap-4 md:gap-10 px-4 sm:px-6 md:px-8 transition-all duration-300 ease-out ${rowPad}`}
         >
 
-          {/* Social icons */}
-          <div className="hidden sm:flex items-center gap-2.5 sm:gap-4 flex-none min-w-0">
-
-            <a
-              href="https://www.youtube.com/@TheKingsUnionSociety"
-              aria-label="YouTube"
-              className="flex items-center"
-            >
-              <YouTubeIcon
-                className={`${iconSize} transition-all duration-300`}
-              />
-            </a>
-
-            <a
-              href="https://www.instagram.com/thekingsunion"
-              aria-label="Instagram"
-              className="flex items-center"
-            >
-              <InstagramIcon
-                className={`${iconSize} transition-all duration-300`}
-              />
-            </a>
-
-            <a
-              href="https://www.tiktok.com/@the.kings.union"
-              aria-label="TikTok"
-              className="flex items-center"
-            >
-              <TikTokIcon
-                className={`${iconSize} transition-all duration-300`}
-              />
-            </a>
-
+          {/* Social icons (desktop) */}
+          <div className="hidden md:flex items-center gap-4 flex-none">
+            {socialLinks.map((s) => {
+              const Icon = icons[s.label];
+              return (
+                <a key={s.label} href={s.href} aria-label={s.label} className="flex items-center">
+                  <Icon className={`${iconSize} transition-all duration-300`} />
+                </a>
+              );
+            })}
           </div>
 
-          {/* Wordmark */}
-          <div className="flex-1 flex justify-center min-w-0">
-            <span
-              className={`${logoTextSize} font-bold tracking-tight whitespace-nowrap text-white transition-all duration-300`}
+          {/* Wordmark: left on phones, centred on desktop */}
+          <div className="flex-1 flex md:justify-center min-w-0">
+            <a
+              href="/"
+              aria-label="King’s Union home"
+              className={`title ${logoTextSize} font-bold tracking-tight whitespace-nowrap text-white hover:text-[#d4af37] transition-all duration-300`}
             >
-              the Kings Union
-            </span>
+              <span className="italic">the</span>{" "}King’s Union
+            </a>
           </div>
 
-          {/* Join / Contact */}
-          <div className="hidden sm:flex items-center flex-none min-w-0">
-            <div
-              className={`flex items-center gap-1.5 sm:gap-3 whitespace-nowrap ${sideLinkSize} transition-all duration-300`}
+          {/* Join / Contact (desktop) */}
+          <div className={`hidden md:flex items-center gap-3 flex-none ${sideLinkSize} transition-all duration-300`}>
+            <a href={MEMBERSHIP_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
+              Join Us
+            </a>
+            <span className="text-[#d4af37]">|</span>
+            <a href="/contact" className={linkClass}>
+              Contact Us
+            </a>
+          </div>
+
+          {/* Phone menu: a native <details> toggle, so it works even before scripts load */}
+          <details className="md:hidden group flex-none">
+            <summary
+              aria-label="Menu"
+              className="list-none [&::-webkit-details-marker]:hidden -mr-2 p-2 rounded-md cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4af37]"
             >
-              <a
-                href="contact"
-                className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-              >
-                Join Us
-              </a>
+              <MenuIcon />
+            </summary>
 
-              <span className="text-[#d4af37]">|</span>
+            <div className="absolute left-0 right-0 top-full h-[100dvh] bg-[#3d0202] overflow-y-auto overscroll-contain border-t border-[#d4af37]">
+              <nav aria-label="Menu" className="px-4 sm:px-6 pt-2 pb-40">
+                <ul>
+                  {navLinks.map((link) => (
+                    <li key={link.href} className="border-b border-[#d4af37]/30">
+                      <a
+                        href={link.href}
+                        className="title flex items-center justify-between py-4 text-3xl font-bold text-white active:text-[#d4af37]"
+                      >
+                        <Label link={link} />
+                        <span aria-hidden="true" className="text-[#d4af37] text-xl font-normal">→</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
 
-              <a
-                href="contact"
-                className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-              >
-                Contact Us
-              </a>
+                <a
+                  href={MEMBERSHIP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-8 flex items-center justify-center bg-[#d4af37] text-[#3d0202] px-6 py-4 text-base font-bold"
+                >
+                  Become a member →
+                </a>
+
+                <a
+                  href="/contact"
+                  className="mt-3 flex items-center justify-center border border-[#d4af37] px-6 py-4 text-base font-bold text-white"
+                >
+                  Contact us
+                </a>
+
+                <div className="mt-8 flex items-center justify-center gap-8">
+                  {socialLinks.map((sl) => {
+                    const Icon = icons[sl.label];
+                    return (
+                      <a key={sl.label} href={sl.href} aria-label={sl.label} className="p-1">
+                        <Icon className="w-8 h-8" />
+                      </a>
+                    );
+                  })}
+                </div>
+              </nav>
             </div>
-          </div>
+          </details>
 
         </div>
       </header>
 
-      {/* Navigation */}
-      <nav
-        aria-label="Primary"
-        className="border-b border-[#d4af37]"
-      >
-        <div className="flex flex-wrap items-center justify-center gap-x-3 sm:gap-x-5 gap-y-1.5 px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 text-xs sm:text-sm tracking-wide">
-
-          <a
-            href="/"
-            className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-          >
-            Home
-          </a>
-
-          <span className="text-[#d4af37]">|</span>
-
-          <a
-            href="about"
-            className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-          >
-            About
-          </a>
-
-          <span className="text-[#d4af37]">|</span>
-
-          <a
-            href="governance"
-            className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-          >
-            Governance
-          </a>
-
-          <span className="text-[#d4af37]">|</span>
-
-          <a
-            href="debates"
-            className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-          >
-            Debates
-          </a>
-
-          <span className="text-[#d4af37]">|</span>
-
-          <a
-            href="term-card"
-            className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-          >
-            Term Card
-          </a>
-
-          <span className="text-[#d4af37]">|</span>
-
-          <a
-            href="social-events"
-            className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-          >
-            Social Events
-          </a>
-
-          <span className="text-[#d4af37]">|</span>
-
-          <a
-            href="support"
-            className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-          >
-            Support Us
-          </a>
-
+      {/* Navigation row (desktop) */}
+      <nav aria-label="Primary" className="hidden md:block border-b border-[#d4af37]">
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 px-8 py-3 text-sm tracking-wide">
+          {navLinks.map((link, i) => (
+            <span key={link.href} className="flex items-center gap-x-5">
+              {i > 0 && <span className="text-[#d4af37]">|</span>}
+              <a href={link.href} className={linkClass}>
+                <Label link={link} />
+              </a>
+            </span>
+          ))}
         </div>
       </nav>
 

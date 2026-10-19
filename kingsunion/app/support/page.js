@@ -1,5 +1,9 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import Partners from "@/components/partners";
+import PhotoSlot from "@/components/photo_slot";
+
+export const metadata = { title: "Support Us" };
 
 export default function SupportUsPage() {
   return (
@@ -41,6 +45,13 @@ export default function SupportUsPage() {
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
                   Why support us?
                 </h2>
+
+                <PhotoSlot
+                  src="/gallery/chapel-audience.jpg"
+                  alt="Members of the audience listening during a King’s Union debate"
+                  aspect="aspect-[4/3]"
+                  className="mt-8 rounded-lg"
+                />
               </div>
 
               <div className="lg:col-span-7 lg:col-start-6 space-y-6 text-base sm:text-lg leading-relaxed text-white/85">
@@ -136,8 +147,8 @@ export default function SupportUsPage() {
                   </p>
 
                   <a
-                    href="contact"
-                    className="inline-block mt-3 text-sm font-bold text-[#d4af37] hover:text-white transition-colors"
+                    href="/contact"
+                    className="inline-flex items-center min-h-11 mt-1 text-base sm:text-sm font-bold text-[#d4af37] hover:text-white transition-colors"
                   >
                     Join the Union →
                   </a>
@@ -154,8 +165,8 @@ export default function SupportUsPage() {
                   </p>
 
                   <a
-                    href="contact"
-                    className="inline-block mt-3 text-sm font-bold text-[#d4af37] hover:text-white transition-colors"
+                    href="/contact"
+                    className="inline-flex items-center min-h-11 mt-1 text-base sm:text-sm font-bold text-[#d4af37] hover:text-white transition-colors"
                   >
                     Get in touch →
                   </a>
@@ -173,7 +184,7 @@ export default function SupportUsPage() {
 
                   <a
                     href="/#follow"
-                    className="inline-block mt-3 text-sm font-bold text-[#d4af37] hover:text-white transition-colors"
+                    className="inline-flex items-center min-h-11 mt-1 text-base sm:text-sm font-bold text-[#d4af37] hover:text-white transition-colors"
                   >
                     Follow us →
                   </a>
@@ -185,6 +196,70 @@ export default function SupportUsPage() {
 
           </div>
         </section>
+
+        {/* Sponsorship */}
+        <section id="sponsorship" className="scroll-mt-24 border-b border-[#d4af37]">
+          <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+
+              <div className="lg:col-span-4">
+                <p className="text-xs sm:text-sm uppercase tracking-widest mb-4 text-[#d4af37]">
+                  Sponsorship
+                </p>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-tight">
+                  Partner with
+                  <br />
+                  the Union.
+                </h2>
+                <p className="mt-6 text-base sm:text-lg leading-relaxed text-white/85">
+                  The King’s Union is proud to partner with organisations on
+                  tailor-made sponsorship agreements, bringing value to clients
+                  in multiple ways.
+                </p>
+              </div>
+
+              <div className="lg:col-span-7 lg:col-start-6">
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8">
+                  {[
+                    ["Access to King’s College London", "Home to 42,000 students from over 190 different countries, with a strong network of influential alumni and academics."],
+                    ["Digital influence", "Access to the Union’s thousands of followers across Instagram, TikTok and YouTube, as well as the Union’s website and mailing list."],
+                    ["Branding", "Advertisement opportunities in the term card, and on banners and stalls at formal events."],
+                    ["Events access", "Partner on high-profile occasions such as social events, the Freshers’ Week programme and the Winter Ball."],
+                  ].map(([title, text]) => (
+                    <li key={title} className="border-t border-[#d4af37] pt-4">
+                      <h3 className="text-xl font-bold">{title}</h3>
+                      <p className="mt-2 text-sm sm:text-base text-white/70 leading-relaxed">{text}</p>
+                    </li>
+                  ))}
+                </ul>
+
+                <p className="mt-10 text-base sm:text-lg text-white/85 leading-relaxed">
+                  Sponsorship enquiries are addressed to{" "}
+                  <a href="mailto:sponsorships@kingsunion.org.uk" className="text-[#d4af37] hover:text-white underline underline-offset-4 break-all">
+                    sponsorships@kingsunion.org.uk
+                  </a>
+                  , or by{" "}
+                  <a href="/contact#union" className="text-[#d4af37] hover:text-white underline underline-offset-4">
+                    contacting us here
+                  </a>
+                  .
+                </p>
+
+                <a
+                  href="mailto:sponsorships@kingsunion.org.uk?subject=Sponsorship%20enquiry"
+                  className="mt-6 inline-flex items-center justify-center min-h-12 border border-[#d4af37] px-7 py-3 text-sm font-bold text-white hover:bg-[#d4af37] hover:text-[#3d0202] transition-colors duration-200"
+                >
+                  Enquire about sponsorship →
+                </a>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <Partners />
 
         {/* Final CTA */}
         <section>

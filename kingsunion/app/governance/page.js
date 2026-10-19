@@ -1,38 +1,11 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import MemberPhoto from "@/components/member_photo";
+import { committee, committeeYear } from "@/lib/committee";
 
-const committee = [
-  {
-    name: "Mustafa Dassu",
-    title: "Founder & President",
-    image: "/people/mustafa.jpg",
-  },
-  {
-    name: "Archie Johnston",
-    title: "Vice President & Treasurer",
-    image: "/people/archie.jpg",
-  },
-  {
-    name: "Ethan Khong",
-    title: "Chief of Staff",
-    image: "/people/ethan.jpg",
-  },
-  {
-    name: "Ryan Wen",
-    title: "Bursar",
-    image: "/people/ryan.jpg",
-  },
-  {
-    name: "Jarren Ong",
-    title: "Legal & Welfare Officer",
-    image: "/people/jarren.jpg",
-  },
-  {
-    name: "Isabella Steiner",
-    title: "Communications Officer",
-    image: "/people/isabella.jpg",
-  },
-];
+export const metadata = { title: "Governance" };
+
+
 
 export default function GovernancePage() {
   return (
@@ -102,7 +75,7 @@ export default function GovernancePage() {
 
           <div className="mb-10 sm:mb-14">
             <p className="text-xs sm:text-sm uppercase tracking-widest mb-4 text-[#d4af37]">
-              2025–26
+              {committeeYear}
             </p>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
@@ -113,16 +86,15 @@ export default function GovernancePage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 sm:gap-x-6 md:gap-x-8 gap-y-10 sm:gap-y-12">
 
             {committee.map((member) => (
-              <article key={member.name}>
+              <article key={member.title}>
 
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-full aspect-square object-cover mb-4 rounded-lg border border-[#d4af37]"
+                <MemberPhoto
+                  member={member}
+                  className="mb-4 rounded-lg border border-[#d4af37]"
                 />
 
-                <h3 className="text-sm sm:text-base md:text-lg font-bold leading-snug">
-                  {member.name}
+                <h3 className={`text-sm sm:text-base md:text-lg leading-snug ${member.name ? "font-bold" : "italic text-white/50"}`}>
+                  {member.name || "To be announced"}
                 </h3>
 
                 <p className="text-xs sm:text-sm text-white/60 mt-1">
@@ -208,11 +180,11 @@ export default function GovernancePage() {
               <span className="text-xs text-[#d4af37]">05</span>
               <div>
                 <h3 className="text-lg sm:text-xl font-bold">
-                  Legal & Welfare Officer
+                  Legal & Governance Officer
                 </h3>
                 <p className="mt-2 text-sm sm:text-base text-white/70 max-w-2xl leading-relaxed">
-                  Supports members and helps uphold the Union's standards of
-                  conduct, welfare and responsible debate.
+                  Advises on the Union's constitution, rules and procedures, and
+                  helps uphold its standards of conduct and responsible debate.
                 </p>
               </div>
             </div>
@@ -226,6 +198,19 @@ export default function GovernancePage() {
                 <p className="mt-2 text-sm sm:text-base text-white/70 max-w-2xl leading-relaxed">
                   Oversees the Union's communications, social media and public
                   presence.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-[80px_1fr] sm:grid-cols-[120px_1fr] gap-4 sm:gap-6 border-b border-[#d4af37] py-6">
+              <span className="text-xs text-[#d4af37]">07</span>
+              <div>
+                <h3 className="text-lg sm:text-xl font-bold">
+                  Events & Programming Officer
+                </h3>
+                <p className="mt-2 text-sm sm:text-base text-white/70 max-w-2xl leading-relaxed">
+                  Plans the Union's programme of debates, speakers and events
+                  across the year.
                 </p>
               </div>
             </div>
@@ -249,7 +234,7 @@ export default function GovernancePage() {
             </h2>
 
             <a
-              href="contact"
+              href="/contact"
               className="inline-flex items-center justify-center border border-[#d4af37] px-6 py-3 text-sm font-bold text-white hover:bg-[#d4af37] hover:text-[#3d0202] transition-colors duration-200"
             >
               Contact the Union →

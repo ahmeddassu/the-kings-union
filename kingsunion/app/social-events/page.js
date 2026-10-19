@@ -1,5 +1,16 @@
+import { notFound } from "next/navigation";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import { MEMBERSHIP_URL } from "@/lib/nav";
+import PhotoSlot from "@/components/photo_slot";
+import Gallery from "@/components/gallery";
+import { socialGallery } from "@/lib/gallery";
+
+export const metadata = { title: "Social Events" };
+
+// Hidden for now: the page shows "not found". Set to true to bring it back
+// (and re-add it in lib/nav.js and app/sitemap.js).
+const SHOW_PAGE = false;
 
 const upcomingEvents = [
   {
@@ -50,6 +61,8 @@ const pastEvents = [
 ];
 
 export default function SocialEventsPage() {
+  if (!SHOW_PAGE) notFound();
+
   return (
     <>
       <Navbar />
@@ -200,10 +213,17 @@ export default function SocialEventsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
 
               {pastEvents.map((event) => (
-                <article
-                  key={event.title}
-                  className="border-t border-[#d4af37] pt-4"
-                >
+                <article key={event.title}>
+                  {/* Add a photo with  photo: "/socials/file.jpg"  in pastEvents above */}
+                  <PhotoSlot
+                    src={event.photo}
+                    alt={event.title}
+                    aspect="aspect-[4/3]"
+                    label="Photos to come"
+                    className="mb-4 rounded-lg"
+                  />
+
+                  <div className="border-t border-[#d4af37] pt-4">
                   <p className="text-xs text-white/60 mb-3">
                     {event.date}
                   </p>
@@ -215,6 +235,7 @@ export default function SocialEventsPage() {
                   <p className="mt-3 text-sm text-white/70 leading-relaxed">
                     {event.description}
                   </p>
+                  </div>
                 </article>
               ))}
 
@@ -222,6 +243,8 @@ export default function SocialEventsPage() {
 
           </div>
         </section>
+
+        <Gallery eyebrow="Gallery" title="Out and about" photos={socialGallery} />
 
         {/* CTA */}
         <section>
@@ -240,10 +263,12 @@ export default function SocialEventsPage() {
               </div>
 
               <a
-                href="contact"
-                className="inline-flex items-center justify-center border border-[#d4af37] px-6 py-3 text-sm font-bold text-white hover:bg-[#d4af37] hover:text-[#3d0202] transition-colors duration-200"
+                href={MEMBERSHIP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center bg-[#d4af37] text-[#3d0202] px-6 py-3 text-sm sm:text-base font-bold hover:bg-white transition-colors duration-200"
               >
-                Join the Union →
+                Join the Union on KCLSU →
               </a>
 
             </div>

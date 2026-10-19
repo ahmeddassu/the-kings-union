@@ -1,11 +1,6 @@
-const committee = [
-  { name: "Mustafa Dassu", title: "Founder & President", image: "/people/mustafa.jpg" },
-  { name: "Archie Johnston", title: "Vice President & Treasurer", image: "/people/archie.jpg" },
-  { name: "Ethan Khong", title: "Chief of Staff", image: "/people/ethan.jpg" },
-  { name: "Ryan Wen", title: "Bursar", image: "/people/ryan.jpg" },
-  { name: "Jarren Ong", title: "Legal & Welfare Officer", image: "/people/jarren.jpg" },
-  { name: "Isabella Steiner", title: "Communications Officer", image: "/people/isabella.jpg" },
-];
+import { committee } from "@/lib/committee";
+import MemberPhoto from "@/components/member_photo";
+
 
 export default function MeetTheCommittee() {
   return (
@@ -18,8 +13,8 @@ export default function MeetTheCommittee() {
       <div className="px-4 sm:px-6 md:px-8 py-8 sm:py-10 md:py-12">
 
         <a
-          href="#"
-          className="inline-block text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white hover:text-[#d4af37] mb-6 sm:mb-8 transition-colors duration-200"
+          href="/governance"
+          className="title inline-block py-2 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white hover:text-[#d4af37] mb-4 sm:mb-6 transition-colors duration-200"
         >
           Meet the Committee
         </a>
@@ -27,17 +22,13 @@ export default function MeetTheCommittee() {
         <div className="no-scrollbar flex gap-4 sm:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth">
           {committee.map((member) => (
             <div
-              key={member.name}
+              key={member.title}
               className="flex-none w-32 sm:w-44 md:w-52 snap-start"
             >
-              <img
-                src={member.image}
-                alt=""
-                className="w-full aspect-square object-cover mb-3 rounded-lg"
-              />
+              <MemberPhoto member={member} className="mb-3 rounded-lg" />
 
-              <p className="text-sm sm:text-base font-bold leading-snug text-white">
-                {member.name}
+              <p className={`text-sm sm:text-base font-bold leading-snug ${member.name ? "text-white" : "text-white/50 italic font-normal"}`}>
+                {member.name || "To be announced"}
               </p>
 
               <p className="text-xs sm:text-sm text-white/70">

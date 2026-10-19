@@ -1,73 +1,51 @@
+import { navLinks, MEMBERSHIP_URL } from "@/lib/nav";
+
+const linkClass =
+  "inline-block py-2 sm:py-0 text-white/85 hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200";
+
 export default function Footer() {
+  const pages = navLinks.filter((l) => l.href !== "/");
+
   return (
     <footer className="bg-[#3d0202] text-white font-serif border-t border-[#d4af37]">
-      <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-8 sm:gap-10 px-4 sm:px-6 md:px-8 py-8 sm:py-10 md:py-12">
+      <div className="flex flex-col md:flex-row items-start justify-between gap-8 md:gap-10 px-4 sm:px-6 md:px-8 py-10 md:py-12">
 
-        <span className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight whitespace-nowrap">
-          the Kings Union
-        </span>
+        <a
+          href="/"
+          className="title inline-block py-1 text-2xl md:text-3xl font-bold tracking-tight whitespace-nowrap hover:text-[#d4af37] transition-colors duration-200"
+        >
+          <span className="italic">the</span>{" "}King’s Union
+        </a>
 
-        <div className="grid grid-cols-2 gap-x-10 sm:gap-x-16 gap-y-2 text-xs sm:text-sm">
-
-          <ul className="flex flex-col gap-2">
-            <li>
-              <a
-                href="about"
-                className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-              >
-                About
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="debates"
-                className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-              >
-                Debates
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="term-card"
-                className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-              >
-                Term Card
-              </a>
-            </li>
-          </ul>
-
-          <ul className="flex flex-col gap-2">
-            <li>
-              <a
-                href="social-events"
-                className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-              >
-                Events
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="contact"
-                className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-              >
-                Join us
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="contact"
-                className="text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200"
-              >
-                Contact us
-              </a>
-            </li>
-          </ul>
-
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-10 sm:gap-x-16 gap-y-1 sm:gap-y-3 text-base sm:text-sm">
+          {pages.map((link) => (
+            <a key={link.href} href={link.href} className={linkClass}>
+              {link.italic ? <em>{link.label}</em> : link.label}
+            </a>
+          ))}
+          <a href="/speak" className={linkClass}>
+            Speak at the Union
+          </a>
+          <a href={MEMBERSHIP_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
+            Join us
+          </a>
+          <a href="/debates#propose" className={linkClass}>
+            Propose a motion
+          </a>
+          <a href="/#mailing-list" className={linkClass}>
+            Mailing list
+          </a>
+          <a href="/#faq" className={linkClass}>
+            FAQ
+          </a>
+          <a href="/term-card#calendar" className={linkClass}>
+            Calendar
+          </a>
+          <a href="/contact" className={linkClass}>
+            Contact us
+          </a>
         </div>
+
       </div>
     </footer>
   );

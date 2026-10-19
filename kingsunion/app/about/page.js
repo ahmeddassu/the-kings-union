@@ -1,5 +1,8 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoSlot from "@/components/photo_slot";
+
+export const metadata = { title: "About" };
 
 const principles = [
   {
@@ -99,6 +102,15 @@ export default function AboutPage() {
 
           </div>
         </div>
+      </section>
+
+      {/* Chamber photo */}
+      <section className="border-b border-[#d4af37]">
+        <img
+          src="/chamber.jpg"
+          alt="Members of the audience during a King's Union debate in the College Chapel"
+          className="block w-full aspect-[3/2] max-h-[75vh] object-cover"
+        />
       </section>
 
       {/* How debates work */}
@@ -202,6 +214,13 @@ export default function AboutPage() {
                 <br />
                 debate.
               </h2>
+
+              {/* Add a social photo: src="/socials/file.jpg" */}
+              <PhotoSlot
+                alt="Union members at a social"
+                aspect="aspect-[4/3]"
+                className="mt-8 rounded-lg"
+              />
             </div>
 
             <div className="lg:col-span-6 lg:col-start-7 space-y-6 text-base sm:text-lg leading-relaxed text-white/90">
