@@ -131,6 +131,14 @@ export default async function SpeakPage() {
                 Get in touch →
               </a>
             </div>
+            <div className="mt-12 border-t border-[#d4af37]/50 pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <p className="text-lg sm:text-xl">
+                A King’s student? <span className="text-white/75">You can apply to speak in a debate too.</span>
+              </p>
+              <a href="/speak/apply" className="inline-flex min-h-11 items-center text-base font-bold text-[#d4af37] hover:text-white">
+                Apply to speak →
+              </a>
+            </div>
           </div>
         </section>
 

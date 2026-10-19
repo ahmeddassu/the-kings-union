@@ -29,8 +29,14 @@ export default function Footer() {
           <a href={MEMBERSHIP_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
             Join us
           </a>
-          <a href="/debates#propose" className={linkClass}>
-            Propose a motion
+          <a href="/motions" className={linkClass}>
+            Suggest a motion
+          </a>
+          <a href="/speak/apply" className={linkClass}>
+            Apply to speak
+          </a>
+          <a href="/get-involved" className={linkClass}>
+            Get involved
           </a>
           <a href="/#mailing-list" className={linkClass}>
             Ticket alerts

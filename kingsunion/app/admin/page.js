@@ -19,7 +19,7 @@ export default async function AdminHome({ searchParams }) {
   const counts = await Promise.all(debates.map((d) => getCounts(d.id)));
 
   return (
-    <AdminShell base={base}>
+    <AdminShell base={base} current="">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-widest text-[#d4af37]">Live voting</p>
