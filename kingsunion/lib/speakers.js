@@ -1,8 +1,16 @@
 import { getEvents } from "@/lib/sheet";
 import { getPastDebates } from "@/lib/debates";
 
+// King's students who have spoken. Everyone else counts as an external (guest)
+// speaker. Add new student speakers here, spelled exactly as on the term card.
+export const KINGS_STUDENTS = [
+  "Zehna Ahmad", "Robert Young", "Arvind Iyengar", "Fernando Marco",
+  "Cai Finch", "Pranav Karthikeyan", "Juan Duve", "George Phantom",
+  "Eva Tomás Sastre", "Cole Brydson", "Charles Amos", "Seb Vials",
+];
+
 // Everyone who has spoken, newest debate first, each linked to their debate.
-// Chatham House debates are left out.
+// Chatham House debates are left out. Each has `student: true/false`.
 export async function getSpeakers() {
   const events = (await getEvents())
     .filter((e) => e.type === "Debate" && !e.chathamHouse)
@@ -10,7 +18,8 @@ export async function getSpeakers() {
   const seen = new Map();
   for (const e of events) {
     for (const name of [...(e.proposition || []), ...(e.opposition || [])]) {
-      if (!seen.has(name)) seen.set(name, { name, slug: e.slug, motion: e.title });
+      if (!seen.has(name))
+        seen.set(name, { name, slug: e.slug, motion: e.title, student: KINGS_STUDENTS.includes(name) });
     }
   }
   return [...seen.values()];
