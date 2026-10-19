@@ -7,6 +7,7 @@ export const revalidate = 300;
 const pages = [
   "", "about", "debates", "term-card", "governance",
   "kingsway", "speak", "support", "contact", "press", "membership",
+  "motions", "speak/apply", "get-involved", "welcome",
 ];
 
 export default async function sitemap() {

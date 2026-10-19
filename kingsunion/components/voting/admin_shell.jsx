@@ -1,5 +1,12 @@
 // Header and frame for the admin pages.
-export default function AdminShell({ base, children, wide = false }) {
+const sections = [
+  ["", "Debates"],
+  ["/motions", "Motions"],
+  ["/applications", "Speaker applications"],
+  ["/posters", "Poster QR codes"],
+];
+
+export default function AdminShell({ base, children, wide = false, current = "" }) {
   return (
     <>
       <header className="border-b border-[#d4af37]/60">
@@ -24,6 +31,20 @@ export default function AdminShell({ base, children, wide = false }) {
             </form>
           </div>
         </div>
+        <nav aria-label="Admin sections" className="px-4 sm:px-6 md:px-8 flex gap-1 overflow-x-auto">
+          {sections.map(([path, name]) => (
+            <a
+              key={name}
+              href={`${base}${path}` || "/"}
+              aria-current={current === path ? "page" : undefined}
+              className={`inline-flex min-h-11 shrink-0 items-center border-b-2 px-3 text-sm ${
+                current === path ? "border-[#d4af37] text-white font-bold" : "border-transparent text-white/65 hover:text-white"
+              }`}
+            >
+              {name}
+            </a>
+          ))}
+        </nav>
       </header>
       <main className={`flex-1 w-full px-4 sm:px-6 md:px-8 py-8 sm:py-12 ${wide ? "" : "max-w-6xl mx-auto"}`}>{children}</main>
     </>

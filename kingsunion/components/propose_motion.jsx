@@ -1,10 +1,17 @@
-// "Propose a motion" form. Posts to /api/contact, which emails the Union committee.
-// Works without JavaScript.
+// "Propose a motion" form. Posts to /api/motions, which saves it for the
+// committee (admin site → Motions). Works without JavaScript.
 const field =
   "w-full border-b border-[#d4af37]/70 bg-transparent py-3 text-base text-white placeholder:text-white/35 outline-none focus:border-white transition-colors";
 const label = "block text-xs uppercase tracking-widest mb-1 text-[#d4af37]";
 
-export default function ProposeMotion({ id = "propose" }) {
+const messages = {
+  sent: "Thank you. Your motion is with the committee.",
+  missing: "Please write your motion before submitting.",
+  busy: "You’ve sent a few suggestions already. Please try again in an hour.",
+  send: "Sorry, that didn’t go through. Please try again, or email the Union.",
+};
+
+export default function ProposeMotion({ id = "propose", status }) {
   const f = (n) => `${id}-${n}`;
   return (
     <section id={id} className="scroll-mt-24 bg-[#3d0202] text-white font-serif border-t border-[#d4af37]">
@@ -14,12 +21,20 @@ export default function ProposeMotion({ id = "propose" }) {
           <h2 className="title text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">Propose a motion.</h2>
           <p className="mt-4 max-w-md text-base text-white/75 leading-relaxed">
             What should the Union debate next? Suggest a motion and the committee will consider it for
-            next term’s card. Name and email are optional.
+            next term’s card. Name and email are optional. The best suggestions go up on the{" "}
+            <a href="/motions" className="underline underline-offset-4 hover:text-[#d4af37]">motions board</a>, where everyone can vote for them.
           </p>
         </div>
 
-        <form action="/api/contact" method="post" className="lg:col-span-7 flex flex-col gap-6">
-          <input type="hidden" name="team" value="motion" />
+        <form action="/api/motions" method="post" className="lg:col-span-7 flex flex-col gap-6">
+          {status && messages[status] && (
+            <p
+              role={status === "sent" ? "status" : "alert"}
+              className={`border px-4 py-3 text-base ${status === "sent" ? "border-[#d4af37] text-white" : "border-[#f3c4c4]/70 text-[#f3c4c4]"}`}
+            >
+              {messages[status]}
+            </p>
+          )}
 
           <div>
             <label htmlFor={f("motion")} className={label}>Your motion *</label>
