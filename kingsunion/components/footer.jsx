@@ -35,6 +35,9 @@ export default function Footer() {
           <a href="/#mailing-list" className={linkClass}>
             Mailing list
           </a>
+          <a href="/press" className={linkClass}>
+            Press
+          </a>
           <a href="/#faq" className={linkClass}>
             FAQ
           </a>

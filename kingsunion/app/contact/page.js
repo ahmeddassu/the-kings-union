@@ -73,6 +73,9 @@ export default function ContactPage() {
                     <a href={`mailto:${UNION_EMAIL}`} className="text-[#d4af37] hover:text-white underline underline-offset-4 [overflow-wrap:anywhere]">{UNION_EMAIL}</a>.
                   </p>
                 )}
+                <a href="/press" className="mt-2 inline-flex items-center min-h-11 text-sm sm:text-base font-bold text-[#d4af37] hover:text-white transition-colors">
+                  Press page and images →
+                </a>
               </div>
               <div className="border-t border-[#d4af37] pt-4">
                 <h3 className="text-xl font-bold">Sponsorship</h3>
