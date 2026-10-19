@@ -13,13 +13,13 @@ export default function AddToCalendar({ event, compact = false }) {
       )}
       <div className="flex flex-wrap gap-2">
         <a href={googleCalendarUrl(event, pageUrl)} target="_blank" rel="noopener noreferrer" className={btn}>
-          Google
+          Google Calendar
         </a>
         <a href={`/events/${event.slug}/calendar.ics`} className={btn}>
-          Apple / Outlook app
+          Apple Calendar
         </a>
         <a href={outlookCalendarUrl(event, pageUrl)} target="_blank" rel="noopener noreferrer" className={btn}>
-          Outlook.com
+          Outlook
         </a>
       </div>
     </div>

@@ -79,3 +79,14 @@ h4,
   .marquee-track .marquee-list { flex-wrap: wrap; flex-shrink: 1; }
   .marquee-track .marquee-list[aria-hidden] { display: none; }
 }
+
+/* Hide the browser's page scrollbar (scrolling still works with the wheel,
+   trackpad, keyboard and touch). */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
