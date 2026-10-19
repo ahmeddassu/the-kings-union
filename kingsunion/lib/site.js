@@ -17,7 +17,7 @@ export const defaultImage = {
 
 export const siteMetadata = {
   metadataBase: siteUrl,
-  title: { default: siteName, template: `%s · ${siteName}` },
+  title: siteName,
   description: siteDescription,
   openGraph: {
     type: "website",
