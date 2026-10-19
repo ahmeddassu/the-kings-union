@@ -44,9 +44,19 @@ export default function AboutPage() {
     <main className="bg-[#3d0202] text-white font-serif">
       <Navbar />
 
-      {/* Hero */}
-      <section className="border-b border-[#d4af37]">
-        <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-28">
+      {/* Hero, with the chamber photo behind it (fades as you scroll away) */}
+      <section className="relative isolate overflow-clip border-b border-[#d4af37]">
+        <img
+          src="/chamber.jpg"
+          alt=""
+          className="fade-on-scroll absolute inset-0 -z-10 h-full w-full object-cover"
+        />
+        {/* Darkens the photo so the heading stays easy to read */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-gradient-to-r from-[#3d0202] via-[#3d0202]/80 to-[#3d0202]/40"
+        />
+        <div className="px-4 sm:px-6 md:px-8 py-20 sm:py-28 md:py-36">
           <p className="text-xs sm:text-sm uppercase tracking-widest mb-6 text-[#d4af37]">
             About the Union
           </p>
@@ -102,15 +112,6 @@ export default function AboutPage() {
 
           </div>
         </div>
-      </section>
-
-      {/* Chamber photo */}
-      <section className="border-b border-[#d4af37] overflow-clip">
-        <img
-          src="/chamber.jpg"
-          alt="Members of the audience during a King's Union debate in the College Chapel"
-          className="fade-on-scroll block w-full aspect-[3/2] max-h-[75vh] object-cover"
-        />
       </section>
 
       {/* How debates work */}
