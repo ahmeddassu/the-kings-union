@@ -29,6 +29,8 @@ function secret() {
     process.env.ADMIN_SESSION_SECRET ||
     process.env.KV_REST_API_TOKEN ||
     process.env.UPSTASH_REDIS_REST_TOKEN ||
+    process.env.REDIS_URL ||
+    process.env.KV_URL ||
     ""
   );
 }
