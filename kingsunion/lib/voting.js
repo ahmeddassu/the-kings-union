@@ -109,12 +109,50 @@ export async function updateDetails(id, input) {
   return save({ ...debate, ...fields });
 }
 
+// Votes actually cast on phones (from the ballots), regardless of any manual
+// adjustment to the totals.
+export async function getCountedVotes(id) {
+  const values = (await redis("HVALS", k.ballots(id))) || [];
+  const aye = values.filter((v) => v === "aye").length;
+  const no = values.filter((v) => v === "no").length;
+  return { aye, no, total: aye + no };
+}
+
+const MAX_COUNT = 100000;
+const toCount = (v) => {
+  const n = Number(v);
+  if (!Number.isInteger(n) || n < 0 || n > MAX_COUNT) {
+    throw new Error("Please enter whole numbers between 0 and 100,000.");
+  }
+  return n;
+};
+
+// Sets the Aye/No totals by hand (paper ballots, a recount, a correction).
+// Phone votes cast afterwards are added on top. Every change is logged for
+// admins only.
+async function setTotals(debate, aye, no, kind) {
+  const before = await getCounts(debate.id);
+  await pipeline([
+    ["SET", k.votes(debate.id, "aye"), aye],
+    ["SET", k.votes(debate.id, "no"), no],
+  ]);
+  const entry = { at: Date.now(), kind, from: [before.aye, before.no], to: [aye, no] };
+  const adjustments = [...(debate.adjustments || []), entry].slice(-20);
+  return save({ ...debate, adjustments });
+}
+
 // Admin actions on a debate.
-export async function applyAction(id, action) {
+export async function applyAction(id, action, body = {}) {
   const debate = await getDebate(id);
   if (!debate) return null;
   const now = Date.now();
   switch (action) {
+    case "setCounts":
+      return setTotals(debate, toCount(body.aye), toCount(body.no), "set");
+    case "restoreCounted": {
+      const counted = await getCountedVotes(id);
+      return setTotals(debate, counted.aye, counted.no, "restore");
+    }
     case "open":
       return save({ ...debate, status: "open", openedAt: debate.openedAt || now });
     case "close":
@@ -133,7 +171,7 @@ export async function applyAction(id, action) {
       await pipeline([
         ["DEL", k.votes(id, "aye"), k.votes(id, "no"), k.voters(id), k.ballots(id)],
       ]);
-      return save({ ...debate, status: "draft", openedAt: null, closedAt: null });
+      return save({ ...debate, status: "draft", openedAt: null, closedAt: null, adjustments: [] });
     default:
       throw new Error("Unknown action.");
   }
