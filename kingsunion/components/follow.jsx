@@ -90,8 +90,16 @@ export default function FollowUs() {
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex h-full flex-col border border-[#d4af37] bg-[#3d0202]/60 p-4 sm:p-6 text-white transition-colors duration-200 hover:bg-[#d4af37] hover:text-[#3d0202] focus-visible:bg-[#d4af37] focus-visible:text-[#3d0202]"
+                className="group relative isolate overflow-clip flex h-full flex-col border border-[#d4af37] bg-[#3d0202]/60 p-4 sm:p-6 text-white transition-colors duration-200 hover:bg-[#d4af37] hover:text-[#3d0202] focus-visible:bg-[#d4af37] focus-visible:text-[#3d0202]"
               >
+                {/* Large see-through logo behind the card */}
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-8 -bottom-8 -z-10 h-44 w-44 sm:h-52 sm:w-52 text-[#d4af37] opacity-[0.12] transition-[color,opacity,transform] duration-300 group-hover:text-[#3d0202] group-hover:opacity-[0.15] group-hover:scale-105 group-focus-visible:text-[#3d0202]"
+                >
+                  {s.icon}
+                </svg>
                 <div className="flex items-start justify-between">
                   <svg viewBox="0 0 24 24" aria-hidden="true" className="h-9 w-9 text-[#d4af37] transition-colors group-hover:text-[#3d0202] group-focus-visible:text-[#3d0202]">
                     {s.icon}
