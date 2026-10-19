@@ -23,17 +23,17 @@ export default function Home() {
       <Hero/>
       <NextDebate/>
       <JoinBand/>
-      <WhoWeAre/>
       <Stats/>
+      <WhoWeAre/>
+      <MeetTheCommittee/>
       <PastDebates/>
       <SubscribeCalendar/>
-      <MailingList/>
       <Speakers/>
       <PartnerStrip/>
       <Gallery eyebrow="Gallery" title="From the chamber" photos={chamberGallery}/>
-      <MeetTheCommittee/>
       <Faq/>
       <FollowUs/>
+      <MailingList/>
       <Footer/> 
     </div>
   );

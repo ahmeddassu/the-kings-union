@@ -31,7 +31,7 @@ export default async function Speakers() {
   const duration = `${Math.max(20, speakers.length * 4)}s`;
 
   return (
-    <section className="bg-[#3d0202] text-white font-serif border-t border-[#d4af37]">
+    <section className="bg-[#3d0202] text-white font-serif border-t border-[#d4af37] pb-8 sm:pb-10 md:pb-12">
       <div className="px-4 sm:px-6 md:px-8 pt-8 sm:pt-10 md:pt-12">
         <p className="text-xs sm:text-sm uppercase tracking-widest mb-3 text-[#d4af37]">
           Speakers
@@ -42,7 +42,7 @@ export default async function Speakers() {
       </div>
 
       <div
-        className="marquee mt-5 sm:mt-6 mb-8 sm:mb-10 md:mb-12 border-y border-[#d4af37]/60 py-3 sm:py-4 text-lg sm:text-xl md:text-2xl"
+        className="marquee mt-5 sm:mt-6 border-y border-[#d4af37]/60 py-3 sm:py-4 text-lg sm:text-xl md:text-2xl"
         style={{ "--marquee-duration": duration }}
       >
         <div className="marquee-track flex w-max">
