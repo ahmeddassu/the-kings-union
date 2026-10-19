@@ -11,6 +11,7 @@ export const navLinks = [
   { href: "/governance", label: "Governance" },
   { href: "/debates", label: "Debates" },
   { href: "/term-card", label: "Term Card" },
+  { href: "/membership", label: "Membership" },
   // Social Events is hidden for now (the page shows "not found"); add this back to show it:
   // { href: "/social-events", label: "Social Events" },
   { href: "/kingsway", label: "Kingsway", italic: true },

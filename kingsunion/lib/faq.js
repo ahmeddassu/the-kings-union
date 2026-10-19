@@ -1,5 +1,3 @@
-import { MEMBERSHIP_URL } from "@/lib/nav";
-
 // Questions for the FAQ on the homepage. Edit freely: `a` is the answer;
 // `link` (optional) adds a link after it.
 export const faq = [
@@ -17,8 +15,8 @@ export const faq = [
   },
   {
     q: "Do I need to be a member?",
-    a: "No. Anyone can come, but members have tickets reserved for them, so they’re more likely to get in when a debate is busy. Membership is through KCLSU.",
-    link: { href: MEMBERSHIP_URL, text: "Become a member", external: true },
+    a: "No. Anyone can come, but members have tickets reserved for them, so they’re more likely to get in when a debate is busy. Membership is £10 through KCLSU.",
+    link: { href: "/membership", text: "Member benefits" },
   },
   {
     q: "Can I speak?",

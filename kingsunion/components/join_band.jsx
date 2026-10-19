@@ -11,6 +11,9 @@ export default function JoinBand() {
           <p className="text-lg sm:text-xl md:text-2xl font-bold leading-snug">
             Join the King’s Union and have your say in the chamber.
           </p>
+          <a href="/membership" className="mt-1 inline-flex min-h-11 items-center text-sm sm:text-base font-bold text-[#d4af37] hover:text-white transition-colors">
+            See member benefits →
+          </a>
         </div>
 
         <a
