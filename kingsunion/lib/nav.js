@@ -4,8 +4,6 @@ export const MEMBERSHIP_URL =
 
 export const KINGSWAY_URL = "https://kcuskingsway.substack.com/";
 
-// The Union mailing list (a Substack). Change this if the Substack has a different address.
-export const UNION_NEWSLETTER_URL = "https://kingsunion.substack.com/";
 
 export const navLinks = [
   { href: "/", label: "Home" },

@@ -33,7 +33,7 @@ export default function Footer() {
             Propose a motion
           </a>
           <a href="/#mailing-list" className={linkClass}>
-            Mailing list
+            Ticket alerts
           </a>
           <a href="/press" className={linkClass}>
             Press

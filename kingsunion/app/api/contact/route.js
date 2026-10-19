@@ -1,4 +1,5 @@
-// Receives the Union contact form, the Kingsway writer's application and motion suggestions, and emails them on.
+// Receives the Union contact form, the Kingsway writer's application, motion
+// suggestions and ticket-alert sign-ups, and emails them on.
 // Needs these settings in Vercel (Settings → Environment Variables):
 //   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS  – the mailbox that sends the emails
 //   (for Gmail: smtp.gmail.com, 465, the address, and an app password)
@@ -23,7 +24,18 @@ export async function POST(request) {
   const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   let subject, message;
 
-  if (team === "motion") {
+  if (team === "alerts") {
+    // Ticket alerts: just an email address. Each sign-up is emailed to the Union,
+    // so the committee can add it to the list it emails when tickets go on sale.
+    if (!validEmail) return back(request, `/?error=email#mailing-list`);
+    subject = `Ticket alerts sign-up: ${email}`;
+    message = [
+      "Please add this address to the ticket alerts list:",
+      "",
+      email,
+      name ? `Name: ${name}` : null,
+    ].filter((l) => l !== null).join("\n");
+  } else if (team === "motion") {
     // Motion suggestion: only the motion is required.
     const motion = clean(form.get("motion"), 200).replace(/^this house\s*/i, "");
     if (!motion) return back(request, `/debates?error=missing#propose`);
@@ -87,7 +99,8 @@ export async function POST(request) {
     });
   } catch (err) {
     console.error("Contact form failed to send:", err);
-    return back(request, team === "motion" ? `/debates?error=send#propose` : `/contact?error=send#${team}`);
+    const failed = { motion: `/debates?error=send#propose`, alerts: `/?error=send#mailing-list` };
+    return back(request, failed[team] || `/contact?error=send#${team}`);
   }
 
   return back(request, `/contact/sent?team=${team}`);

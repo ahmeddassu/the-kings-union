@@ -14,6 +14,10 @@ export const teams = {
     label: "The King’s Union",
     recipients: () => [UNION_EMAIL],
   },
+  alerts: {
+    label: "Ticket alerts",
+    recipients: () => [UNION_EMAIL],
+  },
   motion: {
     label: "Motion suggestion",
     recipients: () => [UNION_EMAIL],

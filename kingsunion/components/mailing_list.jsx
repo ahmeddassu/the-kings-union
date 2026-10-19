@@ -1,8 +1,6 @@
-import { UNION_NEWSLETTER_URL } from "@/lib/nav";
-
-// The Union mailing list. Runs on Substack (free, handles sending and
-// unsubscribing). The form opens Substack's subscribe page with the email
-// filled in, and Substack asks the reader to confirm. Works without JavaScript.
+// Ticket alerts: people leave their email to hear when tickets go on sale.
+// Each sign-up is emailed to the Union (see app/api/contact/route.js).
+// Works without JavaScript.
 export default function MailingList({ id = "mailing-list" }) {
   return (
     <section
@@ -12,23 +10,27 @@ export default function MailingList({ id = "mailing-list" }) {
       <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 lg:items-end">
         <div>
           <p className="text-xs sm:text-sm uppercase tracking-widest text-[#d4af37] mb-3">
-            Mailing list
+            Ticket alerts
           </p>
           <h2 className="title text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
-            Never miss a motion.
+            Be first for tickets.
           </h2>
           <p className="mt-4 max-w-md text-base text-white/75 leading-relaxed">
-            One email before each debate: the motion, the speakers and where to
-            be. Free, and you can unsubscribe any time.
+            Leave your email and we’ll tell you as soon as tickets for each
+            debate go on sale. Popular debates fill up fast.
           </p>
         </div>
 
         <form
-          action={new URL("subscribe", UNION_NEWSLETTER_URL).toString()}
-          method="get"
-          target="_blank"
+          action="/api/contact"
+          method="post"
           className="w-full max-w-xl"
         >
+          <input type="hidden" name="team" value="alerts" />
+          {/* Spam trap: hidden from people, filled in by bots */}
+          <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+            <input name="company" type="text" tabIndex={-1} autoComplete="off" />
+          </div>
           <label htmlFor={`${id}-email`} className="block text-xs uppercase tracking-widest mb-2 text-[#d4af37]">
             Your email
           </label>
@@ -46,7 +48,7 @@ export default function MailingList({ id = "mailing-list" }) {
               type="submit"
               className="min-h-12 bg-[#d4af37] text-[#3d0202] px-6 py-3 text-base font-bold hover:bg-white transition-colors duration-200 whitespace-nowrap"
             >
-              Sign up →
+              Notify me →
             </button>
           </div>
         </form>
