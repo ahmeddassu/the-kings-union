@@ -94,3 +94,21 @@ html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   display: none;
 }
+
+/* Photo that fades into the background as it scrolls out of view and comes
+   back to full strength when it's in the middle of the screen. Uses the
+   browser's scroll-driven animations; browsers without them show it normally. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .fade-on-scroll {
+      animation: fade-on-scroll linear both;
+      animation-timeline: view();
+    }
+  }
+}
+@keyframes fade-on-scroll {
+  0%   { opacity: 0;   transform: scale(1.06); }
+  35%  { opacity: 1;   transform: scale(1); }
+  65%  { opacity: 1;   transform: scale(1); }
+  100% { opacity: 0;   transform: scale(1.06); }
+}

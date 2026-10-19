@@ -105,11 +105,11 @@ export default function AboutPage() {
       </section>
 
       {/* Chamber photo */}
-      <section className="border-b border-[#d4af37]">
+      <section className="border-b border-[#d4af37] overflow-clip">
         <img
           src="/chamber.jpg"
           alt="Members of the audience during a King's Union debate in the College Chapel"
-          className="block w-full aspect-[3/2] max-h-[75vh] object-cover"
+          className="fade-on-scroll block w-full aspect-[3/2] max-h-[75vh] object-cover"
         />
       </section>
 
