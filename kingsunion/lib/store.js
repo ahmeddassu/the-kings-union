@@ -118,7 +118,7 @@ export async function cachedGet(key, seconds = 60) {
     try {
       const res = await fetch(`${REST_URL.replace(/\/$/, "")}/get/${encodeURIComponent(key)}`, {
         headers: { Authorization: `Bearer ${REST_TOKEN}` },
-        next: { revalidate: seconds },
+        next: { revalidate: seconds, tags: [`store:${key}`] },
       });
       if (!res.ok) return null;
       const data = await res.json();
@@ -128,7 +128,7 @@ export async function cachedGet(key, seconds = 60) {
     }
   }
   try {
-    const read = unstable_cache(async () => tcpCommand(["GET", key]), ["ku-store", key], { revalidate: seconds });
+    const read = unstable_cache(async () => tcpCommand(["GET", key]), ["ku-store", key], { revalidate: seconds, tags: [`store:${key}`] });
     return (await read()) ?? null;
   } catch {
     return null;

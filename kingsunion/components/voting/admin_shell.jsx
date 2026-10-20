@@ -1,6 +1,7 @@
 // Header and frame for the admin pages.
 const sections = [
   ["", "Debates"],
+  ["/calendar", "Calendar"],
   ["/motions", "Motions"],
   ["/messages", "Messages"],
   ["/alerts", "Ticket alerts"],
