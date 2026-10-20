@@ -33,12 +33,20 @@ export default async function PastDebates() {
       )}
       <div className="px-4 sm:px-6 md:px-8 py-8 sm:py-10 md:py-12">
 
-        <a
-          href="/debates"
-          className="title inline-block py-2 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white hover:text-[#d4af37] mb-4 sm:mb-6 transition-colors duration-200"
-        >
-          Past Debates
-        </a>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 mb-4 sm:mb-6">
+          <a
+            href="/debates"
+            className="title inline-block py-2 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white hover:text-[#d4af37] transition-colors duration-200"
+          >
+            Past Debates
+          </a>
+          <a
+            href="/votes"
+            className="inline-flex min-h-11 items-center text-sm sm:text-base font-bold text-[#d4af37] hover:text-white transition-colors"
+          >
+            How King’s votes: every result →
+          </a>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
           {recentDebates.map((debate) => (

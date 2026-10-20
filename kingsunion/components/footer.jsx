@@ -41,6 +41,9 @@ export default function Footer() {
           <a href="/#mailing-list" className={linkClass}>
             Ticket alerts
           </a>
+          <a href="/votes" className={linkClass}>
+            How King’s votes
+          </a>
           <a href="/press" className={linkClass}>
             Press
           </a>
