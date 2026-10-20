@@ -59,6 +59,13 @@ export default async function DebatesPage() {
               A record of motions debated by the King’s Union, from the
               controversial to the constitutional.
             </p>
+
+            <a
+              href="/votes"
+              className="mt-8 inline-flex items-center justify-center bg-[#d4af37] text-[#3d0202] px-6 py-3 text-base font-bold hover:bg-white transition-colors duration-200"
+            >
+              How King’s votes →
+            </a>
           </div>
         </section>
 
