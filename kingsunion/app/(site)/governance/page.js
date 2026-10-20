@@ -1,6 +1,8 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import MemberPhoto from "@/components/member_photo";
+import ProfileLink from "@/components/profile_link";
 import { committee, committeeYear } from "@/lib/committee";
 
 export const metadata = { title: "Governance" };
@@ -32,6 +34,8 @@ export default function GovernancePage() {
           </p>
         </div>
       </section>
+
+      <PhotoBand src="/gallery/floor-speech.jpg" alt="A member speaks from the floor of the House" position="center 50%" />
 
       {/* Governance */}
       <section className="border-b border-[#d4af37]">
@@ -87,20 +91,20 @@ export default function GovernancePage() {
 
             {committee.map((member) => (
               <article key={member.title}>
+                <ProfileLink name={member.name}>
+                  <MemberPhoto
+                    member={member}
+                    className="mb-4 rounded-lg border border-[#d4af37]"
+                  />
 
-                <MemberPhoto
-                  member={member}
-                  className="mb-4 rounded-lg border border-[#d4af37]"
-                />
+                  <h3 className={`text-sm sm:text-base md:text-lg leading-snug group-hover:text-[#d4af37] transition-colors ${member.name ? "font-bold" : "italic text-white/50"}`}>
+                    {member.name || "To be announced"}
+                  </h3>
 
-                <h3 className={`text-sm sm:text-base md:text-lg leading-snug ${member.name ? "font-bold" : "italic text-white/50"}`}>
-                  {member.name || "To be announced"}
-                </h3>
-
-                <p className="text-xs sm:text-sm text-white/60 mt-1">
-                  {member.title}
-                </p>
-
+                  <p className="text-xs sm:text-sm text-white/60 mt-1">
+                    {member.title}
+                  </p>
+                </ProfileLink>
               </article>
             ))}
 

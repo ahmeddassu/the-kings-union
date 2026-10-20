@@ -11,8 +11,7 @@ export const boilerplate =
 export const pressKit = [
   { file: "/KUArmsFinal.png", label: "Union crest", note: "PNG, transparent background" },
   { file: "/og.jpg", label: "Banner", note: "JPG, 1200 × 630" },
-  { file: "/chamber.jpg", label: "The chamber", note: "Photo, JPG" },
-  { file: "/gallery/chapel-audience.jpg", label: "Audience", note: "Photo, JPG" },
-  { file: "/gallery/chapel-floor.jpg", label: "From the floor", note: "Photo, JPG" },
-  { file: "/gallery/chapel-speaker.jpg", label: "A speaker", note: "Photo, JPG" },
+  { file: "/gallery/floor-speaker-packed-house.jpg", label: "A packed House", note: "Photo, JPG" },
+  { file: "/gallery/point-from-the-floor.jpg", label: "From the floor", note: "Photo, JPG" },
+  { file: "/gallery/speaker-reads-from-notes.jpg", label: "A speaker", note: "Photo, JPG" },
 ];

@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import MailingList from "@/components/mailing_list";
 import ProposeMotion from "@/components/propose_motion";
 import ArchiveFilters, { archiveAttrs } from "@/components/archive_filters";
@@ -31,9 +32,19 @@ export default async function DebatesPage() {
 
       <main className="bg-[#3d0202] text-white font-serif">
 
-        {/* Hero */}
-        <section className="border-b border-[#d4af37]">
-          <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-28">
+        {/* Hero, with the empty chapel faded behind it (as on the debate pages) */}
+        <section className="relative overflow-hidden border-b border-[#d4af37]">
+          <img
+            src="/gallery/chapel-despatch-table.jpg"
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full object-cover object-center opacity-35 pointer-events-none select-none"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-r from-[#3d0202] via-[#3d0202]/80 to-[#3d0202]/30 pointer-events-none"
+          />
+          <div className="relative px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-28">
             <p className="text-xs sm:text-sm uppercase tracking-widest mb-6 text-[#d4af37]">
               The Archive
             </p>
@@ -53,6 +64,8 @@ export default async function DebatesPage() {
 
         <div className="archive">
         <ArchiveFilters debates={debates} />
+
+        <PhotoBand src="/gallery/speaker-before-the-chair.jpg" alt="A guest speaker addresses the House in front of the chair" position="center 40%" />
 
         {/* Debate archive */}
         <section id="archive" className="scroll-mt-24">
@@ -86,13 +99,6 @@ export default async function DebatesPage() {
 
                     {/* Main information */}
                     <div className="md:col-span-7">
-                      {debate.photo && (
-                        <img
-                          src={debate.photo}
-                          alt=""
-                          className="w-full max-w-md aspect-[3/2] object-cover mb-5"
-                        />
-                      )}
 
                       <a
                         href={debate.href || undefined}

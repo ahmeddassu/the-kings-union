@@ -46,13 +46,6 @@ export default async function PastDebates() {
               key={debate.title}
               className="border-t border-[#d4af37] pt-4 flex flex-col"
             >
-              {debate.photo && (
-                <img
-                  src={debate.photo}
-                  alt=""
-                  className="w-full aspect-[3/2] object-cover mb-4"
-                />
-              )}
 
               {debate.href ? (
                 <a

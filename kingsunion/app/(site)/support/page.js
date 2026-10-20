@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import Partners from "@/components/partners";
 import PhotoSlot from "@/components/photo_slot";
 
@@ -115,6 +116,8 @@ export default function SupportUsPage() {
 
           </div>
         </section>
+
+        <PhotoBand src="/gallery/speaking-to-a-full-house.jpg" alt="A speaker addresses a full House in the College Chapel" position="center 40%" />
 
         {/* Other ways to support */}
         <section className="border-b border-[#d4af37]">

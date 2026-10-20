@@ -1,5 +1,6 @@
 import { committee } from "@/lib/committee";
 import MemberPhoto from "@/components/member_photo";
+import ProfileLink from "@/components/profile_link";
 
 
 export default function MeetTheCommittee() {
@@ -25,15 +26,17 @@ export default function MeetTheCommittee() {
               key={member.title}
               className="flex-none w-32 sm:w-44 md:w-52 snap-start"
             >
-              <MemberPhoto member={member} className="mb-3 rounded-lg" />
+              <ProfileLink name={member.name}>
+                <MemberPhoto member={member} className="mb-3 rounded-lg" />
 
-              <p className={`text-sm sm:text-base font-bold leading-snug ${member.name ? "text-white" : "text-white/50 italic font-normal"}`}>
-                {member.name || "To be announced"}
-              </p>
+                <p className={`text-sm sm:text-base font-bold leading-snug group-hover:text-[#d4af37] transition-colors ${member.name ? "text-white" : "text-white/50 italic font-normal"}`}>
+                  {member.name || "To be announced"}
+                </p>
 
-              <p className="text-xs sm:text-sm text-white/70">
-                {member.title}
-              </p>
+                <p className="text-xs sm:text-sm text-white/70">
+                  {member.title}
+                </p>
+              </ProfileLink>
             </div>
           ))}
         </div>

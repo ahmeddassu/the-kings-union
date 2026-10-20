@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import { boilerplate, coverage, pressKit } from "@/lib/press";
 import { MEDIA_CONTACT, UNION_EMAIL } from "@/lib/contact";
 import { getPastDebates, displayDate, verdict, hasCounts } from "@/lib/debates";
@@ -37,6 +38,8 @@ export default async function PressPage() {
             </p>
           </div>
         </section>
+
+        <PhotoBand src="/gallery/speaker-with-microphone.jpg" alt="A guest speaker makes his case to the House" position="center 40%" />
 
         {/* Contact + boilerplate */}
         <section className="border-b border-[#d4af37]">

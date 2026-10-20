@@ -2,6 +2,8 @@
 const sections = [
   ["", "Debates"],
   ["/motions", "Motions"],
+  ["/messages", "Messages"],
+  ["/alerts", "Ticket alerts"],
   ["/applications", "Speaker applications"],
   ["/posters", "Poster QR codes"],
 ];

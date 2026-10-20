@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import PhotoSlot from "@/components/photo_slot";
 
 export const metadata = { title: "About" };
@@ -114,6 +115,8 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <PhotoBand src="/gallery/two-speakers-before-the-chair.jpg" alt="Two speakers face each other across the House while the chair presides" position="center 45%" />
+
       {/* How debates work */}
       <section className="border-b border-[#d4af37]">
         <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
@@ -161,6 +164,8 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      <PhotoBand src="/gallery/chapel-altar-set.jpg" alt="The despatch tables set for a debate in front of the chapel altar" position="center 60%" />
 
       {/* Principles */}
       <section className="border-b border-[#d4af37]">
