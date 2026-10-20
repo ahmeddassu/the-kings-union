@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import MailingList from "@/components/mailing_list";
 import ProposeMotion from "@/components/propose_motion";
 import ArchiveFilters, { archiveAttrs } from "@/components/archive_filters";
@@ -53,6 +54,8 @@ export default async function DebatesPage() {
 
         <div className="archive">
         <ArchiveFilters debates={debates} />
+
+        <PhotoBand src="/gallery/speaker-before-the-chair.jpg" alt="A guest speaker addresses the House in front of the chair" position="center 40%" />
 
         {/* Debate archive */}
         <section id="archive" className="scroll-mt-24">

@@ -198,6 +198,7 @@ export const details = {
       text: "Photo: mikemacmarketing, CC BY 2.0",
       href: "https://commons.wikimedia.org/wiki/File:Social_Media_App_Icons_On_The_Screen_of_A_Smartphone.jpg",
     },
+    photo: "/events/ban-social-media-for-under-sixteens.jpg",
   },
   "two-percent-wealth-tax": {
     background: "/events/treasury.jpg",
