@@ -13,8 +13,7 @@ export const metadata = {
 };
 
 const editors = [
-  // Add a photo with  image: "/people/guy.jpg"
-  { name: "Guy de Basto", title: "Editor-in-Chief" },
+  { name: "Guy de Basto", title: "Editor-in-Chief", image: "/people/guy.jpg" },
 ];
 
 export default function KingswayPage() {
