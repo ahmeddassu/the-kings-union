@@ -16,13 +16,30 @@ function londonOffsetMinutes(utcDate) {
   return Math.round((asUtc - utcDate.getTime()) / 60000);
 }
 
-export function eventTimes(event) {
-  const [y, m, d] = event.date.split("-").map(Number);
-  const [hh, mm] = (event.time || "19:00").split(":").map(Number);
+function londonTime(isoDate, hhmm) {
+  const [y, m, d] = isoDate.split("-").map(Number);
+  const [hh, mm] = hhmm.split(":").map(Number);
   const guess = new Date(Date.UTC(y, m - 1, d, hh, mm));
-  const start = new Date(guess.getTime() - londonOffsetMinutes(guess) * 60000);
-  const end = new Date(start.getTime() + (event.durationMinutes || DEFAULT_MINUTES) * 60000);
+  return new Date(guess.getTime() - londonOffsetMinutes(guess) * 60000);
+}
+
+// Start and end as real moments. Uses the end date/time if one is set,
+// otherwise assumes two hours.
+export function eventTimes(event) {
+  const start = londonTime(event.date, event.time || "19:00");
+  let end = event.endTime ? londonTime(event.endDate || event.date, event.endTime) : null;
+  if (!end || end <= start) end = new Date(start.getTime() + (event.durationMinutes || DEFAULT_MINUTES) * 60000);
   return { start, end };
+}
+
+// All-day entries (deadlines, reading week…): date-only, end date exclusive.
+const dayStamp = (iso) => iso.replace(/-/g, "");
+function nextDay(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10);
+}
+function allDaySpan(event) {
+  return { first: event.date, after: nextDay(event.endDate || event.date) };
 }
 
 const stamp = (date) => date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
@@ -31,12 +48,21 @@ function details(event) {
   return event.type === "Debate" ? `King’s Union debate: “${event.title}”` : event.title;
 }
 
+const uid = (event) => `${event.slug || event.id}@kingsunion`;
+
 export function googleCalendarUrl(event, pageUrl) {
-  const { start, end } = eventTimes(event);
+  let dates;
+  if (event.allDay) {
+    const { first, after } = allDaySpan(event);
+    dates = `${dayStamp(first)}/${dayStamp(after)}`;
+  } else {
+    const { start, end } = eventTimes(event);
+    dates = `${stamp(start)}/${stamp(end)}`;
+  }
   const q = new URLSearchParams({
     action: "TEMPLATE",
     text: details(event),
-    dates: `${stamp(start)}/${stamp(end)}`,
+    dates,
     details: pageUrl ? `Details: ${pageUrl}` : "",
     location: event.venue || "King’s College London",
   });
@@ -44,13 +70,21 @@ export function googleCalendarUrl(event, pageUrl) {
 }
 
 export function outlookCalendarUrl(event, pageUrl) {
-  const { start, end } = eventTimes(event);
+  let startdt, enddt;
+  if (event.allDay) {
+    const { first, after } = allDaySpan(event);
+    [startdt, enddt] = [first, after];
+  } else {
+    const { start, end } = eventTimes(event);
+    [startdt, enddt] = [start.toISOString(), end.toISOString()];
+  }
   const q = new URLSearchParams({
     path: "/calendar/action/compose",
     rru: "addevent",
     subject: details(event),
-    startdt: start.toISOString(),
-    enddt: end.toISOString(),
+    startdt,
+    enddt,
+    ...(event.allDay ? { allday: "true" } : {}),
     body: pageUrl ? `Details: ${pageUrl}` : "",
     location: event.venue || "King’s College London",
   });
@@ -59,8 +93,16 @@ export function outlookCalendarUrl(event, pageUrl) {
 
 const esc = (s) => String(s).replace(/([,;\\])/g, "\\$1").replace(/\n/g, "\\n");
 
-export function icsFile(event, pageUrl) {
+function timeLines(event) {
+  if (event.allDay) {
+    const { first, after } = allDaySpan(event);
+    return [`DTSTART;VALUE=DATE:${dayStamp(first)}`, `DTEND;VALUE=DATE:${dayStamp(after)}`];
+  }
   const { start, end } = eventTimes(event);
+  return [`DTSTART:${stamp(start)}`, `DTEND:${stamp(end)}`];
+}
+
+export function icsFile(event, pageUrl) {
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
@@ -68,10 +110,9 @@ export function icsFile(event, pageUrl) {
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    `UID:${event.slug}@kingsunion`,
+    `UID:${uid(event)}`,
     `DTSTAMP:${stamp(new Date())}`,
-    `DTSTART:${stamp(start)}`,
-    `DTEND:${stamp(end)}`,
+    ...timeLines(event),
     `SUMMARY:${esc(details(event))}`,
     `LOCATION:${esc(event.venue || "King’s College London")}`,
     pageUrl ? `URL:${pageUrl}` : null,
@@ -84,13 +125,11 @@ export function icsFile(event, pageUrl) {
 }
 
 function vevent(event, pageUrl) {
-  const { start, end } = eventTimes(event);
   return [
     "BEGIN:VEVENT",
-    `UID:${event.slug}@kingsunion`,
+    `UID:${uid(event)}`,
     `DTSTAMP:${stamp(new Date())}`,
-    `DTSTART:${stamp(start)}`,
-    `DTEND:${stamp(end)}`,
+    ...timeLines(event),
     `SUMMARY:${esc(details(event))}`,
     `LOCATION:${esc(event.venue || "King’s College London")}`,
     pageUrl ? `URL:${pageUrl}` : null,
@@ -113,7 +152,7 @@ export function icsCalendar(events, siteUrl) {
     "X-WR-TIMEZONE:Europe/London",
     "REFRESH-INTERVAL;VALUE=DURATION:PT6H",
     "X-PUBLISHED-TTL:PT6H",
-    ...events.flatMap((e) => vevent(e, new URL(`/events/${e.slug}`, siteUrl).toString())),
+    ...events.flatMap((e) => vevent(e, new URL(e.href || (e.slug ? `/events/${e.slug}` : "/term-card"), siteUrl).toString())),
     "END:VCALENDAR",
   ].map(fold).join("\r\n");
 }
