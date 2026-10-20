@@ -197,7 +197,8 @@ function Panel({ item, onClose, today }) {
 
           {upcoming && (
             <div className="mt-auto border-t border-white/15 pt-5">
-              <p className="text-xs uppercase tracking-widest text-white/50 mb-3">Add to your calendar</p>
+              <p className="text-xs uppercase tracking-widest text-white/50 mb-1">Add to your calendar</p>
+              <p className="text-sm text-white/55 mb-3">It updates by itself if the time or venue changes.</p>
               <div className="grid grid-cols-1 min-[420px]:grid-cols-3 gap-2">
                 <a href={item.links.google} target="_blank" rel="noopener noreferrer" className={panelBtn}>Google Calendar</a>
                 <a href={item.links.ics} className={panelBtn}>Apple Calendar</a>

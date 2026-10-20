@@ -18,7 +18,7 @@ export async function GET(_request, { params }) {
   return new Response(icsFile(event, pageUrl), {
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": `attachment; filename="${slug}.ics"`,
+      "Content-Disposition": `inline; filename="${slug}.ics"`,
     },
   });
 }

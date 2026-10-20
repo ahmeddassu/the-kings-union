@@ -6,7 +6,7 @@ import SubscribeCalendar from "@/components/subscribe_calendar";
 import TermCalendar from "@/components/term_calendar";
 import { termName, shortDate } from "@/lib/events";
 import { getCalendarItems } from "@/lib/calendar_entries";
-import { googleCalendarUrl, outlookCalendarUrl } from "@/lib/calendar";
+import { subscribeLinks, itemFeedPath } from "@/lib/calendar";
 import { tagFor } from "@/lib/calendar_tags";
 import { siteUrl } from "@/lib/site";
 
@@ -68,15 +68,8 @@ export default async function TermCardPage() {
   const today = todayInLondon();
   const raw = await getCalendarItems();
   const items = raw.map((item) => {
-    const page = new URL(item.href || "/term-card", siteUrl).toString();
-    return {
-      ...item,
-      links: {
-        google: googleCalendarUrl(item, page),
-        outlook: outlookCalendarUrl(item, page),
-        ics: item.source === "termcard" ? `/events/${item.slug}/calendar.ics` : `/api/calendar/${item.id}`,
-      },
-    };
+    const sub = subscribeLinks(siteUrl, itemFeedPath(item), `King’s Union: ${item.title}`);
+    return { ...item, links: { google: sub.google, outlook: sub.outlook, ics: sub.webcal } };
   });
   const next = items.find((i) => (i.endDate || i.date) >= today);
   const startMonth = (next ? next.date : today).slice(0, 7);
