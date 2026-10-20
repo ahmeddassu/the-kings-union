@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import MotionBoard from "@/components/motion_board";
 import ProposeMotion from "@/components/propose_motion";
 import { featuredMotions, hasUpvoted, storeConfigured } from "@/lib/submissions";
@@ -54,6 +55,8 @@ export default async function MotionsPage({ searchParams }) {
             </a>
           </div>
         </section>
+
+        <PhotoBand src="/gallery/audience-profile.jpg" alt="Members of the audience listen from the front benches" position="center 50%" />
 
         <section>
           <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">

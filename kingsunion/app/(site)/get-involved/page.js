@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import JoinBand from "@/components/join_band";
 import { committee, committeeYear } from "@/lib/committee";
 import { roleDescriptions } from "@/lib/involved";
@@ -76,6 +77,8 @@ export default function GetInvolvedPage() {
             </p>
           </div>
         </section>
+
+        <PhotoBand src="/gallery/speaker-gesturing.jpg" alt="A guest speaker makes his point to the House as the chair looks on" position="center 45%" />
 
         <section>
           <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">

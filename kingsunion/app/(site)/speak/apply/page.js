@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import { upcomingDebates } from "@/lib/upcoming";
 import { longDate } from "@/lib/events";
 import { MEMBERSHIP_URL } from "@/lib/nav";
@@ -60,6 +61,8 @@ export default async function ApplyPage({ searchParams }) {
             </p>
           </div>
         </section>
+
+        <PhotoBand src="/gallery/speakers-preparing.jpg" alt="Speakers go over their notes on the benches before the debate" position="center 45%" />
 
         <section>
           <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 grid grid-cols-1 sm:grid-cols-3 gap-8">

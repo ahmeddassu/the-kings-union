@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import { MEMBERSHIP_URL } from "@/lib/nav";
 
 export const metadata = {
@@ -61,6 +62,8 @@ export default function MembershipPage() {
             </a>
           </div>
         </section>
+
+        <PhotoBand src="/gallery/front-bench.jpg" alt="Members and a guest speaker on the front bench during a debate" position="center 30%" />
 
         {/* Benefits */}
         <section className="border-b border-[#d4af37]">
