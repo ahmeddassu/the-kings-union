@@ -14,5 +14,4 @@ export const pressKit = [
   { file: "/gallery/floor-speaker-packed-house.jpg", label: "A packed House", note: "Photo, JPG" },
   { file: "/gallery/point-from-the-floor.jpg", label: "From the floor", note: "Photo, JPG" },
   { file: "/gallery/speaker-reads-from-notes.jpg", label: "A speaker", note: "Photo, JPG" },
-  { file: "/gallery/floor-intervention.jpg", label: "Points of information", note: "Photo, JPG" },
 ];

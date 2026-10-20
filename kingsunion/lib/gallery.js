@@ -8,7 +8,7 @@
 //   speaker-before-the-chair.jpg (Debates), chapel-empty.jpg (Term Card),
 //   chapel-benches.jpg (Contact), floor-speech.jpg (Governance),
 //   speaker-with-microphone.jpg (Press), two-speakers-before-the-chair.jpg and
-//   chapel-altar-set.jpg (About), speaking-to-a-full-house.jpg (Kingsway).
+//   chapel-altar-set.jpg (About), speaking-to-a-full-house.jpg (Support Us).
 // The Press page media kit has its own four (see lib/press.js).
 // Debate pages only use their own photo (set in lib/events.js).
 // A gallery shows only the photos listed; an empty list shows crest placeholders.
