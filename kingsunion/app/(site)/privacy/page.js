@@ -74,8 +74,13 @@ export default function PrivacyPage() {
             <p className={p}>
               When you use a form (contact, Kingsway writer applications, motion suggestions, applying to speak, or ticket
               alerts), we keep what you send so the committee can reply or act on it. It is used only for that purpose,
-              and deleted once it is no longer needed. Ticket alerts are sent only because you asked for them, and you can
-              ask us to remove you at any time.
+              and deleted once it is no longer needed. Ticket alerts are sent only because you asked for them, and every
+              alert has a link to unsubscribe in one click.
+            </p>
+            <p className={p}>
+              To make sure nothing is lost if something goes wrong, the website’s database (including form submissions) is
+              backed up every night to private storage that only the committee can access. Backups are deleted after about
+              a month.
             </p>
 
             <h2 className={h2}>Cookies and settings saved in your browser</h2>

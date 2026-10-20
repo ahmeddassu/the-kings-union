@@ -42,7 +42,8 @@ export default function AlertsAdmin({ base, initial }) {
         </a>
       </div>
       <p className="mt-3 text-sm text-white/60">
-        When tickets go on sale, paste the addresses into the <strong>Bcc</strong> field of an email so people can’t see each other’s.
+        The easiest way to email everyone is the box above. If you copy the addresses into your own email instead, put them in{" "}
+        <strong>Bcc</strong> so people can’t see each other’s, and include a way to unsubscribe.
       </p>
       {error && (
         <p role="alert" className="mt-4 text-[#f3c4c4]">
