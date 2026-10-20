@@ -1,6 +1,7 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import MemberPhoto from "@/components/member_photo";
+import ProfileLink from "@/components/profile_link";
 import KingswayPosts from "@/components/kingsway_posts";
 import KingswaySubscribe from "@/components/kingsway_subscribe";
 import { KINGSWAY_URL } from "@/lib/nav";
@@ -13,8 +14,7 @@ export const metadata = {
 };
 
 const editors = [
-  // Add a photo with  image: "/people/guy.jpg"
-  { name: "Guy de Basto", title: "Editor-in-Chief" },
+  { name: "Guy de Basto", title: "Editor-in-Chief", image: "/people/guy.jpg" },
 ];
 
 export default function KingswayPage() {
@@ -89,11 +89,13 @@ export default function KingswayPage() {
               <div className="lg:col-span-7 lg:col-start-6 grid grid-cols-2 sm:grid-cols-3 gap-x-4 sm:gap-x-6 gap-y-10">
                 {editors.map((e) => (
                   <article key={e.title}>
-                    <MemberPhoto member={e} className="mb-4 rounded-lg" />
-                    <h3 className="text-sm sm:text-base md:text-lg font-bold leading-snug">
-                      {e.name}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-white/60 mt-1">{e.title}</p>
+                    <ProfileLink name={e.name}>
+                      <MemberPhoto member={e} className="mb-4 rounded-lg" />
+                      <h3 className="text-sm sm:text-base md:text-lg font-bold leading-snug group-hover:text-[#d4af37] transition-colors">
+                        {e.name}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-white/60 mt-1">{e.title}</p>
+                    </ProfileLink>
                   </article>
                 ))}
               </div>
