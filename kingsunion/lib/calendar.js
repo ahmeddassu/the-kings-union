@@ -102,6 +102,8 @@ function timeLines(event) {
   return [`DTSTART:${stamp(start)}`, `DTEND:${stamp(end)}`];
 }
 
+// One event as a calendar file. It is also a live subscription: calendar apps
+// that subscribe to it re-check it, so a changed time or venue updates itself.
 export function icsFile(event, pageUrl) {
   return [
     "BEGIN:VCALENDAR",
@@ -109,6 +111,10 @@ export function icsFile(event, pageUrl) {
     "PRODID:-//King's Union//Term Card//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
+    `X-WR-CALNAME:${esc(`King’s Union: ${event.title}`)}`,
+    "X-WR-TIMEZONE:Europe/London",
+    "REFRESH-INTERVAL;VALUE=DURATION:PT1H",
+    "X-PUBLISHED-TTL:PT1H",
     "BEGIN:VEVENT",
     `UID:${uid(event)}`,
     `DTSTAMP:${stamp(new Date())}`,
@@ -150,8 +156,8 @@ export function icsCalendar(events, siteUrl) {
     "X-WR-CALNAME:The King’s Union",
     "X-WR-CALDESC:Debates and events from the King’s Union\\, King’s College London",
     "X-WR-TIMEZONE:Europe/London",
-    "REFRESH-INTERVAL;VALUE=DURATION:PT6H",
-    "X-PUBLISHED-TTL:PT6H",
+    "REFRESH-INTERVAL;VALUE=DURATION:PT1H",
+    "X-PUBLISHED-TTL:PT1H",
     ...events.flatMap((e) => vevent(e, new URL(e.href || (e.slug ? `/events/${e.slug}` : "/term-card"), siteUrl).toString())),
     "END:VCALENDAR",
   ].map(fold).join("\r\n");
@@ -164,14 +170,20 @@ function fold(line) {
   return parts.join("\r\n ");
 }
 
-// Links for subscribing to the term calendar.
-export function subscribeLinks(siteUrl) {
-  const feed = new URL("/calendar.ics", siteUrl);
+// Links that subscribe someone's calendar to a feed: the whole term
+// (/calendar.ics) or a single event. Subscribed calendars re-check the feed by
+// themselves, so changes to times and venues reach people automatically.
+export function subscribeLinks(siteUrl, path = "/calendar.ics", name = "The King’s Union") {
+  const feed = new URL(path, siteUrl);
   const webcal = `webcal://${feed.host}${feed.pathname}`;
   return {
     webcal,
     google: `https://calendar.google.com/calendar/render?cid=${encodeURIComponent(webcal)}`,
-    outlook: `https://outlook.live.com/calendar/0/addfromweb?url=${encodeURIComponent(feed.toString())}&name=${encodeURIComponent("The King’s Union")}`,
+    outlook: `https://outlook.live.com/calendar/0/addfromweb?url=${encodeURIComponent(feed.toString())}&name=${encodeURIComponent(name)}`,
     file: feed.pathname,
   };
 }
+
+// The feed address for one calendar item (term card event or admin entry).
+export const itemFeedPath = (item) =>
+  item.source === "admin" || (!item.slug && item.id) ? `/api/calendar/${item.id}` : `/events/${item.slug}/calendar.ics`;

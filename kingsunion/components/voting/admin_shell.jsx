@@ -7,6 +7,7 @@ const sections = [
   ["/alerts", "Ticket alerts"],
   ["/applications", "Speaker applications"],
   ["/posters", "Poster QR codes"],
+  ["/stats", "Visitor stats"],
 ];
 
 export default function AdminShell({ base, children, wide = false, current = "" }) {

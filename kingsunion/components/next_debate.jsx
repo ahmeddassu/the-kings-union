@@ -1,6 +1,6 @@
 import { getEvents } from "@/lib/sheet";
 import { longDate } from "@/lib/events";
-import { googleCalendarUrl } from "@/lib/calendar";
+import { subscribeLinks, itemFeedPath } from "@/lib/calendar";
 import { siteUrl } from "@/lib/site";
 import { eventTimes } from "@/lib/calendar";
 import { ticketStatus } from "@/lib/tickets";
@@ -16,7 +16,6 @@ export default async function NextDebate() {
   const next = (await getEvents()).find((e) => e.type === "Debate" && e.date >= today);
   if (!next) return null;
 
-  const pageUrl = new URL(`/events/${next.slug}`, siteUrl).toString();
   const { start, end } = eventTimes(next);
   const status = await ticketStatus(next);
 
@@ -70,7 +69,7 @@ export default async function NextDebate() {
             Details →
           </a>
           <a
-            href={googleCalendarUrl(next, pageUrl)}
+            href={subscribeLinks(siteUrl, itemFeedPath({ ...next, source: "termcard" }), `King’s Union: ${next.title}`).google}
             target="_blank"
             rel="noopener noreferrer"
             className="min-h-12 inline-flex items-center justify-center border border-[#d4af37] px-6 py-3 text-sm sm:text-base font-bold text-white hover:bg-[#d4af37] hover:text-[#3d0202] transition-colors duration-200"
