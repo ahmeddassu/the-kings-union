@@ -1,5 +1,6 @@
 import { getEvents } from "@/lib/sheet";
 import { siteUrl } from "@/lib/site";
+import { profiles } from "@/lib/people";
 
 export const dynamic = "force-static";
 export const revalidate = 300;
@@ -25,5 +26,6 @@ export default async function sitemap() {
       changeFrequency: "weekly",
       priority: 0.6,
     })),
+    ...profiles.map((p) => ({ url: url(`/team/${p.slug}`), changeFrequency: "monthly", priority: 0.4 })),
   ];
 }
