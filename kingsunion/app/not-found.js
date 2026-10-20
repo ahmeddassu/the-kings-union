@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PageView from "@/components/page_view";
 
 export const metadata = { title: "Page not found" };
 
@@ -8,6 +9,8 @@ export default function NotFound() {
     <>
       <Navbar />
       <main className="bg-[#3d0202] text-white font-serif flex-1">
+        <div data-not-found hidden />
+        <PageView notFound />
         <section className="border-b border-[#d4af37]">
           <div className="px-4 sm:px-6 md:px-8 py-20 sm:py-28 md:py-36">
             <p className="text-xs sm:text-sm uppercase tracking-widest mb-6 text-[#d4af37]">

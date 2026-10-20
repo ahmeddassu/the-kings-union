@@ -56,6 +56,9 @@ export default function Footer() {
           <a href="/contact" className={linkClass}>
             Contact us
           </a>
+          <a href="/privacy" className={linkClass}>
+            Privacy
+          </a>
         </div>
 
       </div>

@@ -62,7 +62,7 @@ export default function DailyChart({ daily }) {
           <div className="mt-2 flex gap-[2px] text-[10px] sm:text-xs text-white/50" aria-hidden="true">
             {daily.map((d, i) => (
               <span key={d.day} className="flex-1 text-center">
-                {i % 7 === daily.length % 7 || i === daily.length - 1 ? label(d.day, { day: "numeric", month: "short" }) : ""}
+                {(daily.length - 1 - i) % Math.ceil(daily.length / 8) === 0 ? label(d.day, { day: "numeric", month: "short" }) : ""}
               </span>
             ))}
           </div>
@@ -75,7 +75,7 @@ export default function DailyChart({ daily }) {
           style={{ left: tip.x, top: tip.y - 8 }}
         >
           <p className="font-bold">{tip.d.visitors} visitors</p>
-          <p className="text-white/70">{tip.d.views} page views</p>
+          <p className="text-white/70">{tip.d.visits ? `${tip.d.visits} visits · ` : ""}{tip.d.views} page views</p>
           <p className="text-white/50">{label(tip.d.day, { weekday: "short", day: "numeric", month: "short" })}</p>
         </div>
       )}

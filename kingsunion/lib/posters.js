@@ -9,4 +9,10 @@ export const posterPages = [
   { key: "home", label: "Homepage", path: "/" },
 ];
 
-export const posterUrl = (page) => new URL(page.path, siteUrl).toString().replace(/\/$/, "");
+// The QR link carries a tag (utm_*) so scans show up in Visitor stats under
+// "QR codes and posters". The tag holds no personal information.
+export const posterUrl = (page) => {
+  const url = new URL(page.path, siteUrl);
+  url.search = new URLSearchParams({ utm_source: "poster", utm_medium: "qr", utm_campaign: page.key }).toString();
+  return url.toString();
+};
