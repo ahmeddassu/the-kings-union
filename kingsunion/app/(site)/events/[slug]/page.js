@@ -42,25 +42,18 @@ export async function generateMetadata({ params }) {
   };
 }
 
-function Placeholder({ children }) {
-  return <p className="text-white/50 italic">{children}</p>;
-}
-
 function SpeakerList({ side, names }) {
+  if (!names || !names.length) return null;
   return (
     <div className="border-t border-[#d4af37] pt-4">
       <h3 className="text-xs uppercase tracking-widest text-[#d4af37] mb-3">
         {side}
       </h3>
-      {names && names.length ? (
-        <ul className="space-y-1 text-base sm:text-lg">
-          {names.map((n) => (
-            <li key={n}>{n}</li>
-          ))}
-        </ul>
-      ) : (
-        <Placeholder>Speakers to be announced</Placeholder>
-      )}
+      <ul className="space-y-1 text-base sm:text-lg">
+        {names.map((n) => (
+          <li key={n}>{n}</li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -146,10 +139,12 @@ export default async function EventPage({ params }) {
                 <dt className="text-xs uppercase tracking-widest text-white/50 mb-1">Time</dt>
                 <dd className="tabular-nums">{event.time}</dd>
               </div>
-              <div>
-                <dt className="text-xs uppercase tracking-widest text-white/50 mb-1">Venue</dt>
-                <dd>{info.venue || <span className="text-white/50 italic">To be confirmed</span>}</dd>
-              </div>
+              {info.venue && (
+                <div>
+                  <dt className="text-xs uppercase tracking-widest text-white/50 mb-1">Venue</dt>
+                  <dd>{info.venue}</dd>
+                </div>
+              )}
             </dl>
 
             {!hasHappened && (
@@ -194,13 +189,12 @@ export default async function EventPage({ params }) {
         </section>
 
         {/* Photo: shown once there is one, or as a placeholder after the event */}
-        {(info.photo || hasHappened) && (
+        {info.photo && (
           <section className="border-b border-[#d4af37]">
             <PhotoSlot
               src={info.photo}
               alt={event.title}
               aspect="aspect-[3/2] max-h-[75vh]"
-              label="Photos to come"
               className="border-0"
             />
           </section>
@@ -215,15 +209,11 @@ export default async function EventPage({ params }) {
                 {motion ? "About the motion" : "About the event"}
               </h2>
               <div className="max-w-prose text-base sm:text-lg leading-relaxed text-white/85">
-                {info.description ? (
-                  <p>{info.description}</p>
-                ) : (
-                  <Placeholder>Details to follow.</Placeholder>
-                )}
+                {info.description && <p>{info.description}</p>}
               </div>
             </div>
 
-            {motion && (
+            {motion && (info.chathamHouse || info.result || info.proposition?.length > 0 || info.opposition?.length > 0) && (
               <aside className="md:col-span-5 min-w-0 space-y-8">
                 {info.chathamHouse ? (
                   <div className="border-t border-[#d4af37] pt-4">
@@ -234,13 +224,14 @@ export default async function EventPage({ params }) {
                       Held under the Chatham House Rule, so speakers are not named.
                     </p>
                   </div>
-                ) : (
+                ) : (info.proposition?.length > 0 || info.opposition?.length > 0) ? (
                   <div className="grid grid-cols-2 gap-6">
                     <SpeakerList side="Proposition" names={info.proposition} />
                     <SpeakerList side="Opposition" names={info.opposition} />
                   </div>
-                )}
+                ) : null}
 
+                {info.result && (
                 <div className="border-t border-b border-[#d4af37] py-4 flex items-center justify-between">
                   <span className="font-bold">Result</span>
                   {info.result ? (
@@ -254,10 +245,9 @@ export default async function EventPage({ params }) {
                           : "Motion defeated"}
                       </span>
                     </span>
-                  ) : (
-                    <span className="text-white/50 italic text-sm">To be added after the debate</span>
-                  )}
+                  ) : null}
                 </div>
+                )}
               </aside>
             )}
           </div>

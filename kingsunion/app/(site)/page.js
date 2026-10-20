@@ -6,7 +6,6 @@ import Stats from "@/components/stats";
 import Speakers from "@/components/speakers";
 import WhoWeAre from "@/components/who";
 import PastDebates from "@/components/past_debates";
-import MeetTheCommittee from "@/components/meet_committee";
 import FollowUs from "@/components/follow";
 import Footer from "@/components/footer";
 import Gallery from "@/components/gallery";
@@ -49,7 +48,6 @@ export default function Home() {
       <JoinBand/>
       <Stats/>
       <WhoWeAre/>
-      <MeetTheCommittee/>
       <PastDebates/>
       <SubscribeCalendar/>
       <Speakers/>

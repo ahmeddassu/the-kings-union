@@ -30,6 +30,6 @@ export const teams = {
 
 // Shown on the Contact page under "Other enquiries".
 // Media contact: fill in when there is one. While blank, the page says it's
-// coming soon and points press to the Union email.
+// directs press to the Union email.
 export const MEDIA_CONTACT = { name: "", email: "" };
 export const SPONSORSHIP_EMAIL = "sponsorships@kingsunion.org.uk";

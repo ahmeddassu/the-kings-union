@@ -1,7 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import PhotoBand from "@/components/photo_band";
-import PhotoSlot from "@/components/photo_slot";
 
 export const metadata = { title: "About" };
 
@@ -221,12 +220,6 @@ export default function AboutPage() {
                 debate.
               </h2>
 
-              {/* Add a social photo: src="/socials/file.jpg" */}
-              <PhotoSlot
-                alt="Union members at a social"
-                aspect="aspect-[4/3]"
-                className="mt-8 rounded-lg"
-              />
             </div>
 
             <div className="lg:col-span-6 lg:col-start-7 space-y-6 text-base sm:text-lg leading-relaxed text-white/90">
