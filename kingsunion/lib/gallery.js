@@ -4,7 +4,12 @@
 // have their own, and these are used as photo strips on other pages:
 //   speaker-at-altar.jpg (Speak), speakers-preparing.jpg (Apply to speak),
 //   after-the-debate.jpg (Welcome), speaker-gesturing.jpg (Get involved),
-//   front-bench.jpg (Membership), audience-profile.jpg (Motions).
+//   front-bench.jpg (Membership), audience-profile.jpg (Motions),
+//   speaker-before-the-chair.jpg (Debates), chapel-empty.jpg (Term Card),
+//   chapel-benches.jpg (Contact), floor-speech.jpg (Governance),
+//   speaker-with-microphone.jpg (Press), two-speakers-before-the-chair.jpg and
+//   chapel-altar-set.jpg (About), speaking-to-a-full-house.jpg (Support Us).
+// The Press page media kit has its own four (see lib/press.js).
 // Debate pages only use their own photo (set in lib/events.js).
 // A gallery shows only the photos listed; an empty list shows crest placeholders.
 
@@ -15,6 +20,9 @@ export const chamberGallery = [
   { src: "/gallery/speaker-and-chair.jpg", alt: "A guest speaker addresses the House, with the chair behind him" },
   { src: "/gallery/audience-listening.jpg", alt: "Members of the audience follow the debate from the benches" },
   { src: "/gallery/after-the-debate-2.jpg", alt: "Speakers and members talk after the vote" },
+  { src: "/gallery/speaker-reads-statement.jpg", alt: "A guest speaker reads her opening statement to the House" },
+  { src: "/gallery/floor-question.jpg", alt: "A member puts a question to the speakers from the floor" },
+  { src: "/gallery/speaker-in-profile.jpg", alt: "A guest speaker answers a point from the floor" },
 ];
 
 export const socialGallery = [];

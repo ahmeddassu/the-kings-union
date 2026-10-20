@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import ContactForm from "@/components/contact_form";
 import KingswayForm from "@/components/kingsway_form";
 import { MEDIA_CONTACT, SPONSORSHIP_EMAIL, UNION_EMAIL } from "@/lib/contact";
@@ -35,6 +36,8 @@ export default function ContactPage() {
 
           </div>
         </section>
+
+        <PhotoBand src="/gallery/chapel-benches.jpg" alt="The benches of the College Chapel before a debate" position="center 55%" />
 
         {/* Two forms: the Union, and Kingsway */}
         <section className="border-b border-[#d4af37]">

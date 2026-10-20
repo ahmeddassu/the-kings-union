@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import MemberPhoto from "@/components/member_photo";
 import ProfileLink from "@/components/profile_link";
 import { committee, committeeYear } from "@/lib/committee";
@@ -33,6 +34,8 @@ export default function GovernancePage() {
           </p>
         </div>
       </section>
+
+      <PhotoBand src="/gallery/floor-speech.jpg" alt="A member speaks from the floor of the House" position="center 50%" />
 
       {/* Governance */}
       <section className="border-b border-[#d4af37]">

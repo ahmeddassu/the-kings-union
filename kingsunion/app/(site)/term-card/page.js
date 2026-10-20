@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import MailingList from "@/components/mailing_list";
 import SubscribeCalendar from "@/components/subscribe_calendar";
 import { termName, shortDate, isMotion } from "@/lib/events";
@@ -33,6 +34,8 @@ export default async function TermCardPage() {
             </p>
           </div>
         </section>
+
+        <PhotoBand src="/gallery/chapel-empty.jpg" alt="The College Chapel set for a debate" position="center 55%" />
 
         {/* Term Card */}
         <section className="relative overflow-hidden">
