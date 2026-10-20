@@ -8,8 +8,9 @@ const columns = {
 };
 
 export default function Gallery({ eyebrow, title, photos }) {
-  // No photos yet: show six crest placeholders so the space is visible.
-  const items = photos.length ? photos : Array.from({ length: 6 }, () => ({}));
+  // No photos yet: leave the section out.
+  if (!photos.length) return null;
+  const items = photos;
   const cols = items.length >= 3 ? columns[3] : columns[items.length];
 
   return (

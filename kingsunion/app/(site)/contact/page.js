@@ -72,7 +72,7 @@ export default function ContactPage() {
                   </>
                 ) : (
                   <p className="mt-2 text-sm sm:text-base text-white/70 leading-relaxed">
-                    Details coming soon. In the meantime, journalists can reach us at{" "}
+                    Journalists can reach us at{" "}
                     <a href={`mailto:${UNION_EMAIL}`} className="text-[#d4af37] hover:text-white underline underline-offset-4 [overflow-wrap:anywhere]">{UNION_EMAIL}</a>.
                   </p>
                 )}

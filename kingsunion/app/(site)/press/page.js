@@ -55,7 +55,7 @@ export default async function PressPage() {
                 </>
               ) : (
                 <p className="text-base sm:text-lg text-white/80 leading-relaxed">
-                  Details coming soon. In the meantime, email{" "}
+                  For press enquiries, email{" "}
                   <a href={`mailto:${UNION_EMAIL}?subject=Press%20enquiry`} className={link}>{UNION_EMAIL}</a>.
                 </p>
               )}

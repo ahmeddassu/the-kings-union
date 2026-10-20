@@ -2,14 +2,12 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import PhotoBand from "@/components/photo_band";
 import JoinBand from "@/components/join_band";
-import { committee, committeeYear } from "@/lib/committee";
-import { roleDescriptions } from "@/lib/involved";
 import { MEMBERSHIP_URL } from "@/lib/nav";
 
 export const metadata = {
   title: "Get involved",
   description:
-    "Ways to get involved with the King’s Union: come to a debate, join, speak, suggest a motion, write for Kingsway or join the committee.",
+    "Ways to get involved with the King’s Union: come to a debate, join, speak, suggest a motion or write for Kingsway.",
 };
 
 const ways = [
@@ -103,36 +101,6 @@ export default function GetInvolvedPage() {
           </div>
         </section>
 
-        <section id="committee" className="scroll-mt-24 border-t border-[#d4af37]">
-          <div className="px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-            <div className="lg:col-span-4">
-              <p className="text-xs sm:text-sm uppercase tracking-widest mb-4 text-[#d4af37]">Committee {committeeYear}</p>
-              <h2 className="title text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">Join the committee.</h2>
-              <p className="mt-4 max-w-md text-base text-white/75 leading-relaxed">
-                The committee runs the Union: booking speakers, putting on debates and socials, and
-                looking after members. Roles are elected by the members. If one of them interests you,
-                or you’d like to help out before then, get in touch.
-              </p>
-              <a
-                href="/contact"
-                className="mt-6 inline-flex items-center justify-center bg-[#d4af37] text-[#3d0202] px-6 py-3 text-base font-bold hover:bg-white transition-colors duration-200"
-              >
-                Get in touch →
-              </a>
-            </div>
-            <ul className="lg:col-span-8 divide-y divide-[#d4af37]/40 border-y border-[#d4af37]/40">
-              {committee.map((m) => (
-                <li key={m.title} className="py-5 grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-6">
-                  <div className="sm:col-span-5">
-                    <p className="text-lg sm:text-xl font-bold">{m.title}</p>
-                    <p className={`text-sm ${m.name ? "text-white/60" : "text-[#d4af37]"}`}>{m.name || "Vacant: get in touch"}</p>
-                  </div>
-                  <p className="sm:col-span-7 text-base leading-relaxed text-white/75">{roleDescriptions[m.title] || ""}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
 
         <JoinBand />
       </main>

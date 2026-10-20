@@ -219,7 +219,6 @@ export default function SocialEventsPage() {
                     src={event.photo}
                     alt={event.title}
                     aspect="aspect-[4/3]"
-                    label="Photos to come"
                     className="mb-4 rounded-lg"
                   />
 
