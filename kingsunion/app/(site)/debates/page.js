@@ -89,13 +89,6 @@ export default async function DebatesPage() {
 
                     {/* Main information */}
                     <div className="md:col-span-7">
-                      {debate.photo && (
-                        <img
-                          src={debate.photo}
-                          alt=""
-                          className="w-full max-w-md aspect-[3/2] object-cover mb-5"
-                        />
-                      )}
 
                       <a
                         href={debate.href || undefined}

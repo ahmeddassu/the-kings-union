@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import MemberPhoto from "@/components/member_photo";
 import KingswayPosts from "@/components/kingsway_posts";
 import KingswaySubscribe from "@/components/kingsway_subscribe";
@@ -72,6 +73,8 @@ export default function KingswayPage() {
             </div>
           </div>
         </section>
+
+        <PhotoBand src="/gallery/speaking-to-a-full-house.jpg" alt="A speaker addresses a full House in the College Chapel" position="center 40%" />
 
         {/* Editorial team */}
         <section className="border-b border-[#d4af37]">
