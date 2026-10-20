@@ -139,7 +139,7 @@ async function loadEvents() {
         proposition: chathamHouse ? [] : names(at(row, "proposition speakers")),
         opposition: chathamHouse ? [] : names(at(row, "opposition speakers")),
         chathamHouse,
-        photo: text(at(row, "photo")),
+        photo: text(at(row, "photo")) || fallbackDetail(title).photo || "",
         // "Tickets" column; falls back to a link set in lib/events.js
         tickets: text(at(row, "tickets")) || fallbackDetail(title).tickets || "",
         topic: text(at(row, "topic")),

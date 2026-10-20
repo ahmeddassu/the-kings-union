@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import Stats from "@/components/stats";
 import Speakers from "@/components/speakers";
 import { getPastDebates, hasCounts } from "@/lib/debates";
@@ -63,6 +64,8 @@ export default async function SpeakPage() {
             )}
           </div>
         </section>
+
+        <PhotoBand src="/gallery/speaker-at-altar.jpg" alt="A guest speaker reads his speech in front of the chapel altar" position="center 70%" />
 
         <Stats />
 

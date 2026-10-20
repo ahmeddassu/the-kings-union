@@ -1,10 +1,36 @@
 import { getPastDebates, displayDate, verdict, hasCounts } from "@/lib/debates";
+import { pastDebatesBackground as bg } from "@/lib/gallery";
 
 export default async function PastDebates() {
   const recentDebates = (await getPastDebates()).slice(0, 3);
 
   return (
-    <section className="bg-[#3d0202] text-white font-serif border-t border-[#d4af37]">
+    <section className="relative isolate overflow-clip bg-[#3d0202] text-white font-serif border-t border-[#d4af37]">
+      {bg.src && (
+        <>
+          <img
+            src={bg.src}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-[0.14] grayscale"
+          />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#3d0202]/40 via-transparent to-[#3d0202]/70" />
+          {bg.credit &&
+            (bg.href ? (
+              <a
+                href={bg.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute bottom-1 right-3 z-10 py-1 text-right text-[11px] text-white/50 hover:text-white"
+              >
+                {bg.credit}
+              </a>
+            ) : (
+              <p className="absolute bottom-2 right-3 z-10 text-right text-[11px] text-white/50">{bg.credit}</p>
+            ))}
+        </>
+      )}
       <div className="px-4 sm:px-6 md:px-8 py-8 sm:py-10 md:py-12">
 
         <a

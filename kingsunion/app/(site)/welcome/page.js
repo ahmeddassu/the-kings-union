@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import PhotoBand from "@/components/photo_band";
 import NextDebate from "@/components/next_debate";
 import { MEMBERSHIP_URL, socialLinks } from "@/lib/nav";
 
@@ -56,6 +57,8 @@ export default function WelcomePage() {
             </p>
           </div>
         </section>
+
+        <PhotoBand src="/gallery/after-the-debate.jpg" alt="Students talk with the speakers after a debate in the College Chapel" position="center 45%" />
 
         <NextDebate />
 

@@ -181,6 +181,7 @@ export const details = {
       href: "https://commons.wikimedia.org/wiki/File:London_MMB_%C2%BB0Y4_River_Thames_and_Palace_of_Westminster.jpg",
     },
     venue: "College Chapel",
+    photo: "/events/no-confidence-in-his-majestys-government.jpg",
     proposition: ["Liam Halligan", "Zehna Ahmad", "Robert Young"],
     opposition: ["Neal Lawson", "Arvind Iyengar", "Fernando Marco"],
     result: { proposition: 58, opposition: 73 },
