@@ -1,7 +1,8 @@
-import { partners } from "@/lib/partners";
+import { getSponsors } from "@/lib/sponsors";
 
 // "Our partners" band. The first partner is shown large as the principal partner.
-export default function Partners() {
+export default async function Partners() {
+  const partners = await getSponsors();
   if (!partners.length) return null;
   const [lead, ...rest] = partners;
   return (
@@ -13,7 +14,7 @@ export default function Partners() {
         </h2>
 
         <a
-          href={lead.href}
+          href={lead.href || undefined}
           target="_blank"
           rel="noopener noreferrer"
           className="group mt-10 block border border-[#d4af37] p-6 sm:p-10 hover:bg-[#d4af37]/10 transition-colors duration-200"
@@ -21,7 +22,7 @@ export default function Partners() {
           <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-12">
             <div className="shrink-0">
               {lead.logo ? (
-                <img src={lead.logo} alt={lead.name} className="h-16 sm:h-20 w-auto" />
+                <img src={lead.logo} alt={lead.name} className="h-16 sm:h-20 w-auto max-w-full" />
               ) : (
                 <p className="title text-4xl sm:text-5xl md:text-6xl font-bold leading-none">{lead.name}</p>
               )}
@@ -39,9 +40,9 @@ export default function Partners() {
         {rest.length > 0 && (
           <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {rest.map((p) => (
-              <li key={p.name}>
+              <li key={p.id || p.name}>
                 <a
-                  href={p.href}
+                  href={p.href || undefined}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex min-h-20 items-center border border-[#d4af37]/60 px-5 py-4 hover:bg-[#d4af37]/10 transition-colors"

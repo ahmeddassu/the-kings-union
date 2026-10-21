@@ -1,7 +1,8 @@
-import { partners } from "@/lib/partners";
+import { getSponsors } from "@/lib/sponsors";
 
 // Slim "supported by" strip for the homepage. Full details live on /support#partners.
-export default function PartnerStrip() {
+export default async function PartnerStrip() {
+  const partners = await getSponsors();
   if (!partners.length) return null;
   const [lead, ...rest] = partners;
   return (
@@ -13,9 +14,9 @@ export default function PartnerStrip() {
 
         <ul className="flex flex-wrap items-center gap-x-10 gap-y-4 flex-1">
           {[lead, ...rest].map((p, i) => (
-            <li key={p.name}>
+            <li key={p.id || p.name}>
               <a
-                href={p.href}
+                href={p.href || undefined}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center min-h-11 hover:text-[#d4af37] transition-colors"

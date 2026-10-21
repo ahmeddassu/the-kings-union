@@ -36,6 +36,7 @@ export const SECTIONS = {
   alerts: { label: "Ticket alerts", path: "/alerts" },
   applications: { label: "Speaker applications", path: "/applications" },
   posters: { label: "Poster QR codes", path: "/posters" },
+  sponsors: { label: "Sponsors", path: "/sponsors" },
   stats: { label: "Visitor stats", path: "/stats" },
   backups: { label: "Backups", path: "/backups" },
   people: { label: "People", path: "/people" },
@@ -46,7 +47,7 @@ export const TEAMS = {
   executive: { label: "Executive", can: Object.keys(SECTIONS) },
   events: { label: "Events and Programming", can: ["debates", "results", "calendar", "motions", "applications", "posters", "messages"] },
   kingsway: { label: "Kingsway", can: ["kingsway", "calendar", "stats"] },
-  finance: { label: "Finance", can: ["messages", "stats"] },
+  finance: { label: "Finance", can: ["sponsors", "messages", "stats"] },
   growth: { label: "Growth and Marketing", can: ["results", "alerts", "posters", "stats", "calendar"] },
 };
 

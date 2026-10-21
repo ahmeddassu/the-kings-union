@@ -11,6 +11,7 @@ const sections = [
   ["/alerts", "Ticket alerts", ["alerts"]],
   ["/applications", "Speaker applications", ["applications"]],
   ["/posters", "Poster QR codes", ["posters"]],
+  ["/sponsors", "Sponsors", ["sponsors"]],
   ["/stats", "Visitor stats", ["stats"]],
   ["/backups", "Backups", ["backups"]],
   ["/people", "People", ["people"]],
