@@ -14,7 +14,7 @@ export default async function PeoplePage() {
   const teams = Object.entries(TEAMS).map(([key, t]) => ({
     key,
     label: t.label,
-    sees: key === "super" ? ["Everything the Executive sees, plus the Activity log. Set in Vercel, not here"] : key === "executive" ? ["Everything (People, Backups…) except the Activity log"] : [...new Set(t.can.map((s) => (s === "messages" ? "Messages to the Union" : s === "kingsway" ? "Kingsway writer applications" : SECTIONS[s].label)))],
+    sees: key === "super" ? ["Everything the Executive sees, plus the Activity log. Set by the site’s developers, not here"] : key === "executive" ? ["Everything (People, Backups…) except the Activity log"] : [...new Set(t.can.map((s) => (s === "messages" ? "Messages to the Union" : s === "kingsway" ? "Kingsway writer applications" : SECTIONS[s].label)))],
   }));
   return (
     <AdminShell base={base} current="/people">

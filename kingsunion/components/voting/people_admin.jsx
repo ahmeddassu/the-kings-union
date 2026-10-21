@@ -55,7 +55,7 @@ export default function PeopleAdmin({ base, initial, shared: sharedInitial, team
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const teamLabel = Object.fromEntries(teams.map((t) => [t.key, t.label]));
-  const assignable = teams.filter((t) => t.key !== "super"); // super admins are set in Vercel
+  const assignable = teams.filter((t) => t.key !== "super"); // super admins are set in the code or Vercel
 
   async function run(name, fn) {
     setBusy(name);
@@ -138,7 +138,7 @@ export default function PeopleAdmin({ base, initial, shared: sharedInitial, team
                 ) : (
                 <div className="flex flex-wrap items-center gap-2">
                   {p.superAdmin ? (
-                    <span className="inline-flex min-h-11 items-center border border-[#d4af37] px-3 text-sm font-bold text-[#d4af37]">Super admin (set in Vercel)</span>
+                    <span className="inline-flex min-h-11 items-center border border-[#d4af37] px-3 text-sm font-bold text-[#d4af37]">Super admin</span>
                   ) : (
                   <>
                   <label className="sr-only" htmlFor={`team-${p.id}`}>Team for {p.name}</label>
