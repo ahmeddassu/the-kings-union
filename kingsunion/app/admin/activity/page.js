@@ -16,7 +16,7 @@ export default async function ActivityPage({ searchParams }) {
   const shown = q.by ? all.filter((a) => a.by === q.by) : all;
   return (
     <AdminShell base={base} current="/activity">
-      <p className="text-xs uppercase tracking-widest text-[#d4af37]">Executive only</p>
+      <p className="text-xs uppercase tracking-widest text-[#d4af37]">Super admins only</p>
       <h1 className="title mt-2 text-4xl sm:text-5xl font-bold">Activity</h1>
       <p className="mt-3 max-w-2xl text-white/70">Who did what in admin, newest first. The last 2,000 actions are kept.</p>
       {people.length > 1 && (

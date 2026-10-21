@@ -14,7 +14,7 @@ export async function PATCH(request, { params }) {
   const { id } = await params;
   const body = await request.json().catch(() => ({}));
   try {
-    const result = await updatePerson(id, body, await sharedAllowed());
+    const result = await updatePerson(id, body, await sharedAllowed(), admin);
     if (!result) return missing();
     const { person, token } = result;
     let link = null, emailed = false;
@@ -37,7 +37,7 @@ export async function DELETE(_request, { params }) {
   const { id } = await params;
   try {
     const who = (await listPeople()).find((p) => p.id === id);
-    if (!(await removePerson(id, await sharedAllowed()))) return missing();
+    if (!(await removePerson(id, await sharedAllowed(), admin))) return missing();
     await logAction(admin, `Removed ${who?.name || "a person"}’s login`);
     return Response.json({ ok: true });
   } catch (err) {

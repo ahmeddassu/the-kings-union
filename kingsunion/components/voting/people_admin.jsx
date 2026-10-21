@@ -47,7 +47,7 @@ function LinkBox({ link, name, emailed, onDone }) {
   );
 }
 
-export default function PeopleAdmin({ base, initial, shared: sharedInitial, teams, meId }) {
+export default function PeopleAdmin({ base, initial, shared: sharedInitial, teams, meId, meIsSuper = false }) {
   const [people, setPeople] = useState(initial);
   const [shared, setShared] = useState(sharedInitial);
   const [form, setForm] = useState({ name: "", email: "", team: "events" });
@@ -55,6 +55,7 @@ export default function PeopleAdmin({ base, initial, shared: sharedInitial, team
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const teamLabel = Object.fromEntries(teams.map((t) => [t.key, t.label]));
+  const assignable = teams.filter((t) => t.key !== "super"); // super admins are set in Vercel
 
   async function run(name, fn) {
     setBusy(name);
@@ -132,7 +133,14 @@ export default function PeopleAdmin({ base, initial, shared: sharedInitial, team
                     {p.lastLogin ? <span className="text-white/45"> · last signed in {when(p.lastLogin)}</span> : null}
                   </p>
                 </div>
+                {p.superAdmin && !meIsSuper ? (
+                  <p className="text-sm text-[#d4af37]">Super admin · only another super admin can change this login</p>
+                ) : (
                 <div className="flex flex-wrap items-center gap-2">
+                  {p.superAdmin ? (
+                    <span className="inline-flex min-h-11 items-center border border-[#d4af37] px-3 text-sm font-bold text-[#d4af37]">Super admin (set in Vercel)</span>
+                  ) : (
+                  <>
                   <label className="sr-only" htmlFor={`team-${p.id}`}>Team for {p.name}</label>
                   <select
                     id={`team-${p.id}`}
@@ -141,10 +149,12 @@ export default function PeopleAdmin({ base, initial, shared: sharedInitial, team
                     onChange={(e) => patch(p, { team: e.target.value }, `Move ${p.name} to ${teamLabel[e.target.value]}?`)}
                     className={`${field} w-auto min-h-11`}
                   >
-                    {teams.map((t) => (
+                    {assignable.map((t) => (
                       <option key={t.key} value={t.key}>{t.label}</option>
                     ))}
                   </select>
+                  </>
+                  )}
                   <button type="button" disabled={!!busy} onClick={() => patch(p, { resetPassword: true }, `Make a new setup link for ${p.name}? Their current password will stop working.`)} className={outline}>
                     {p.status === "invited" ? "New setup link" : "Reset password"}
                   </button>
@@ -157,6 +167,7 @@ export default function PeopleAdmin({ base, initial, shared: sharedInitial, team
                     Remove
                   </button>
                 </div>
+                )}
               </li>
             ))}
           </ul>
@@ -177,7 +188,7 @@ export default function PeopleAdmin({ base, initial, shared: sharedInitial, team
           <label className="block">
             <span className={label}>Team</span>
             <select value={form.team} onChange={(e) => setForm({ ...form, team: e.target.value })} className={field}>
-              {teams.map((t) => (
+              {assignable.map((t) => (
                 <option key={t.key} value={t.key}>{t.label}</option>
               ))}
             </select>
