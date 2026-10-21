@@ -1,4 +1,8 @@
-import { passwordMatches, newSession, allowLoginAttempt, clearLoginAttempts, clientIp, ADMIN_COOKIE } from "@/lib/admin_auth";
+// Sign in with your own email and password, or (until it's switched off) the
+// shared committee password with the email left blank.
+import { passwordMatches, newSession, sessionCookie, allowLoginAttempt, clearLoginAttempts, clientIp, sharedAllowed, SHARED, TEAMS } from "@/lib/admin_auth";
+import { signIn } from "@/lib/admin_accounts";
+import { logAction } from "@/lib/audit";
 import { storeConfigured } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -16,15 +20,22 @@ export async function POST(request) {
 
   const ip = clientIp(request);
   if (!(await allowLoginAttempt(ip))) return Response.redirect(adminHome(request, "?error=wait"), 303);
-  if (!passwordMatches(form.get("password"))) return Response.redirect(adminHome(request, "?error=wrong"), 303);
+
+  const email = String(form.get("email") || "").trim();
+  const password = form.get("password");
+  let person = null;
+  if (email) {
+    person = await signIn(email, password);
+    if (!person) return Response.redirect(adminHome(request, "?error=wrong"), 303);
+  } else {
+    if (!(await sharedAllowed())) return Response.redirect(adminHome(request, "?error=shared"), 303);
+    if (!passwordMatches(password)) return Response.redirect(adminHome(request, "?error=wrong"), 303);
+  }
 
   await clearLoginAttempts(ip);
-  const session = newSession();
-  const response = Response.redirect(adminHome(request), 303);
-  const headers = new Headers(response.headers);
-  headers.append(
-    "Set-Cookie",
-    `${ADMIN_COOKIE}=${session.value}; Path=/; Max-Age=${session.maxAge}; HttpOnly; Secure; SameSite=Strict`
-  );
+  const who = person || SHARED;
+  await logAction({ name: who.name, team: who.team }, `Signed in (${TEAMS[who.team]?.label || who.team})`);
+  const headers = new Headers({ Location: adminHome(request).toString() });
+  headers.append("Set-Cookie", sessionCookie(newSession(person)));
   return new Response(null, { status: 303, headers });
 }

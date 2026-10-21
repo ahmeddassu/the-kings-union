@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Speaker applications · Admin" };
 
 export default async function ApplicationsAdminPage() {
-  const base = await requireAdmin();
+  const base = await requireAdmin("applications");
   const [applications, debates] = await Promise.all([listApplications(), upcomingDebates().catch(() => [])]);
 
   return (

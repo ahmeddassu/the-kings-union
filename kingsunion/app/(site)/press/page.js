@@ -5,7 +5,7 @@ import { boilerplate, coverage, pressKit } from "@/lib/press";
 import { MEDIA_CONTACT, UNION_EMAIL } from "@/lib/contact";
 import { getPastDebates, displayDate, verdict, hasCounts } from "@/lib/debates";
 import { socialLinks } from "@/lib/nav";
-import { partners } from "@/lib/partners";
+import { getSponsors } from "@/lib/sponsors";
 
 export const metadata = {
   title: "Press",
@@ -18,7 +18,7 @@ const link = "text-[#d4af37] hover:text-white underline underline-offset-4 [over
 
 export default async function PressPage() {
   const recent = (await getPastDebates()).slice(0, 4);
-  const lead = partners[0];
+  const [lead] = await getSponsors();
 
   return (
     <>

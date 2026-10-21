@@ -1,7 +1,10 @@
 import AdminShell from "@/components/voting/admin_shell";
 import AdminLogin from "@/components/voting/admin_login";
 import StatusBadge from "@/components/voting/status_badge";
-import { isAdmin } from "@/lib/admin_auth";
+import { getAdmin } from "@/lib/admin_auth";
+import { homeFor } from "@/lib/admin_page";
+import { redirect } from "next/navigation";
+import { sharedAllowed } from "@/lib/admin_auth";
 import { basePath } from "@/lib/hosts";
 import { storeConfigured } from "@/lib/store";
 import { listDebates, getCounts } from "@/lib/voting";
@@ -12,9 +15,11 @@ export const dynamic = "force-dynamic";
 export default async function AdminHome({ searchParams }) {
   const { error } = (await searchParams) || {};
   if (!storeConfigured) return <AdminLogin error="setup" />;
-  if (!(await isAdmin())) return <AdminLogin error={error} />;
+  const admin = await getAdmin();
+  if (!admin) return <AdminLogin error={error} shared={await sharedAllowed()} />;
 
   const base = await basePath("admin");
+  if (!admin.can("debates")) redirect(`${base}${homeFor(admin)}`);
   const debates = await listDebates();
   const counts = await Promise.all(debates.map((d) => getCounts(d.id)));
 

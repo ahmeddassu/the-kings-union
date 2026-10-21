@@ -6,7 +6,7 @@ import { getEvents } from "@/lib/sheet";
 export const dynamic = "force-dynamic";
 
 export default async function NewDebate() {
-  const base = await requireAdmin();
+  const base = await requireAdmin("debates");
   const yesterday = yesterdayInLondon();
   const termCard = (await getEvents())
     .filter((e) => e.type === "Debate" && e.date >= yesterday)

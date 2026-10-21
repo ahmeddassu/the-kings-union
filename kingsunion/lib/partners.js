@@ -1,6 +1,5 @@
-// Partners shown on the Support page and in the homepage strip.
-// Add a partner by adding an entry. `logo` is optional (a file in public/partners/);
-// only use a partner's logo with their permission.
+// The starting list of partners. Sponsors are now managed in admin → Sponsors
+// (lib/sponsors.js); this list is only used until someone first edits them there.
 export const partners = [
   {
     name: "Free Speech Union",

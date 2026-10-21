@@ -20,7 +20,7 @@ async function sitePhotos() {
 }
 
 export default async function CalendarAdminPage() {
-  const base = await requireAdmin();
+  const base = await requireAdmin("calendar");
   const [entries, events, photos] = await Promise.all([listEntries(), getEvents().catch(() => []), sitePhotos()]);
   return (
     <AdminShell base={base} current="/calendar" wide>

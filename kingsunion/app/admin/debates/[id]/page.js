@@ -8,7 +8,7 @@ import { qrSvg } from "@/lib/qr";
 export const dynamic = "force-dynamic";
 
 export default async function ManageDebate({ params }) {
-  const base = await requireAdmin();
+  const base = await requireAdmin("debates");
   const { id } = await params;
   const debate = await getDebate(id);
   if (!debate) notFound();

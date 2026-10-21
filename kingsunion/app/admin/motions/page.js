@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Motions · Admin" };
 
 export default async function MotionsAdminPage() {
-  const base = await requireAdmin();
+  const base = await requireAdmin("motions");
   const motions = await listMotions();
 
   return (

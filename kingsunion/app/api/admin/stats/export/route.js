@@ -1,5 +1,5 @@
 // Admin: visitor stats as a spreadsheet (CSV). Totals only, like the page.
-import { isAdmin } from "@/lib/admin_auth";
+import { can, refuse } from "@/lib/admin_auth";
 import { getStats } from "@/lib/visitor_stats";
 import { PAGE_NAMES } from "@/lib/page_names";
 
@@ -13,7 +13,8 @@ const cell = (v) => {
 const rows = (title, header, list) => [[title], header, ...list, []];
 
 export async function GET(request) {
-  if (!(await isAdmin())) return new Response("Please sign in again.", { status: 401 });
+  const admin = await can("stats");
+  if (!admin) return refuse();
   const asked = Number(new URL(request.url).searchParams.get("days"));
   const days = [7, 30, 90].includes(asked) ? asked : 30;
   const s = await getStats(days);

@@ -10,7 +10,7 @@ const BOXES = [
 
 export default function MessagesAdmin({ base, initial }) {
   const [items, setItems] = useState(initial); // { union: [...], kingsway: [...] }
-  const [box, setBox] = useState("union");
+  const [box, setBox] = useState(initial.union ? "union" : "kingsway");
   const [show, setShow] = useState("new");
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
@@ -48,7 +48,7 @@ export default function MessagesAdmin({ base, initial }) {
   return (
     <div>
       <div role="tablist" className="flex flex-wrap gap-2">
-        {BOXES.map(([key, name]) => (
+        {BOXES.filter(([key]) => items[key]).map(([key, name]) => (
           <button key={key} type="button" role="tab" aria-selected={box === key} onClick={() => setBox(key)} className={tab(box === key)}>
             {name} ({items[key].filter((m) => m.status === "new").length} new)
           </button>

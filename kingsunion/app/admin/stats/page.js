@@ -177,7 +177,7 @@ function HourBars({ hours }) {
 }
 
 export default async function StatsPage({ searchParams }) {
-  const base = await requireAdmin();
+  const base = await requireAdmin("stats");
   const q = await searchParams;
   const days = RANGES.includes(Number(q?.days)) ? Number(q.days) : 30;
   const [s, events] = await Promise.all([getStats(days), getEvents().catch(() => [])]);

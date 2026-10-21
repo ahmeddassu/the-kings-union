@@ -1,13 +1,14 @@
 // Admin: download a debate's QR code. ?format=png (default) or svg
 import QRCode from "qrcode";
-import { isAdmin } from "@/lib/admin_auth";
+import { can, refuse } from "@/lib/admin_auth";
 import { getDebate, votingLink } from "@/lib/voting";
 import { QR_COLOURS } from "@/lib/qr";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request, { params }) {
-  if (!(await isAdmin())) return new Response("Please sign in again.", { status: 401 });
+  const admin = await can("debates");
+  if (!admin) return refuse();
   const { id } = await params;
   const debate = await getDebate(id);
   if (!debate) return new Response("Not found", { status: 404 });

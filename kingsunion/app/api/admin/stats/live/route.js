@@ -1,11 +1,12 @@
 // Admin: how many people are on the site right now (last five minutes).
-import { isAdmin } from "@/lib/admin_auth";
+import { can, refuse } from "@/lib/admin_auth";
 import { getLive } from "@/lib/visitor_stats";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  if (!(await isAdmin())) return Response.json({ error: "Please sign in again." }, { status: 401 });
+  const admin = await can("stats");
+  if (!admin) return refuse();
   try {
     return Response.json(await getLive(), { headers: { "Cache-Control": "no-store" } });
   } catch {
