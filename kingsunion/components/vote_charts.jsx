@@ -69,6 +69,7 @@ export function Divisions({ rows }) {
               onPointerLeave={() => setTip(null)}
               onFocus={(e) => show(e, d)}
               onBlur={() => setTip(null)}
+              role="img"
               aria-label={`${d.title}: ${d.proposition} Ayes, ${d.opposition} Noes. ${d.carried ? "Carried" : "Defeated"}.`}
               className="group relative mt-3 flex h-6 gap-[2px] outline-none focus-visible:ring-2 focus-visible:ring-white/70"
             >
@@ -186,6 +187,7 @@ export function Topics({ rows }) {
                     onPointerLeave={() => setTip(null)}
                     onFocus={(e) => show(e, r, "carried")}
                     onBlur={() => setTip(null)}
+                    role="img"
                     aria-label={`${r.label}: ${r.carried} carried`}
                     className={`block h-full outline-none focus-visible:ring-2 focus-visible:ring-white/70 hover:brightness-110 rounded-l ${r.defeated ? "" : "rounded-r"}`}
                     style={{ flex: r.carried, background: AYE }}
@@ -198,6 +200,7 @@ export function Topics({ rows }) {
                     onPointerLeave={() => setTip(null)}
                     onFocus={(e) => show(e, r, "defeated")}
                     onBlur={() => setTip(null)}
+                    role="img"
                     aria-label={`${r.label}: ${r.defeated} defeated`}
                     className={`block h-full outline-none focus-visible:ring-2 focus-visible:ring-white/70 hover:brightness-110 rounded-r ${r.carried ? "" : "rounded-l"}`}
                     style={{ flex: r.defeated, background: NO }}

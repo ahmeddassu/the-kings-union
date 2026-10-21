@@ -45,6 +45,12 @@ function mailer() {
   return transport;
 }
 
+// A plain email to the committee (e.g. a website problem). Not for the alerts list.
+export async function sendCommitteeEmail({ to, subject, text }) {
+  if (!emailConfigured()) throw new Error("Email isn’t set up yet.");
+  await mailer().sendMail({ from: `"The King’s Union website" <${process.env.SMTP_USER}>`, to, subject, text });
+}
+
 // ---------- Unsubscribe links ----------
 
 function secret() {

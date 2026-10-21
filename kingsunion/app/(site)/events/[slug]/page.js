@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { eventSchema } from "@/lib/event_schema";
+import { eventSchema, eventBreadcrumbs } from "@/lib/event_schema";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import PhotoSlot from "@/components/photo_slot";
@@ -80,7 +80,7 @@ export default async function EventPage({ params }) {
       <Navbar />
 
       <main className="bg-[#3d0202] text-white font-serif">
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eventSchema(event)).replace(/</g, "\\u003c") }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([eventSchema(event), eventBreadcrumbs(event)]).replace(/</g, "\\u003c") }} />
 
         {/* Header */}
         <section className="relative overflow-hidden border-b border-[#d4af37]">

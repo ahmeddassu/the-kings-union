@@ -83,6 +83,16 @@ export default function PrivacyPage() {
               a month.
             </p>
 
+            <h2 className={h2}>Coming to our events</h2>
+            <p className={p}>
+              Tickets for our events are booked through Luma, which has its own privacy policy. After an event, the
+              committee keeps a record of who was checked in at the door: just your name and email address, and which
+              events you came to. We use it to see how many people come, and to recognise regulars, for example by
+              giving them priority when tickets are in demand. We rely on our legitimate interest in running the
+              society. The record is only seen by the committee, is never shared or sold, and is deleted after two
+              years. Only totals (how many people came) are ever published.
+            </p>
+
             <h2 className={h2}>Cookies and settings saved in your browser</h2>
             <ul className="mt-4 list-disc pl-6 space-y-1.5">
               <li className={li}>

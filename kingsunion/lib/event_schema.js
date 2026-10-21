@@ -33,18 +33,35 @@ export function eventSchema(event) {
       name: event.venue ? `${event.venue}, King’s College London` : "King’s College London",
       address: ADDRESS,
     },
-    organizer: { "@type": "Organization", name: siteName, url: siteUrl.toString() },
+    organizer: { "@type": "Organization", "@id": new URL("/#organization", siteUrl).toString(), name: siteName, url: siteUrl.toString() },
     image: [new URL(image || "/og.jpg", siteUrl).toString()],
   };
-  if (event.description) data.description = event.description;
+  data.description =
+    event.description ||
+    (event.type === "Debate" ? `A King’s Union debate on the motion “${event.title}”, with a vote of the House at the end.` : `${event.title}, at the King’s Union.`);
   if (speakers.length) data.performer = speakers.map((n) => ({ "@type": "Person", name: n }));
   if (event.tickets) {
     data.offers = {
       "@type": "Offer",
       url: event.tickets,
       availability: "https://schema.org/InStock",
+      // Debates are free (see lib/faq.js).
+      ...(event.type === "Debate" ? { price: 0, priceCurrency: "GBP" } : {}),
       validFrom: new Date(start.getTime() - 21 * 864e5).toISOString(),
     };
   }
   return data;
+}
+
+// Home › Term Card › this event, for Google's breadcrumb trail in results.
+export function eventBreadcrumbs(event) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl.toString() },
+      { "@type": "ListItem", position: 2, name: "Term Card", item: new URL("/term-card", siteUrl).toString() },
+      { "@type": "ListItem", position: 3, name: event.title, item: new URL(`/events/${event.slug}`, siteUrl).toString() },
+    ],
+  };
 }

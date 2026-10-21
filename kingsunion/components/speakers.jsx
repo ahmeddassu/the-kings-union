@@ -70,6 +70,12 @@ export default async function Speakers() {
 
       <Row label="Guest speakers" speakers={guests} />
       <Row label="King’s students" speakers={students} reverse />
+
+      <div className="px-4 sm:px-6 md:px-8 mt-6">
+        <a href="/speakers" className="inline-flex min-h-11 items-center text-[#d4af37] underline underline-offset-4 hover:text-white">
+          All speakers and their debates
+        </a>
+      </div>
     </section>
   );
 }

@@ -21,7 +21,7 @@ export const faq = [
   {
     q: "Can I speak?",
     a: "Yes. After the main speeches, the debate is opened to the floor and anyone in the audience can make a point. If you’d like to be one of the main speakers, get in touch.",
-    link: { href: "/speak", text: "Speak at the Union" },
+    link: { href: "/guide", text: "How to debate" },
   },
   {
     q: "How long does a debate last?",
