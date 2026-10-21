@@ -360,7 +360,7 @@ export default function TermCalendar({ items, today, startMonth, list }) {
                   >
                     <span
                       className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-sm tabular-nums ${
-                        isToday ? "bg-[#d4af37] font-bold text-[#3d0202]" : inMonth ? "text-white/85" : "text-white/30"
+                        isToday ? "bg-[#d4af37] font-bold text-[#3d0202]" : inMonth ? "text-white/85" : "text-white/55"
                       }`}
                     >
                       <span className="sr-only">{fmt(day, { weekday: "long", day: "numeric", month: "long" })}</span>
@@ -392,11 +392,11 @@ export default function TermCalendar({ items, today, startMonth, list }) {
                             <button
                               type="button"
                               onClick={(e) => open(it, e)}
-                              className={`group flex w-full items-start gap-1.5 rounded px-1.5 py-1 text-left text-xs leading-snug transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${inMonth ? "" : "opacity-60"}`}
+                              className={`group flex w-full items-start gap-1.5 rounded px-1.5 py-1 text-left text-xs leading-snug transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${inMonth ? "" : "opacity-75"}`}
                               style={{ boxShadow: `inset 3px 0 0 ${tagFor(it.tag).colour}`, background: `${tagFor(it.tag).colour}22` }}
                             >
                               <span className="min-w-0">
-                                <span className="block tabular-nums text-white/60">{it.allDay ? "All day" : it.time}</span>
+                                <span className="block tabular-nums text-white/80">{it.allDay ? "All day" : it.time}</span>
                                 <span className="block font-bold text-white line-clamp-2 group-hover:text-[#f1d785]">{it.title}</span>
                                 <span className="sr-only">, {tagFor(it.tag).label}</span>
                               </span>
@@ -429,7 +429,7 @@ export default function TermCalendar({ items, today, startMonth, list }) {
                     >
                       <span className="text-sm leading-tight text-white/70">
                         <span className="block">{fmt(it.date, { weekday: "short", day: "numeric" })}</span>
-                        <span className="block tabular-nums text-white/50">{it.allDay ? "All day" : it.time}</span>
+                        <span className="block tabular-nums text-white/75">{it.allDay ? "All day" : it.time}</span>
                       </span>
                       <span className="min-w-0">
                         <span className="flex items-center gap-2 text-xs uppercase tracking-widest text-white/55">

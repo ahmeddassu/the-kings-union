@@ -99,6 +99,9 @@ export default async function VotesPage() {
                 detail="votes cast"
               />
             </div>
+            <a href="/records" className="mt-8 inline-flex min-h-11 items-center text-[#d4af37] underline underline-offset-4 hover:text-white">
+              More records
+            </a>
           </div>
         </section>
 

@@ -11,10 +11,13 @@ const sections = [
   ["/alerts", "Ticket alerts", ["alerts"]],
   ["/applications", "Speaker applications", ["applications"]],
   ["/speaker-pack", "Speaker pack", ["speakers"]],
+  ["/past-speakers", "Past speakers", ["guests"]],
+  ["/attendance", "Attendance", ["attendance"]],
   ["/posters", "Poster QR codes", ["posters"]],
   ["/sponsors", "Sponsors", ["sponsors"]],
   ["/stats", "Visitor stats", ["stats"]],
   ["/backups", "Backups", ["backups"]],
+  ["/status", "Status", ["status"]],
   ["/people", "People", ["people"]],
   ["/activity", "Activity", ["activity"]],
 ];

@@ -57,6 +57,14 @@ export default function Navbar() {
     "text-white hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200";
 
   return (
+    <>
+    {/* For keyboard and screen-reader users: jump past the menus. */}
+    <a
+      href="#content"
+      className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:bg-[#d4af37] focus:px-4 focus:py-3 focus:font-serif focus:font-bold focus:text-[#3d0202]"
+    >
+      Skip to content
+    </a>
     <div className="sticky top-0 z-50 bg-[#3d0202] font-serif">
 
       {/* Top row */}
@@ -81,7 +89,7 @@ export default function Navbar() {
           <div className="flex-1 flex md:justify-center min-w-0">
             <a
               href="/"
-              aria-label="King’s Union home"
+              aria-label="the King’s Union, home"
               className={`title inline-flex items-center gap-2 sm:gap-2.5 md:gap-3.5 ${logoTextSize} font-bold tracking-tight whitespace-nowrap text-white hover:text-[#d4af37] transition-all duration-300`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -172,7 +180,7 @@ export default function Navbar() {
         <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 px-8 py-3 text-sm tracking-wide">
           {navLinks.map((link, i) => (
             <span key={link.href} className="flex items-center gap-x-5">
-              {i > 0 && <span className="text-[#d4af37]">|</span>}
+              {i > 0 && <span aria-hidden="true" className="text-[#d4af37]">|</span>}
               <a href={link.href} className={linkClass}>
                 <Label link={link} />
               </a>
@@ -182,5 +190,7 @@ export default function Navbar() {
       </nav>
 
     </div>
+    <div id="content" tabIndex={-1} className="scroll-mt-40 outline-none" />
+    </>
   );
 }
