@@ -1,6 +1,8 @@
 import AdminShell from "@/components/voting/admin_shell";
 import AlertsAdmin from "@/components/voting/alerts_admin";
 import AlertMailer from "@/components/voting/alert_mailer";
+import RemindersToggle from "@/components/voting/reminders_toggle";
+import { remindersOn, upcomingReminders } from "@/lib/reminders";
 import { requireAdmin } from "@/lib/admin_page";
 import { listAlerts } from "@/lib/inbox";
 import { listCampaigns, emailConfigured } from "@/lib/alert_mail";
@@ -37,6 +39,9 @@ export default async function AlertsPage() {
       <p className="mt-3 max-w-2xl text-white/70">
         {alerts.length} {alerts.length === 1 ? "person has" : "people have"} asked to be emailed when tickets go on sale.
       </p>
+      <div className="mt-8">
+        <RemindersToggle base={base} initialOn={await remindersOn()} ready={emailConfigured()} upcoming={await upcomingReminders()} count={alerts.length} />
+      </div>
       <div className="mt-8">
         <AlertMailer base={base} count={alerts.length} ready={emailConfigured()} events={upcoming} initialCampaigns={campaigns} />
       </div>
