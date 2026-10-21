@@ -35,6 +35,7 @@ export const SECTIONS = {
   kingsway: { label: "Messages", path: "/messages" },        // Kingsway writer applications
   alerts: { label: "Ticket alerts", path: "/alerts" },
   applications: { label: "Speaker applications", path: "/applications" },
+  speakers: { label: "Speaker pack", path: "/speaker-pack" },
   posters: { label: "Poster QR codes", path: "/posters" },
   sponsors: { label: "Sponsors", path: "/sponsors" },
   stats: { label: "Visitor stats", path: "/stats" },
@@ -48,7 +49,7 @@ export const TEAMS = {
   // Only set from Vercel (SUPER_ADMIN_EMAILS), never from inside admin.
   super: { label: "Super admin", can: Object.keys(SECTIONS) },
   executive: { label: "Executive", can: Object.keys(SECTIONS).filter((s) => s !== "activity") },
-  events: { label: "Events and Programming", can: ["debates", "results", "calendar", "motions", "applications", "posters", "messages"] },
+  events: { label: "Events and Programming", can: ["debates", "results", "calendar", "motions", "applications", "speakers", "posters", "messages"] },
   kingsway: { label: "Kingsway", can: ["kingsway", "calendar", "stats"] },
   finance: { label: "Finance", can: ["sponsors", "messages", "stats"] },
   growth: { label: "Growth and Marketing", can: ["results", "alerts", "posters", "stats", "calendar"] },

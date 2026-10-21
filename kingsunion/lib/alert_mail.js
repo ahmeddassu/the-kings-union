@@ -162,13 +162,14 @@ export async function sendTest(input, email) {
   await sendOne({ ...c, subject: `[Test] ${c.subject}` }, email);
 }
 
-export async function startCampaign(input) {
+// `meta` is kept with the send-out, e.g. { auto: "reminder", slug } for automatic reminders.
+export async function startCampaign(input, meta = {}) {
   if (!emailConfigured()) throw new Error("Email isn’t set up yet.");
   const c = cleanCampaign(input);
   const people = await listAlerts();
   if (!people.length) throw new Error("Nobody has signed up for ticket alerts yet.");
   const id = randomBytes(6).toString("hex");
-  const campaign = { id, ...c, total: people.length, sent: 0, failed: 0, createdAt: Date.now(), finishedAt: null };
+  const campaign = { id, ...c, ...meta, total: people.length, sent: 0, failed: 0, createdAt: Date.now(), finishedAt: null };
   const cmds = [["HSET", K.campaigns, id, JSON.stringify(campaign)]];
   for (let i = 0; i < people.length; i += 500) cmds.push(["RPUSH", K.todo(id), ...people.slice(i, i + 500).map((p) => p.email)]);
   cmds.push(["EXPIRE", K.todo(id), 30 * 24 * 3600]);
