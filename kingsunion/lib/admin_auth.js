@@ -1,11 +1,17 @@
 // Admin sign-in for admin.kingsunion.org.uk.
 //
-// The password itself is never stored: only a salted scrypt fingerprint, which is
-// slow to guess. To change the password, run this (with your new password) and
-// replace SALT and HASH below:
+// Each committee member has their own login (added by the Executive under
+// admin → People), and belongs to one team. Each team only sees its own
+// sections (TEAMS below). The old shared committee password still works and
+// signs in as the Executive until the Executive switches it off under People.
+//
+// Passwords are never stored: only a salted scrypt fingerprint, which is slow
+// to guess. The shared password's fingerprint is below. To change it, run this
+// (with your new password) and replace SALT and HASH:
 //   node -e "const c=require('crypto'),s=c.randomBytes(16).toString('hex');console.log(s, c.scryptSync('NEW-PASSWORD',s,32,{N:32768,r:8,p:1,maxmem:67108864}).toString('hex'))"
 // Changing it signs every admin out.
-import { scryptSync, timingSafeEqual, createHmac } from "node:crypto";
+import { scryptSync, timingSafeEqual, createHmac, randomBytes } from "node:crypto";
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { redis, storeConfigured } from "@/lib/store";
 
@@ -17,10 +23,50 @@ export const ADMIN_COOKIE = "ku_admin";
 const SESSION_HOURS = 12;
 const MAX_ATTEMPTS = 10; // per 15 minutes, per network address
 
-export function passwordMatches(password) {
-  const attempt = scryptSync(String(password || ""), SALT, 32, SCRYPT);
-  return timingSafeEqual(attempt, Buffer.from(HASH, "hex"));
+// ---------- Teams and what they can see ----------
+
+// Admin sections, with where they live.
+export const SECTIONS = {
+  debates: { label: "Debates", path: "" },
+  results: { label: "Result cards", path: "/results" },
+  calendar: { label: "Calendar", path: "/calendar" },
+  motions: { label: "Motions", path: "/motions" },
+  messages: { label: "Messages", path: "/messages" },        // messages to the Union
+  kingsway: { label: "Messages", path: "/messages" },        // Kingsway writer applications
+  alerts: { label: "Ticket alerts", path: "/alerts" },
+  applications: { label: "Speaker applications", path: "/applications" },
+  posters: { label: "Poster QR codes", path: "/posters" },
+  stats: { label: "Visitor stats", path: "/stats" },
+  backups: { label: "Backups", path: "/backups" },
+  people: { label: "People", path: "/people" },
+  activity: { label: "Activity", path: "/activity" },
+};
+
+export const TEAMS = {
+  executive: { label: "Executive", can: Object.keys(SECTIONS) },
+  events: { label: "Events and Programming", can: ["debates", "results", "calendar", "motions", "applications", "posters", "messages"] },
+  kingsway: { label: "Kingsway", can: ["kingsway", "calendar", "stats"] },
+  finance: { label: "Finance", can: ["messages", "stats"] },
+  growth: { label: "Growth and Marketing", can: ["results", "alerts", "posters", "stats", "calendar"] },
+};
+
+// ---------- Passwords ----------
+
+export function hashPassword(password, salt = randomBytes(16).toString("hex")) {
+  return { salt, hash: scryptSync(String(password || ""), salt, 32, SCRYPT).toString("hex") };
 }
+
+export function checkPassword(password, salt, hash) {
+  const attempt = scryptSync(String(password || ""), salt, 32, SCRYPT);
+  return timingSafeEqual(attempt, Buffer.from(hash, "hex"));
+}
+
+// The shared committee password.
+export function passwordMatches(password) {
+  return checkPassword(password, SALT, HASH);
+}
+
+// ---------- Sessions ----------
 
 // Sessions are signed with a server-only secret (the database token, which is
 // never in the code), so they can't be forged.
@@ -39,23 +85,81 @@ function sign(value) {
   return createHmac("sha256", secret()).update(`${value}.${HASH}`).digest("hex");
 }
 
-export function newSession() {
+// A session for the shared password ("<expires>.<sig>") or for one person
+// ("u.<id>.<version>.<expires>.<sig>"; the version changes when their password
+// is reset or they're removed, which signs them out everywhere).
+export function newSession(user = null) {
   const expires = Date.now() + SESSION_HOURS * 3600 * 1000;
-  return { value: `${expires}.${sign(expires)}`, maxAge: SESSION_HOURS * 3600 };
+  const body = user ? `u.${user.id}.${user.sv || 0}.${expires}` : `${expires}`;
+  return { value: `${body}.${sign(body)}`, maxAge: SESSION_HOURS * 3600 };
 }
 
-export function sessionValid(token) {
-  if (!secret() || typeof token !== "string") return false;
-  const [expires, sig] = token.split(".");
-  if (!/^\d+$/.test(expires || "") || !/^[a-f0-9]{64}$/.test(sig || "")) return false;
-  if (Number(expires) < Date.now()) return false;
-  return timingSafeEqual(Buffer.from(sig, "hex"), Buffer.from(sign(expires), "hex"));
+export const sessionCookie = (session) =>
+  `${ADMIN_COOKIE}=${session.value}; Path=/; Max-Age=${session.maxAge}; HttpOnly; Secure; SameSite=Strict`;
+
+function readToken(token) {
+  if (!secret() || typeof token !== "string") return null;
+  const parts = token.split(".");
+  const sig = parts.pop();
+  const body = parts.join(".");
+  if (!/^[a-f0-9]{64}$/.test(sig || "")) return null;
+  if (!timingSafeEqual(Buffer.from(sig, "hex"), Buffer.from(sign(body), "hex"))) return null;
+  if (parts.length === 1 && /^\d+$/.test(parts[0])) {
+    return Number(parts[0]) < Date.now() ? null : { shared: true };
+  }
+  if (parts.length === 4 && parts[0] === "u" && /^[a-f0-9]{12}$/.test(parts[1]) && /^\d+$/.test(parts[2]) && /^\d+$/.test(parts[3])) {
+    return Number(parts[3]) < Date.now() ? null : { id: parts[1], sv: Number(parts[2]) };
+  }
+  return null;
 }
+
+export const SHARED = { id: "shared", name: "Shared committee login", email: "", team: "executive" };
+
+// Whether the old shared password may still be used (switched off under People).
+export async function sharedAllowed() {
+  if (!storeConfigured) return true;
+  return (await redis("HGET", "ku:admin-settings", "shared")) !== "off";
+}
+
+// Who is signed in: { id, name, team, teamLabel, can(section) } or null.
+export const getAdmin = cache(async () => {
+  const tok = readToken((await cookies()).get(ADMIN_COOKIE)?.value);
+  if (!tok) return null;
+  let user;
+  if (tok.shared) {
+    if (!(await sharedAllowed())) return null;
+    user = SHARED;
+  } else {
+    const raw = await redis("HGET", "ku:admins", tok.id);
+    if (!raw) return null;
+    user = JSON.parse(raw);
+    if (user.disabled || (user.sv || 0) !== tok.sv || !user.hash) return null;
+  }
+  const team = TEAMS[user.team] ? user.team : "events";
+  const allowed = new Set(TEAMS[team].can);
+  return { id: user.id, name: user.name, email: user.email, team, teamLabel: TEAMS[team].label, shared: user.id === "shared", sections: [...allowed], can: (s) => allowed.has(s) };
+});
 
 export async function isAdmin() {
-  const token = (await cookies()).get(ADMIN_COOKIE)?.value;
-  return sessionValid(token);
+  return Boolean(await getAdmin());
 }
+
+// For API routes: the signed-in admin if they may use `section` (or any of
+// several), otherwise null.
+export async function can(...sections) {
+  const admin = await getAdmin();
+  if (!admin) return null;
+  return sections.some((s) => admin.can(s)) ? admin : null;
+}
+
+// The right refusal for an API route.
+export async function refuse() {
+  return (await getAdmin())
+    ? Response.json({ error: "Your team doesn’t have access to this." }, { status: 403 })
+    : Response.json({ error: "Please sign in again." }, { status: 401 });
+}
+
+// ---------- Brute-force protection ----------
 
 // Slows down password guessing. Returns true if this address may try again.
 export async function allowLoginAttempt(ip) {

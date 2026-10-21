@@ -11,7 +11,7 @@ const btn =
   "inline-flex min-h-11 flex-1 items-center justify-center border border-[#d4af37] px-3 text-sm font-bold hover:bg-white/10";
 
 export default async function PostersPage() {
-  const base = await requireAdmin();
+  const base = await requireAdmin("posters");
   const codes = await Promise.all(
     posterPages.map(async (p) => ({
       ...p,

@@ -1,11 +1,12 @@
 // Admin: the debate with live vote numbers (always, even when hidden from voters).
-import { isAdmin } from "@/lib/admin_auth";
+import { can, refuse } from "@/lib/admin_auth";
 import { getDebate, getCounts, getCountedVotes } from "@/lib/voting";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(_request, { params }) {
-  if (!(await isAdmin())) return Response.json({ error: "Please sign in again." }, { status: 401 });
+  const admin = await can("debates");
+  if (!admin) return refuse();
   const { id } = await params;
   const debate = await getDebate(id);
   if (!debate) return Response.json({ error: "That debate no longer exists." }, { status: 404 });

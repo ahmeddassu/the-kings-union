@@ -1,13 +1,16 @@
 // Admin: download a stored backup (?name=...) or a fresh copy right now (no name).
-import { isAdmin } from "@/lib/admin_auth";
+import { can, refuse } from "@/lib/admin_auth";
+import { logAction } from "@/lib/audit";
 import { readBackup, snapshot, pack, backupName } from "@/lib/backup";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 export async function GET(request) {
-  if (!(await isAdmin())) return new Response("Please sign in again.", { status: 401 });
+  const admin = await can("backups");
+  if (!admin) return refuse();
   const name = new URL(request.url).searchParams.get("name");
+  await logAction(admin, "Downloaded a backup");
   let body;
   let filename = name;
   if (name) {

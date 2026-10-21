@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Backups · Admin" };
 
 export default async function BackupsPage() {
-  const base = await requireAdmin();
+  const base = await requireAdmin("backups");
   const ready = blobConfigured();
   const backups = ready ? await listBackups().catch(() => []) : [];
   return (

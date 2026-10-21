@@ -7,7 +7,7 @@ import { getDebate } from "@/lib/voting";
 export const dynamic = "force-dynamic";
 
 export default async function EditDebate({ params }) {
-  const base = await requireAdmin();
+  const base = await requireAdmin("debates");
   const { id } = await params;
   const debate = await getDebate(id);
   if (!debate) notFound();

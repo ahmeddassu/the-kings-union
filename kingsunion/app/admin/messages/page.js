@@ -2,13 +2,18 @@ import AdminShell from "@/components/voting/admin_shell";
 import MessagesAdmin from "@/components/voting/messages_admin";
 import { requireAdmin } from "@/lib/admin_page";
 import { listMessages } from "@/lib/inbox";
+import { getAdmin } from "@/lib/admin_auth";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Messages · Admin" };
 
 export default async function MessagesPage() {
-  const base = await requireAdmin();
-  const [union, kingsway] = await Promise.all([listMessages("union"), listMessages("kingsway")]);
+  const base = await requireAdmin(["messages", "kingsway"]);
+  const admin = await getAdmin();
+  // Each team sees only its own inbox (the Executive sees both).
+  const initial = {};
+  if (admin.can("messages")) initial.union = await listMessages("union");
+  if (admin.can("kingsway")) initial.kingsway = await listMessages("kingsway");
   return (
     <AdminShell base={base} current="/messages">
       <p className="text-xs uppercase tracking-widest text-[#d4af37]">From the website</p>
@@ -18,7 +23,7 @@ export default async function MessagesPage() {
         by email, then mark it dealt with.
       </p>
       <div className="mt-8">
-        <MessagesAdmin base={base} initial={{ union, kingsway }} />
+        <MessagesAdmin base={base} initial={initial} />
       </div>
     </AdminShell>
   );

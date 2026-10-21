@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Viewer · The King’s Union" };
 
 export default async function Viewer({ params }) {
-  const base = await requireAdmin();
+  const base = await requireAdmin("debates");
   const { id } = await params;
   const debate = await getDebate(id);
   if (!debate) notFound();

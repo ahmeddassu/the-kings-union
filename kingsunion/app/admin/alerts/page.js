@@ -14,7 +14,7 @@ export const metadata = { title: "Ticket alerts · Admin" };
 const today = () => new Date().toLocaleDateString("en-CA", { timeZone: "Europe/London" });
 
 export default async function AlertsPage() {
-  const base = await requireAdmin();
+  const base = await requireAdmin("alerts");
   const [alerts, campaigns, events] = await Promise.all([listAlerts(), listCampaigns().catch(() => []), getEvents().catch(() => [])]);
   const upcoming = events
     .filter((e) => e.date >= today())

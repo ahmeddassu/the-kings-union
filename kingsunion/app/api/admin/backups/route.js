@@ -1,20 +1,23 @@
 // Admin: GET lists stored backups; POST makes one now.
-import { isAdmin } from "@/lib/admin_auth";
+import { can, refuse } from "@/lib/admin_auth";
+import { logAction } from "@/lib/audit";
 import { listBackups, saveBackup } from "@/lib/backup";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
-const denied = () => Response.json({ error: "Please sign in again." }, { status: 401 });
 
 export async function GET() {
-  if (!(await isAdmin())) return denied();
+  const admin = await can("backups");
+  if (!admin) return refuse();
   return Response.json({ backups: await listBackups() }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function POST() {
-  if (!(await isAdmin())) return denied();
+  const admin = await can("backups");
+  if (!admin) return refuse();
   try {
     const saved = await saveBackup();
+    await logAction(admin, "Made a backup");
     return Response.json({ saved, backups: await listBackups() });
   } catch (err) {
     console.error("Backup failed:", err);

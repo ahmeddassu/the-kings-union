@@ -130,28 +130,28 @@ const toCount = (v) => {
 // Sets the Aye/No totals by hand (paper ballots, a recount, a correction).
 // Phone votes cast afterwards are added on top. Every change is logged for
 // admins only.
-async function setTotals(debate, aye, no, kind) {
+async function setTotals(debate, aye, no, kind, by = "") {
   const before = await getCounts(debate.id);
   await pipeline([
     ["SET", k.votes(debate.id, "aye"), aye],
     ["SET", k.votes(debate.id, "no"), no],
   ]);
-  const entry = { at: Date.now(), kind, from: [before.aye, before.no], to: [aye, no] };
+  const entry = { at: Date.now(), kind, by, from: [before.aye, before.no], to: [aye, no] };
   const adjustments = [...(debate.adjustments || []), entry].slice(-20);
   return save({ ...debate, adjustments });
 }
 
 // Admin actions on a debate.
-export async function applyAction(id, action, body = {}) {
+export async function applyAction(id, action, body = {}, by = "") {
   const debate = await getDebate(id);
   if (!debate) return null;
   const now = Date.now();
   switch (action) {
     case "setCounts":
-      return setTotals(debate, toCount(body.aye), toCount(body.no), "set");
+      return setTotals(debate, toCount(body.aye), toCount(body.no), "set", by);
     case "restoreCounted": {
       const counted = await getCountedVotes(id);
-      return setTotals(debate, counted.aye, counted.no, "restore");
+      return setTotals(debate, counted.aye, counted.no, "restore", by);
     }
     case "open":
       return save({ ...debate, status: "open", openedAt: debate.openedAt || now });

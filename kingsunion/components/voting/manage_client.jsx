@@ -141,6 +141,11 @@ export default function ManageClient({ base, initial, qrSvg, link }) {
                 Hide result until close
               </button>
             ))}
+          {s === "closed" && counts.total > 0 && (
+            <a href={`/api/admin/debates/${debate.id}/card?format=story&download=1`} className={outline}>
+              Result card ↓
+            </a>
+          )}
           {s === "closed" &&
             (debate.published ? (
               <button type="button" className={outline} disabled={!!busy} onClick={() => act("unpublish")}>
@@ -246,7 +251,7 @@ export default function ManageClient({ base, initial, qrSvg, link }) {
               <ul className="mt-2 space-y-1">
                 {log.map((a) => (
                   <li key={a.at} className="tabular-nums">
-                    {when(a.at)}: {a.kind === "restore" ? "back to phone votes" : "set by hand"}, {a.from[0]}–{a.from[1]} → {a.to[0]}–{a.to[1]}
+                    {when(a.at)}: {a.kind === "restore" ? "back to phone votes" : "set by hand"}, {a.from[0]}–{a.from[1]} → {a.to[0]}–{a.to[1]}{a.by ? ` (${a.by})` : ""}
                   </li>
                 ))}
               </ul>
