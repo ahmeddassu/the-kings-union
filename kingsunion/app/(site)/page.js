@@ -3,17 +3,17 @@ import Hero from "@/components/hero";
 import JoinBand from "@/components/join_band";
 import NextDebate from "@/components/next_debate";
 import Stats from "@/components/stats";
-import Speakers from "@/components/speakers";
+import TheHouse from "@/components/the_house";
+import TheFloor from "@/components/the_floor";
+import Ticker from "@/components/ticker";
 import WhoWeAre from "@/components/who";
 import PastDebates from "@/components/past_debates";
 import FollowUs from "@/components/follow";
 import Footer from "@/components/footer";
-import Gallery from "@/components/gallery";
 import MailingList from "@/components/mailing_list";
 import PartnerStrip from "@/components/partner_strip";
 import SubscribeCalendar from "@/components/subscribe_calendar";
 import Faq from "@/components/faq";
-import { chamberGallery } from "@/lib/gallery";
 import { siteName, siteDescription, siteUrl } from "@/lib/site";
 import { socialLinks } from "@/lib/nav";
 
@@ -64,18 +64,18 @@ export default function Home() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
       <Navbar/>
-      <main>
-      <h1 className="sr-only">The King’s Union: the debating society at King’s College London</h1>
+      <main className="bg-[#140000]">
       <Hero/>
-      <NextDebate/>
-      <JoinBand/>
+      <NextDebate overlap/>
+      <Ticker/>
       <Stats/>
       <WhoWeAre/>
       <PastDebates/>
+      <TheFloor/>
+      <TheHouse/>
+      <JoinBand/>
       <SubscribeCalendar/>
-      <Speakers/>
       <PartnerStrip/>
-      <Gallery eyebrow="Gallery" title="From the chamber" photos={chamberGallery}/>
       <Faq/>
       <FollowUs/>
       <MailingList/>

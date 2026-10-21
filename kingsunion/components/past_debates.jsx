@@ -1,98 +1,85 @@
 import { getPastDebates, displayDate, verdict, hasCounts } from "@/lib/debates";
-import { pastDebatesBackground as bg } from "@/lib/gallery";
 
+// Roman numerals for numbering sittings: I, II, III…
+export function roman(n) {
+  const table = [[1000, "M"], [900, "CM"], [500, "D"], [400, "CD"], [100, "C"], [90, "XC"], [50, "L"], [40, "XL"], [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]];
+  let out = "";
+  for (const [v, s] of table) while (n >= v) { out += s; n -= v; }
+  return out;
+}
+
+function Stamp({ debate }) {
+  const v = verdict(debate);
+  const carried = v === "Carried";
+  const plain = v === "Carried" || v === "Defeated";
+  return (
+    <span
+      className={`stamp inline-block -rotate-[8deg] border-[3px] px-3 py-1 font-serif font-bold uppercase tracking-[0.2em] ${
+        plain ? "text-lg sm:text-xl" : "text-xs sm:text-sm max-w-[12rem] text-center tracking-[0.12em]"
+      } ${carried ? "border-[#1f5c2e] text-[#1f5c2e]" : plain ? "border-[#9b1111] text-[#9b1111]" : "border-[#3d0202] text-[#3d0202]"}`}
+    >
+      {v}
+    </span>
+  );
+}
+
+// "The Record of the House": the latest debates, numbered from the Union's first.
 export default async function PastDebates() {
-  const recentDebates = (await getPastDebates()).slice(0, 3);
+  const all = await getPastDebates();
+  const recent = all.slice(0, 5);
 
   return (
-    <section className="relative isolate overflow-clip bg-[#3d0202] text-white font-serif border-t border-[#d4af37]">
-      {bg.src && (
-        <>
-          <img
-            src={bg.src}
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-[0.14] grayscale"
-          />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#3d0202]/40 via-transparent to-[#3d0202]/70" />
-          {bg.credit &&
-            (bg.href ? (
-              <a
-                href={bg.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="absolute bottom-1 right-3 z-10 py-1 text-right text-[11px] text-white/50 hover:text-white"
-              >
-                {bg.credit}
-              </a>
+    <section aria-labelledby="record" className="bg-[#f6efe2] text-[#3d0202] font-serif">
+      <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-28">
+        <div className="reveal flex flex-wrap items-end justify-between gap-x-8 gap-y-4 mb-10 sm:mb-14">
+          <div>
+            <p className="text-xs sm:text-sm uppercase tracking-[0.25em] font-bold text-[#8a6d12]">The record of the House</p>
+            <h2 id="record" className="mt-3 text-4xl sm:text-5xl md:text-6xl font-bold leading-none">
+              How the House divided.
+            </h2>
+          </div>
+          <div className="flex flex-wrap gap-x-6">
+            <a href="/debates" className="inline-flex min-h-11 items-center font-bold underline underline-offset-4 decoration-[#d4af37] decoration-2 hover:text-[#7a0a0a]">
+              Every debate →
+            </a>
+            <a href="/records" className="inline-flex min-h-11 items-center font-bold underline underline-offset-4 decoration-[#d4af37] decoration-2 hover:text-[#7a0a0a]">
+              The record book →
+            </a>
+          </div>
+        </div>
+
+        <ol className="border-t-2 border-[#3d0202]">
+          {recent.map((debate, i) => {
+            const number = all.length - i;
+            const title = debate.href ? (
+              <a href={debate.href} className="hover:text-[#7a0a0a] transition-colors">{debate.title}</a>
             ) : (
-              <p className="absolute bottom-2 right-3 z-10 text-right text-[11px] text-white/50">{bg.credit}</p>
-            ))}
-        </>
-      )}
-      <div className="px-4 sm:px-6 md:px-8 py-8 sm:py-10 md:py-12">
-
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 mb-4 sm:mb-6">
-          <a
-            href="/debates"
-            className="title inline-block py-2 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white hover:text-[#d4af37] transition-colors duration-200"
-          >
-            Past Debates
-          </a>
-          <a
-            href="/votes"
-            className="inline-flex min-h-11 items-center text-sm sm:text-base font-bold text-[#d4af37] hover:text-white transition-colors"
-          >
-            How King’s votes: every result →
-          </a>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-          {recentDebates.map((debate) => (
-            <article
-              key={debate.title}
-              className="border-t border-[#d4af37] pt-4 flex flex-col"
-            >
-
-              {debate.href ? (
-                <a
-                  href={debate.href}
-                  className="block py-1 text-base sm:text-lg font-bold leading-snug text-white hover:text-[#d4af37] transition-colors duration-200"
-                >
-                  {debate.title}
-                </a>
-              ) : (
-                <span className="text-base sm:text-lg font-bold leading-snug text-white">
-                  {debate.title}
+              debate.title
+            );
+            return (
+              <li key={debate.title + debate.date} className="reveal grid grid-cols-[3.5rem_1fr] sm:grid-cols-[6rem_1fr_auto] items-center gap-x-4 sm:gap-x-8 gap-y-3 border-b border-[#3d0202]/25 py-6 sm:py-8">
+                <span className="title self-start text-3xl sm:text-5xl font-bold italic text-[#8a6d12]">
+                  <span aria-hidden="true">{roman(number)}</span>
+                  <span className="sr-only">Sitting {number}</span>
                 </span>
-              )}
-
-              <p className="text-xs sm:text-sm text-white/60 mt-1 mb-3">
-                {displayDate(debate.date)}
-              </p>
-
-              {debate.description && (
-                <p className="text-xs sm:text-sm text-white/80 leading-relaxed mb-5">
-                  {debate.description}
-                </p>
-              )}
-
-              <div className="mt-auto pt-3 border-t border-[#d4af37] flex items-center justify-between text-xs sm:text-sm">
-                <span className="font-semibold text-white">
-                  Result <span className="font-normal text-white/60">· {verdict(debate)}</span>
-                </span>
-
-                {hasCounts(debate) && (
-                  <span className="font-bold tabular-nums text-[#d4af37]">
-                    {debate.proposition}–{debate.opposition}
-                  </span>
-                )}
-              </div>
-            </article>
-          ))}
-        </div>
-
+                <div className="min-w-0">
+                  <p className="title text-xl sm:text-2xl md:text-3xl font-bold leading-tight">“{title}”</p>
+                  <p className="mt-2 text-sm sm:text-base text-[#3d0202]/70">
+                    {displayDate(debate.date)}
+                    {hasCounts(debate) && (
+                      <span className="ml-3 font-bold tabular-nums text-[#3d0202]">
+                        Ayes {debate.proposition} · Noes {debate.opposition}
+                      </span>
+                    )}
+                  </p>
+                </div>
+                <div className="col-start-2 sm:col-start-3 sm:pr-4">
+                  <Stamp debate={debate} />
+                </div>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );

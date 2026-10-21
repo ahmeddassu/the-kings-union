@@ -112,3 +112,62 @@ body::-webkit-scrollbar {
   65%  { opacity: 1;   transform: scale(1); }
   100% { opacity: 0;   transform: scale(1.06); }
 }
+
+/* ---------- Homepage redesign ---------- */
+
+/* Sections rise into place as they scroll into view (scroll-driven, no JS).
+   Browsers without support, and people who turn off motion, see them as normal. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+    .stamp {
+      animation: stamp linear both;
+      animation-timeline: view();
+      animation-range: entry 40% entry 100%;
+    }
+    .hero-photo {
+      animation: hero-drift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+  }
+}
+@keyframes reveal {
+  from { opacity: 0.15; transform: translateY(2.5rem); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes stamp {
+  from { opacity: 0; transform: rotate(-8deg) scale(1.8); }
+  to   { opacity: 1; transform: rotate(-8deg) scale(1); }
+}
+@keyframes hero-drift {
+  from { transform: scale(1.04); }
+  to   { transform: scale(1.14) translateY(4%); }
+}
+
+/* The gold ticker under the hero. */
+.ticker {
+  overflow: hidden;
+}
+.ticker-track {
+  animation: marquee var(--ticker-duration, 60s) linear infinite;
+}
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+  .ticker-track > [aria-hidden] { display: none; }
+}
+
+/* Hero title: the King's Union, very large. */
+.hero-title {
+  font-family: var(--font-playfair), "Playfair Display", Georgia, serif;
+  letter-spacing: -0.06em;
+  line-height: 0.82;
+  text-wrap: balance;
+}
