@@ -46,7 +46,7 @@ export const SECTIONS = {
 
 export const TEAMS = {
   // Above the Executive: everything, plus the Activity log (who did what).
-  // Only set from Vercel (SUPER_ADMIN_EMAILS), never from inside admin.
+  // Only set in the code or Vercel (see isSuperEmail), never from inside admin.
   super: { label: "Super admin", can: Object.keys(SECTIONS) },
   executive: { label: "Executive", can: Object.keys(SECTIONS).filter((s) => s !== "activity") },
   events: { label: "Events and Programming", can: ["debates", "results", "calendar", "motions", "applications", "speakers", "posters", "messages"] },
@@ -118,11 +118,13 @@ function readToken(token) {
   return null;
 }
 
-// Super admins are the people whose login email is listed in the Vercel
-// setting SUPER_ADMIN_EMAILS (comma-separated). Only someone with access to the
-// Vercel project can add or remove one.
+// Super admins are the people whose login email is listed here, or in the
+// Vercel setting SUPER_ADMIN_EMAILS (comma-separated), which replaces this list
+// when it's set. Neither can be changed from inside admin.
+const DEFAULT_SUPER_ADMINS = "guy.de_basto@kcl.ac.uk";
+
 export function isSuperEmail(email) {
-  const list = String(process.env.SUPER_ADMIN_EMAILS || "")
+  const list = String(process.env.SUPER_ADMIN_EMAILS || DEFAULT_SUPER_ADMINS)
     .split(",")
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
