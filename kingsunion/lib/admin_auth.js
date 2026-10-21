@@ -44,7 +44,10 @@ export const SECTIONS = {
 };
 
 export const TEAMS = {
-  executive: { label: "Executive", can: Object.keys(SECTIONS) },
+  // Above the Executive: everything, plus the Activity log (who did what).
+  // Only set from Vercel (SUPER_ADMIN_EMAILS), never from inside admin.
+  super: { label: "Super admin", can: Object.keys(SECTIONS) },
+  executive: { label: "Executive", can: Object.keys(SECTIONS).filter((s) => s !== "activity") },
   events: { label: "Events and Programming", can: ["debates", "results", "calendar", "motions", "applications", "posters", "messages"] },
   kingsway: { label: "Kingsway", can: ["kingsway", "calendar", "stats"] },
   finance: { label: "Finance", can: ["sponsors", "messages", "stats"] },
@@ -114,6 +117,20 @@ function readToken(token) {
   return null;
 }
 
+// Super admins are the people whose login email is listed in the Vercel
+// setting SUPER_ADMIN_EMAILS (comma-separated). Only someone with access to the
+// Vercel project can add or remove one.
+export function isSuperEmail(email) {
+  const list = String(process.env.SUPER_ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  return Boolean(email) && list.includes(String(email).toLowerCase());
+}
+
+// The team someone actually has (a super admin email outranks their stored team).
+export const effectiveTeam = (person) => (isSuperEmail(person.email) ? "super" : TEAMS[person.team] ? person.team : "events");
+
 export const SHARED = { id: "shared", name: "Shared committee login", email: "", team: "executive" };
 
 // Whether the old shared password may still be used (switched off under People).
@@ -136,7 +153,7 @@ export const getAdmin = cache(async () => {
     user = JSON.parse(raw);
     if (user.disabled || (user.sv || 0) !== tok.sv || !user.hash) return null;
   }
-  const team = TEAMS[user.team] ? user.team : "events";
+  const team = user.id === "shared" ? "executive" : effectiveTeam(user);
   const allowed = new Set(TEAMS[team].can);
   return { id: user.id, name: user.name, email: user.email, team, teamLabel: TEAMS[team].label, shared: user.id === "shared", sections: [...allowed], can: (s) => allowed.has(s) };
 });
