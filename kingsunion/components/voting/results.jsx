@@ -39,13 +39,14 @@ export default function Results({ counts, hidden = false, closed = false, size =
         </div>
       </div>
 
+      {/* Ayes grow from the left (their side), Noes from the right (theirs). */}
       <div
-        className={`mt-5 flex ${xl ? "h-6" : "h-3"} overflow-hidden border border-[#d4af37]/70 bg-white/5`}
+        className={`relative mt-5 ${xl ? "h-6" : "h-3"} overflow-hidden border border-[#d4af37]/70 bg-white/5`}
         role="img"
         aria-label={`Ayes ${c.aye}, Noes ${c.no}`}
       >
-        <div className="bg-[#d4af37] transition-[width] duration-700 ease-out" style={{ width: `${aye}%` }} />
-        <div className="bg-white/80 transition-[width] duration-700 ease-out" style={{ width: `${no}%` }} />
+        <div className="absolute inset-y-0 left-0 bg-[#d4af37] transition-[width] duration-700 ease-out motion-reduce:transition-none" style={{ width: `${aye}%` }} />
+        <div className="absolute inset-y-0 right-0 bg-white/80 transition-[width] duration-700 ease-out motion-reduce:transition-none" style={{ width: `${no}%` }} />
       </div>
 
       <div className={`mt-4 flex flex-wrap items-center justify-between gap-3 ${xl ? "text-xl md:text-2xl" : "text-sm"}`}>
