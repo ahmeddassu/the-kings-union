@@ -59,6 +59,10 @@ export default function Footer() {
           <a href="/privacy" className={linkClass}>
             Privacy
           </a>
+          {/* For the committee: straight to admin sign-in */}
+          <a href="https://admin.kingsunion.org.uk" rel="nofollow" className={linkClass}>
+            Committee login
+          </a>
         </div>
 
       </div>

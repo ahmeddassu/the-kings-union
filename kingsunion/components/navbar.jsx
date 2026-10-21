@@ -50,6 +50,7 @@ export default function Navbar() {
 
   const iconSize = scrolled ? "w-[18px] h-[18px]" : "w-5 h-5 md:w-6 md:h-6";
   const logoTextSize = scrolled ? "text-xl md:text-lg" : "text-[1.7rem] md:text-5xl";
+  const crestSize = scrolled ? "h-7 md:h-7" : "h-9 sm:h-10 md:h-16";
   const rowPad = scrolled ? "py-2 md:py-1.5" : "py-3 md:py-5";
   const sideLinkSize = scrolled ? "text-[11px]" : "text-sm";
   const linkClass =
@@ -81,9 +82,19 @@ export default function Navbar() {
             <a
               href="/"
               aria-label="King’s Union home"
-              className={`title ${logoTextSize} font-bold tracking-tight whitespace-nowrap text-white hover:text-[#d4af37] transition-all duration-300`}
+              className={`title inline-flex items-center gap-2 sm:gap-2.5 md:gap-3.5 ${logoTextSize} font-bold tracking-tight whitespace-nowrap text-white hover:text-[#d4af37] transition-all duration-300`}
             >
-              <span className="italic">the</span>{" "}King’s Union
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/crest-gold.png"
+                alt=""
+                width={239}
+                height={280}
+                className={`${crestSize} w-auto shrink-0 transition-all duration-300`}
+              />
+              <span>
+                <span className="italic">the</span>{" "}King’s Union
+              </span>
             </a>
           </div>
 
