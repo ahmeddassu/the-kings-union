@@ -63,7 +63,7 @@ export default function Home() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
-      <Navbar/>
+      <Navbar overlay/>
       <main className="bg-[#140000]">
       <Hero/>
       <NextDebate overlap/>

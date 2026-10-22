@@ -25,7 +25,7 @@ export default function TheFloor() {
       <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-28">
         <div className="reveal grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 mb-10 sm:mb-14 lg:items-end">
           <div className="lg:col-span-5">
-            <p className="text-xs sm:text-sm uppercase tracking-[0.25em] text-[#d4af37]">The floor</p>
+            <p className="title-sc text-base sm:text-lg tracking-[0.12em] text-[#e6c766]">The floor</p>
             <h2 id="the-floor" className="mt-3 text-4xl sm:text-5xl md:text-6xl font-bold leading-none">In the chamber.</h2>
           </div>
           <p className="lg:col-span-7 title text-2xl sm:text-3xl md:text-4xl italic leading-tight text-white/85">
@@ -34,13 +34,13 @@ export default function TheFloor() {
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <figure className="reveal col-span-2 row-span-2 flex flex-col">
-            <img src={lead.src} alt={lead.alt} loading="lazy" className="w-full object-cover aspect-[4/3] lg:aspect-auto lg:min-h-0 lg:flex-1" />
+          <figure className="col-span-2 row-span-2 flex flex-col">
+            <img src={lead.src} alt={lead.alt} loading="lazy" className="warm w-full object-cover aspect-[4/3] lg:aspect-auto lg:min-h-0 lg:flex-1" />
             <figcaption className="mt-2 text-sm sm:text-base italic text-white/70">{captions[lead.src]}</figcaption>
           </figure>
           {rest.map((p) => (
-            <figure key={p.src} className="reveal">
-              <img src={p.src} alt={p.alt} loading="lazy" className="aspect-[4/3] w-full object-cover" />
+            <figure key={p.src}>
+              <img src={p.src} alt={p.alt} loading="lazy" className="warm aspect-[4/3] w-full object-cover" />
               <figcaption className="mt-2 text-sm italic text-white/70">{captions[p.src]}</figcaption>
             </figure>
           ))}

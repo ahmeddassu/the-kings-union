@@ -39,7 +39,9 @@ function MenuIcon() {
   );
 }
 
-export default function Navbar() {
+// `overlay` (homepage): the bar sits see-through over the hero photo and turns
+// solid maroon as you scroll (CSS only, see .nav-overlay in globals.css).
+export default function Navbar({ overlay = false }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -65,10 +67,10 @@ export default function Navbar() {
     >
       Skip to content
     </a>
-    <div className="sticky top-0 z-50 bg-[#3d0202] font-serif">
+    <div className={overlay ? "nav-overlay fixed inset-x-0 top-0 z-50 font-serif" : "sticky top-0 z-50 bg-[#3d0202] font-serif"}>
 
       {/* Top row */}
-      <header className="border-t border-b border-[#d4af37]">
+      <header className={overlay ? "border-b border-[#d4af37]/40" : "border-t border-b border-[#d4af37]"}>
         <div
           className={`flex items-center justify-between gap-4 md:gap-10 px-4 sm:px-6 md:px-8 transition-all duration-300 ease-out ${rowPad}`}
         >
@@ -176,7 +178,7 @@ export default function Navbar() {
       </header>
 
       {/* Navigation row (desktop) */}
-      <nav aria-label="Primary" className="hidden md:block border-b border-[#d4af37]">
+      <nav aria-label="Primary" className={`hidden md:block border-b ${overlay ? "border-[#d4af37]/40" : "border-[#d4af37]"}`}>
         <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 px-8 py-3 text-sm tracking-wide">
           {navLinks.map((link, i) => (
             <span key={link.href} className="flex items-center gap-x-5">

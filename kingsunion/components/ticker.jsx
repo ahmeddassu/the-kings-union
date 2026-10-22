@@ -35,7 +35,7 @@ export default async function Ticker() {
   );
 
   return (
-    <section aria-label="The Union at a glance" className="ticker mt-10 sm:mt-12 border-y-2 border-[#3d0202] bg-[#d4af37] py-3 sm:py-4 font-serif text-base sm:text-lg md:text-xl font-bold text-[#3d0202]">
+    <section aria-label="The Union at a glance" className="ticker mt-10 sm:mt-12 border-y border-[#8a6d12] bg-[linear-gradient(100deg,#b8892b,#e9c964_30%,#d4af37_55%,#f3dc8c_75%,#b8892b)] py-3 sm:py-4 font-serif text-base sm:text-lg md:text-xl font-bold text-[#3d0202]">
       <div className="ticker-track flex w-max" style={{ "--ticker-duration": `${items.length * 12}s` }}>
         {row(false)}
         {row(true)}

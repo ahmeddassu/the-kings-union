@@ -2,17 +2,18 @@ export default function WhoWeAre() {
   return (
     <section className="bg-[#3d0202] text-white font-serif">
       <div className="px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-28">
+<p aria-hidden="true" className="fleuron mb-12 sm:mb-16 text-2xl sm:text-3xl">{"\u2766\uFE0E"}</p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
 
           {/* Main content */}
           <div className="reveal">
-            <p className="text-xs sm:text-sm uppercase tracking-[0.25em] text-[#d4af37]">Order, order</p>
+            <p className="title-sc text-base sm:text-lg tracking-[0.12em] text-[#e6c766]">Order, order</p>
             <h2 className="mt-3 text-4xl sm:text-5xl md:text-6xl font-bold leading-none mb-10">
               Who we are
             </h2>
 
             <div className="space-y-5 text-base sm:text-lg leading-relaxed max-w-2xl text-white/90">
-              <p>
+              <p className="dropcap">
                 The King’s Union was established in November 2025 as a chamber
                 for public debate within King’s College London.
               </p>
@@ -49,7 +50,7 @@ export default function WhoWeAre() {
           {/* Quote */}
           <div className="reveal flex items-center">
             <blockquote className="relative pt-16">
-              <span aria-hidden="true" className="title absolute -top-6 -left-2 text-[10rem] sm:text-[13rem] leading-none text-[#d4af37]">“</span>
+              <span aria-hidden="true" className="title absolute -top-6 -left-2 text-[10rem] sm:text-[13rem] leading-none gilt">“</span>
               <p className="title text-2xl sm:text-3xl md:text-4xl leading-tight font-bold italic">
                 The Union exists, above all else, to serve the College’s body
                 of students, staff, and alumni. It’s a place where you can
@@ -57,7 +58,7 @@ export default function WhoWeAre() {
                 place for everybody here.
               </p>
 
-              <footer className="mt-8 border-t-2 border-[#d4af37] pt-4 text-base sm:text-lg">
+              <footer className="mt-8 double-rule pt-4 text-base sm:text-lg">
                 <span className="font-bold">— Mustafa Dassu</span>
                 <span className="text-white/60">, Founder & President</span>
               </footer>

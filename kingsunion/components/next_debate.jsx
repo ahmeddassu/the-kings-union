@@ -27,7 +27,7 @@ export default async function NextDebate({ overlap = false }) {
       aria-labelledby="next-sitting"
       className={`relative z-10 px-4 sm:px-6 md:px-8 font-serif ${overlap ? "-mt-32 sm:-mt-36 md:-mt-40" : "bg-[#3d0202] py-8 sm:py-10"}`}
     >
-      <div className="reveal border-t-[6px] border-[#d4af37] bg-[#f6efe2] text-[#3d0202] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)]">
+      <div className={`${overlap ? "enter-rise" : ""} border-t-[6px] border-[#d4af37] bg-[#f6efe2] text-[#3d0202] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)]`} style={{ "--delay": "0.7s" }}>
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 p-6 sm:p-8 md:p-10 md:items-end">
           <div className="md:col-span-8 min-w-0">
             <p id="next-sitting" className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm uppercase tracking-[0.25em] font-bold text-[#8a6d12]">
