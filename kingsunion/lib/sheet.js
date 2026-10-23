@@ -121,12 +121,20 @@ async function loadEvents() {
       while (seen.has(slug)) slug += "-2";
       seen.add(slug);
 
-      // Writing "Chatham House" in either speakers column hides the speakers.
-      const chathamHouse = /chatham/i.test(
-        `${text(at(row, "proposition speakers"))} ${text(at(row, "opposition speakers"))}`
-      );
-      const votesFor = num(at(row, "votes for"));
-      const votesAgainst = num(at(row, "votes against"));
+      // Writing "Chatham House" in either speakers column hides the speakers
+      // (or chathamHouse: true in lib/events.js).
+      const fb = fallbackDetail(title);
+      const chathamHouse =
+        /chatham/i.test(`${text(at(row, "proposition speakers"))} ${text(at(row, "opposition speakers"))}`) ||
+        Boolean(fb.chathamHouse);
+      // Blank cells fall back to what's in lib/events.js, so speakers and results
+      // can be kept in either place. Anything filled in on the sheet wins.
+      const sheetFor = num(at(row, "votes for"));
+      const sheetAgainst = num(at(row, "votes against"));
+      const votesFor = sheetFor != null && sheetAgainst != null ? sheetFor : fb.result?.proposition ?? null;
+      const votesAgainst = sheetFor != null && sheetAgainst != null ? sheetAgainst : fb.result?.opposition ?? null;
+      const prop = names(at(row, "proposition speakers"));
+      const opp = names(at(row, "opposition speakers"));
 
       events.push({
         slug,
@@ -136,8 +144,8 @@ async function loadEvents() {
         title,
         description: text(at(row, "description")) || fallbackDetail(title).description || "",
         venue: text(at(row, "venue")) || fallbackDetail(title).venue || "",
-        proposition: chathamHouse ? [] : names(at(row, "proposition speakers")),
-        opposition: chathamHouse ? [] : names(at(row, "opposition speakers")),
+        proposition: chathamHouse ? [] : prop.length ? prop : fb.proposition || [],
+        opposition: chathamHouse ? [] : opp.length ? opp : fb.opposition || [],
         chathamHouse,
         photo: text(at(row, "photo")) || fallbackDetail(title).photo || "",
         // "Tickets" column; falls back to a link set in lib/events.js

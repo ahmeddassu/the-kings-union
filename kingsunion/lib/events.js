@@ -171,6 +171,9 @@ export const details = {
       "Following the government’s decision in 2024 to apply VAT to private school fees, calls remain for further action to be taken to bring independent schools into the state sector in order to reduce societal inequalities. Critics allege that private schools are anachronistic and have no place in a fairer, twenty-first century Britain. Are private schools really unethical engines of elitism, or are they critical for aspirational families and educational diversity?",
     venue: "KIN427",
     tickets: "https://luma.com/yp2wqhj0",
+    proposition: ["Fiona Lali", "Serena Nanitelamio", "Tanvita Koushik"],
+    opposition: ["Maxwell Marlow", "Robert Young", "Nontapun Punnachet"],
+    result: { proposition: 82, opposition: 53 },
   },
   "no-confidence-in-his-majestys-government": {
     description:

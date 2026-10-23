@@ -7,6 +7,7 @@ export const KINGS_STUDENTS = [
   "Zehna Ahmad", "Robert Young", "Arvind Iyengar", "Fernando Marco",
   "Cai Finch", "Pranav Karthikeyan", "Juan Duve", "George Phantom",
   "Eva Tomás Sastre", "Cole Brydson", "Seb Vials",
+  "Serena Nanitelamio", "Tanvita Koushik", "Nontapun Punnachet",
 ];
 
 // Everyone who has spoken, newest debate first, each linked to their debate.
