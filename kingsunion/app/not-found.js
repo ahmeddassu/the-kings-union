@@ -25,6 +25,17 @@ export default function NotFound() {
               The page you were looking for isn’t on the order paper. It may have
               moved, or the link may be mistyped.
             </p>
+            <form action="/search" method="get" role="search" className="mt-8 flex max-w-xl flex-col sm:flex-row gap-3">
+              <label htmlFor="nf-q" className="sr-only">Search the site</label>
+              <input
+                id="nf-q"
+                name="q"
+                type="search"
+                placeholder="Search the site"
+                className="flex-1 min-w-0 min-h-12 border border-[#d4af37] bg-transparent px-4 text-base text-white placeholder:text-white/50 outline-none focus:border-white"
+              />
+              <button type="submit" className="min-h-12 border border-[#d4af37] px-6 font-bold hover:bg-white/10">Search</button>
+            </form>
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
               <a
                 href="/"

@@ -53,6 +53,12 @@ export default function Footer() {
           <a href="/guide" className={linkClass}>
             How to debate
           </a>
+          <a href="/friends" className={linkClass}>
+            Friends of the Union
+          </a>
+          <a href="/search" className={linkClass}>
+            Search
+          </a>
           <a href="/press" className={linkClass}>
             Press
           </a>

@@ -13,6 +13,8 @@ const sections = [
   ["/speaker-pack", "Speaker pack", ["speakers"]],
   ["/past-speakers", "Past speakers", ["guests"]],
   ["/attendance", "Attendance", ["attendance"]],
+  ["/feedback", "Feedback", ["feedback"]],
+  ["/friends", "Friends", ["friends"]],
   ["/posters", "Poster QR codes", ["posters"]],
   ["/sponsors", "Sponsors", ["sponsors"]],
   ["/stats", "Visitor stats", ["stats"]],

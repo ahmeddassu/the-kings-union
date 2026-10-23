@@ -15,6 +15,7 @@ import { longDate } from "@/lib/events";
 import { siteUrl } from "@/lib/site";
 import { emailConfigured, startCampaign, sendBatch, listCampaigns } from "@/lib/alert_mail";
 import { listAlerts } from "@/lib/inbox";
+import { startFeedbackEmails } from "@/lib/feedback";
 
 const SETTINGS = "ku:alerts-settings";
 const londonDate = (d = new Date()) => d.toLocaleDateString("en-CA", { timeZone: "Europe/London" });
@@ -55,15 +56,17 @@ export function reminderEmail(e) {
   };
 }
 
-// One run of the morning job. Starts tomorrow's reminders (once each) and then
-// keeps sending any automatic reminder that isn't finished, for up to `budgetMs`.
+// One run of the morning job. Starts tomorrow's reminders and the morning-after
+// feedback emails (once each), then keeps sending any automatic email that
+// isn't finished, for up to `budgetMs`.
 export async function runReminders(budgetMs = 50000) {
   const started = Date.now();
   const report = { started: [], sent: 0, left: 0, skipped: null };
-  if (!(await remindersOn())) return { ...report, skipped: "Reminders are switched off." };
   if (!emailConfigured()) return { ...report, skipped: "Email isn’t set up." };
+  const on = await remindersOn();
+  if (!on) report.skipped = "Reminders are switched off.";
 
-  if ((await listAlerts()).length) {
+  if (on && (await listAlerts()).length) {
     const due = (await getEvents().catch(() => [])).filter((e) => e.type === "Debate" && e.date === tomorrow());
     for (const e of due) {
       // SET NX: only the first run ever starts this debate's reminder.
@@ -74,7 +77,10 @@ export async function runReminders(budgetMs = 50000) {
     }
   }
 
-  const pending = (await listCampaigns()).filter((c) => c.auto === "reminder" && c.left > 0);
+  // The morning after a debate: ask for feedback (lib/feedback.js; its own on/off switch).
+  report.started.push(...(await startFeedbackEmails().catch(() => [])));
+
+  const pending = (await listCampaigns()).filter((c) => (c.auto === "reminder" || c.auto === "feedback") && c.left > 0);
   for (const c of pending) {
     let left = c.left;
     while (left > 0 && Date.now() - started < budgetMs) {

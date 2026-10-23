@@ -115,6 +115,10 @@ export default function Navbar() {
             <a href="/contact" className={linkClass}>
               Contact Us
             </a>
+            <span className="text-[#d4af37]" aria-hidden="true">|</span>
+            <a href="/search" className={linkClass}>
+              Search
+            </a>
           </div>
 
           {/* Phone menu: a native <details> toggle, so it works even before scripts load */}
@@ -157,6 +161,18 @@ export default function Navbar() {
                 >
                   Contact us
                 </a>
+
+                <form action="/search" method="get" role="search" className="mt-3 flex gap-2">
+                  <label htmlFor="menu-search" className="sr-only">Search the site</label>
+                  <input
+                    id="menu-search"
+                    name="q"
+                    type="search"
+                    placeholder="Search"
+                    className="flex-1 min-w-0 min-h-12 border border-[#d4af37] bg-transparent px-4 text-base text-white placeholder:text-white/50 outline-none focus:border-white"
+                  />
+                  <button type="submit" className="min-h-12 bg-[#d4af37] px-5 font-bold text-[#3d0202]">Go</button>
+                </form>
 
                 <div className="mt-8 flex items-center justify-center gap-8">
                   {socialLinks.map((sl) => {

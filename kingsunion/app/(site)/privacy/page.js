@@ -83,6 +83,15 @@ export default function PrivacyPage() {
               a month.
             </p>
 
+            <h2 className={h2}>Feedback and Friends of the Union</h2>
+            <p className={p}>
+              Debate feedback is anonymous: we don’t ask for your name or email, and we don’t record who sent it. If
+              you join the Friends of the Union, we keep your name, email, your connection to King’s and what you’re
+              interested in, so we can keep in touch. We rely on your consent, which you can withdraw at any time by
+              emailing us, and we’ll remove you from the list. Your details are only seen by the committee and are
+              never shared or sold.
+            </p>
+
             <h2 className={h2}>Coming to our events</h2>
             <p className={p}>
               Tickets for our events are booked through Luma, which has its own privacy policy. After an event, the
