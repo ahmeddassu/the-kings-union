@@ -274,3 +274,46 @@ body::-webkit-scrollbar {
   from { opacity: 0.2; transform: rotate(-4deg) scale(1.25); }
   to   { opacity: 1; transform: rotate(-4deg) scale(1); }
 }
+
+/* Homepage intro: crest on maroon, then the curtain lifts (about 1.5s). */
+.intro {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .intro {
+    display: flex;
+    animation: intro-lift 0.7s cubic-bezier(0.7, 0, 0.3, 1) 1.15s forwards;
+    pointer-events: none;
+  }
+  .intro-mark {
+    animation: intro-mark 0.6s ease-out both;
+  }
+  .intro-rule {
+    animation: enter-line 0.7s cubic-bezier(0.6, 0, 0.2, 1) 0.35s both;
+  }
+  /* With the intro, the title's entrance starts as the curtain lifts. */
+  .has-intro .enter-rise,
+  .has-intro .enter-line {
+    animation-delay: calc(var(--delay, 0s) + 1.35s);
+  }
+  .has-intro .enter-line {
+    animation-delay: 1.9s;
+  }
+}
+.no-intro .intro {
+  display: none;
+}
+.no-intro .has-intro .enter-rise {
+  animation-delay: var(--delay, 0s);
+}
+.no-intro .has-intro .enter-line {
+  animation-delay: 0.55s;
+}
+@keyframes intro-mark {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes intro-lift {
+  0%   { opacity: 1; transform: none; visibility: visible; }
+  100% { opacity: 0; transform: translateY(-3%); visibility: hidden; }
+}

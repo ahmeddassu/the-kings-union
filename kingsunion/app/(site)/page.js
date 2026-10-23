@@ -6,6 +6,7 @@ import Stats from "@/components/stats";
 import TheHouse from "@/components/the_house";
 import TheFloor from "@/components/the_floor";
 import Ticker from "@/components/ticker";
+import Intro from "@/components/intro";
 import WhoWeAre from "@/components/who";
 import PastDebates from "@/components/past_debates";
 import FollowUs from "@/components/follow";
@@ -63,8 +64,9 @@ export default function Home() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
+      <Intro/>
       <Navbar overlay/>
-      <main className="bg-[#140000]">
+      <main className="has-intro bg-[#140000]">
       <Hero/>
       <NextDebate overlap/>
       <Ticker/>
