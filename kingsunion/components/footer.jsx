@@ -1,85 +1,99 @@
-import { navLinks, MEMBERSHIP_URL } from "@/lib/nav";
+import { MEMBERSHIP_URL } from "@/lib/nav";
 
 const linkClass =
-  "inline-block py-2 sm:py-0 text-white/85 hover:text-[#d4af37] whitespace-nowrap transition-colors duration-200";
+  "inline-block py-1.5 sm:py-1 text-white/85 hover:text-[#d4af37] transition-colors duration-200";
+
+// The footer's links, in groups. Add new pages to whichever group fits.
+const groups = [
+  {
+    title: "The Union",
+    links: [
+      ["/about", "About"],
+      ["/governance", "Governance"],
+      ["/kingsway", "Kingsway", { italic: true }],
+      ["/press", "Press"],
+      ["/support", "Support us"],
+      ["/friends", "Friends of the Union"],
+    ],
+  },
+  {
+    title: "Debates",
+    links: [
+      ["/term-card", "Term Card"],
+      ["/term-card#calendar", "Calendar"],
+      ["/debates", "Past debates"],
+      ["/votes", "How King’s votes"],
+      ["/records", "Records"],
+      ["/speakers", "Past speakers"],
+    ],
+  },
+  {
+    title: "Take part",
+    links: [
+      ["/membership", "Membership"],
+      [MEMBERSHIP_URL, "Join us", { external: true }],
+      ["/get-involved", "Get involved"],
+      ["/speak", "Speak at the Union"],
+      ["/speak/apply", "Apply to speak"],
+      ["/motions", "Suggest a motion"],
+      ["/guide", "How to debate"],
+      ["/#mailing-list", "Ticket alerts"],
+    ],
+  },
+  {
+    title: "Help",
+    links: [
+      ["/#faq", "FAQ"],
+      ["/search", "Search"],
+      ["/contact", "Contact us"],
+      ["/privacy", "Privacy"],
+      // For the committee: straight to admin sign-in
+      ["https://admin.kingsunion.org.uk", "Committee login", { nofollow: true }],
+    ],
+  },
+];
 
 export default function Footer() {
-  const pages = navLinks.filter((l) => l.href !== "/");
-
   return (
     <footer className="bg-[#3d0202] text-white font-serif border-t border-[#d4af37]">
-      <div className="flex flex-col md:flex-row items-start justify-between gap-8 md:gap-10 px-4 sm:px-6 md:px-8 py-10 md:py-12">
-
-        <a
-          href="/"
-          className="title inline-block py-1 text-2xl md:text-3xl font-bold tracking-tight whitespace-nowrap hover:text-[#d4af37] transition-colors duration-200"
-        >
-          <span className="italic">the</span>{" "}King’s Union
-        </a>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-10 sm:gap-x-16 gap-y-1 sm:gap-y-3 text-base sm:text-sm">
-          {pages.map((link) => (
-            <a key={link.href} href={link.href} className={linkClass}>
-              {link.italic ? <em>{link.label}</em> : link.label}
-            </a>
-          ))}
-          <a href="/speak" className={linkClass}>
-            Speak at the Union
+      <div className="px-4 sm:px-6 md:px-8 py-10 md:py-14 grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="lg:col-span-3">
+          <a
+            href="/"
+            className="title inline-block py-1 text-2xl md:text-3xl font-bold tracking-tight whitespace-nowrap hover:text-[#d4af37] transition-colors duration-200"
+          >
+            <span className="italic">the</span>{" "}King’s Union
           </a>
-          <a href={MEMBERSHIP_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
-            Join us
-          </a>
-          <a href="/motions" className={linkClass}>
-            Suggest a motion
-          </a>
-          <a href="/speak/apply" className={linkClass}>
-            Apply to speak
-          </a>
-          <a href="/get-involved" className={linkClass}>
-            Get involved
-          </a>
-          <a href="/#mailing-list" className={linkClass}>
-            Ticket alerts
-          </a>
-          <a href="/votes" className={linkClass}>
-            How King’s votes
-          </a>
-          <a href="/records" className={linkClass}>
-            Records
-          </a>
-          <a href="/speakers" className={linkClass}>
-            Past speakers
-          </a>
-          <a href="/guide" className={linkClass}>
-            How to debate
-          </a>
-          <a href="/friends" className={linkClass}>
-            Friends of the Union
-          </a>
-          <a href="/search" className={linkClass}>
-            Search
-          </a>
-          <a href="/press" className={linkClass}>
-            Press
-          </a>
-          <a href="/#faq" className={linkClass}>
-            FAQ
-          </a>
-          <a href="/term-card#calendar" className={linkClass}>
-            Calendar
-          </a>
-          <a href="/contact" className={linkClass}>
-            Contact us
-          </a>
-          <a href="/privacy" className={linkClass}>
-            Privacy
-          </a>
-          {/* For the committee: straight to admin sign-in */}
-          <a href="https://admin.kingsunion.org.uk" rel="nofollow" className={linkClass}>
-            Committee login
-          </a>
+          <p className="mt-2 text-sm text-white/60">The debating society at King’s College London.</p>
         </div>
 
+        <div className="lg:col-span-9 grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-8">
+          {groups.map((g) => (
+            <nav key={g.title} aria-labelledby={`footer-${g.title.replace(/\s+/g, "-").toLowerCase()}`}>
+              <h2
+                id={`footer-${g.title.replace(/\s+/g, "-").toLowerCase()}`}
+                className="font-serif text-xs uppercase tracking-widest text-[#d4af37]"
+                style={{ letterSpacing: "0.15em" }}
+              >
+                {g.title}
+              </h2>
+              <ul className="mt-3 space-y-0.5 text-base sm:text-sm">
+                {g.links.map(([href, label, opts = {}]) => (
+                  <li key={href + label}>
+                    <a
+                      href={href}
+                      className={linkClass}
+                      {...(opts.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                      {...(opts.nofollow ? { rel: "nofollow" } : {})}
+                    >
+                      {opts.italic ? <em>{label}</em> : label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
       </div>
     </footer>
   );
