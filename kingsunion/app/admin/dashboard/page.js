@@ -1,7 +1,8 @@
 import AdminShell from "@/components/voting/admin_shell";
 import { requireAdmin } from "@/lib/admin_page";
 import { getAdmin } from "@/lib/admin_auth";
-import { getDashboard, isOwner, contactsFor, departmentsOf, whatsapp, DEPARTMENTS, TEAM_DEPARTMENT, DASHBOARD_SHEET_ID } from "@/lib/dashboard";
+import { listPeople } from "@/lib/admin_accounts";
+import { getDashboard, isOwner, contactsFor, departmentsOf, rowsFor, sameName, whatsapp, DEPARTMENTS, TEAM_DEPARTMENT, DASHBOARD_SHEET_ID } from "@/lib/dashboard";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Dashboard · Admin" };
@@ -91,6 +92,15 @@ export default async function DashboardPage({ searchParams }) {
   const team = contactsFor(admin, fullTeam);
   const seesAll = admin.teams.includes("executive") || admin.teams.includes("super");
   const myDepts = departmentsOf(admin, fullTeam);
+  const me = rowsFor(admin, fullTeam);
+  const myNames = [...new Set([admin.name, ...me.map((p) => p.name)])];
+
+  // For the Executive: anyone who doesn't line up between admin and the sheet.
+  const logins = seesAll ? await listPeople().catch(() => []) : [];
+  const loginsNotInSheet = logins.filter((p) => !p.disabled && !rowsFor({ ...p, teams: [] }, fullTeam).length).map((p) => p.name);
+  const ownersNotInSheet = fullTeam.length
+    ? [...new Set(departments.flatMap((d) => d.tasks.flatMap((t) => t.owners)))].filter((o) => !fullTeam.some((p) => sameName(p.name, o)))
+    : [];
   const all = departments.flatMap((d) => d.tasks);
 
   const home = admin.teams.map((t) => TEAM_DEPARTMENT[t]).find(Boolean) || "all";
@@ -98,7 +108,7 @@ export default async function DashboardPage({ searchParams }) {
   const showDone = sp?.done === "1";
   const inDept = dept === "all" ? all : all.filter((t) => t.department === dept);
   const shown = showDone ? inDept : inDept.filter((t) => t.status !== "done");
-  const mine = all.filter((t) => t.status !== "done" && isOwner(t, admin.name));
+  const mine = all.filter((t) => t.status !== "done" && isOwner(t, myNames));
 
   const count = (s) => all.filter((t) => t.status === s).length;
   const href = (d, done = showDone) => `${base}/dashboard?dept=${encodeURIComponent(d)}${done ? "&done=1" : ""}`;
@@ -132,6 +142,29 @@ export default async function DashboardPage({ searchParams }) {
         </p>
       )}
 
+      {seesAll && (loginsNotInSheet.length > 0 || ownersNotInSheet.length > 0) && (
+        <div className="mt-6 max-w-3xl border border-[#d4af37]/60 bg-[#2a0101] p-4 text-sm text-white/80">
+          <p className="font-bold text-white">Names that don’t line up</p>
+          {loginsNotInSheet.length > 0 && (
+            <p className="mt-2">
+              Admin logins not in Team Structure: {loginsNotInSheet.join(", ")}. Add them to the sheet (or match the name or
+              email) so they get their department’s contacts and their own tasks.
+            </p>
+          )}
+          {ownersNotInSheet.length > 0 && (
+            <p className="mt-2">Task owners not in Team Structure: {ownersNotInSheet.join(", ")}. Check the spelling in Owner/s.</p>
+          )}
+          <p className="mt-2 text-white/60">Only the Executive and super admins see this.</p>
+        </div>
+      )}
+
+      {!seesAll && !admin.shared && me.length === 0 && fullTeam.length > 0 && (
+        <p className="mt-6 max-w-2xl text-sm text-white/70">
+          We couldn’t find “{admin.name}” in Team Structure, so only your admin team’s contacts are shown. Ask the
+          Executive to add you to the sheet with the same name or email.
+        </p>
+      )}
+
       <dl className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl">
         {[
           ["Overdue", count("overdue")],
@@ -151,7 +184,7 @@ export default async function DashboardPage({ searchParams }) {
         <TaskList
           tasks={mine}
           showDept
-          empty={`Nothing open with your name on it. Tasks show here when “${admin.name}” is in the Owner/s column.`}
+          empty={`Nothing open with your name on it. Tasks show here when your name is in the Owner/s column.`}
         />
       </section>
 
