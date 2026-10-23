@@ -132,7 +132,7 @@ export default function CalendarAdmin({ base, initial, events, photos }) {
 
         <div>
           <label htmlFor="cal-title" className={label}>Title *</label>
-          <input id="cal-title" required maxLength={160} value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. AGM and committee elections" className={`${field} title text-lg`} />
+          <input id="cal-title" required maxLength={160} value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Committee elections" className={`${field} title text-lg`} />
         </div>
 
         <fieldset>

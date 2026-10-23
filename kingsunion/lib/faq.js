@@ -15,7 +15,7 @@ export const faq = [
   },
   {
     q: "Do I need to be a member?",
-    a: "No. Anyone can come, but members have tickets reserved for them, so they’re more likely to get in when a debate is busy. Membership is £10 through KCLSU.",
+    a: "No. Anyone can come, but members have tickets reserved for them, so they’re more likely to get in when a debate is busy. Membership is £10 through KCLSU. If you’re not at King’s, associate membership is also £10 and has almost all the same benefits.",
     link: { href: "/membership", text: "Member benefits" },
   },
   {

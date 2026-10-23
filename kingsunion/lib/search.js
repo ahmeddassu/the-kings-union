@@ -16,7 +16,7 @@ const PAGES = [
   ["/governance", "Governance", "The committee, the constitution and how the Union is run."],
   ["/debates", "Debates", "Every past debate, results and the archive."],
   ["/term-card", "Term Card", "This term’s debates and events, calendar, dates and tickets."],
-  ["/membership", "Membership", "Join the King’s Union: member benefits, reserved tickets, a vote at the AGM."],
+  ["/membership", "Membership", "Join the King’s Union: member benefits, reserved tickets, front-row seats, the members’ group chat, standing for the committee."],
   ["/kingsway", "Kingsway", "Kingsway, the magazine of the King’s Union: articles, op-eds and writing for us."],
   ["/support", "Support Us", "Sponsors, partners and supporting the Union."],
   ["/speak", "Speak at the Union", "Invitations to speak, guest speakers, how a debate runs."],
