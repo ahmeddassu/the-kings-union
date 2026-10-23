@@ -1,5 +1,5 @@
 // The committee, as in Team Structure on the committee dashboard sheet.
-// Not shown on the public site yet (components/meet_committee.jsx isn't used).
+// Kept for reference only: the committee is not shown on the public site.
 // Leave `image` out to show the crest placeholder; leave `name` out for a vacant role.
 // Photos go in public/people/.
 
