@@ -113,11 +113,18 @@ body::-webkit-scrollbar {
   100% { opacity: 0;   transform: scale(1.06); }
 }
 
-/* Homepage intro: the crest on maroon, then the chamber doors swing open and
-   the page comes forward, as if walking into the House (about 2.4s).
-   Once per visit; off for reduced motion. */
+/* Homepage intro (components/intro.jsx): the crest on flat maroon, a gold line
+   drawn where the doors meet, then the doors swing inwards and slide off the
+   sides as the chamber comes forward. The script adds .intro-run when the intro
+   should play and .intro-open once the page underneath has loaded, so the
+   doors never move while the page is still busy. Only transform and opacity
+   are animated, which the browser can do smoothly on the graphics card. */
 .intro {
   display: none;
+}
+.intro-run .intro {
+  display: block;
+  pointer-events: none;
 }
 .intro-door {
   position: absolute;
@@ -126,6 +133,7 @@ body::-webkit-scrollbar {
   width: 50%;
   background: #2a0101;
   backface-visibility: hidden;
+  will-change: transform, opacity;
 }
 .intro-door-left {
   left: 0;
@@ -137,6 +145,7 @@ body::-webkit-scrollbar {
 }
 .intro-mark {
   transform: translate(-50%, -50%);
+  will-change: transform, opacity;
 }
 .intro-seam {
   position: absolute;
@@ -147,44 +156,50 @@ body::-webkit-scrollbar {
   margin-left: -0.5px;
   background: linear-gradient(to bottom, rgba(212, 175, 55, 0), #d4af37 18%, #d4af37 82%, rgba(212, 175, 55, 0));
   transform: scaleY(0);
+  will-change: transform, opacity;
 }
-@media (prefers-reduced-motion: no-preference) {
-  .intro-seam {
-    animation:
-      intro-seam-in 0.55s cubic-bezier(0.6, 0, 0.2, 1) 0.55s forwards,
-      intro-seam-out 0.25s ease-in 1.15s forwards;
-  }
-  .intro {
-    display: block;
-    pointer-events: none;
-    animation: intro-done 0.01s linear 2.45s forwards;
-  }
-  .intro-mark {
-    animation:
-      intro-mark-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both,
-      intro-mark-out 0.45s cubic-bezier(0.5, 0, 0.75, 0) 0.95s forwards;
-  }
-  .intro-door-left {
-    animation: intro-door-left 1.25s cubic-bezier(0.55, 0, 0.25, 1) 1.15s forwards;
-  }
-  .intro-door-right {
-    animation: intro-door-right 1.25s cubic-bezier(0.55, 0, 0.25, 1) 1.15s forwards;
-  }
-  .intro-settle {
-    transform-origin: 50% 40%;
-    animation: intro-settle 1.7s cubic-bezier(0.25, 0.6, 0.2, 1) 1.15s both;
-  }
+
+/* While the crest is showing */
+.intro-run .intro-mark {
+  animation: intro-mark-in 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.1s both;
+}
+.intro-run .intro-seam {
+  animation: intro-seam-in 0.8s cubic-bezier(0.6, 0, 0.2, 1) 1.1s forwards;
+}
+.intro-run .intro-settle {
+  transform: scale(1.06);
+  transform-origin: 50% 40%;
+  will-change: transform;
+}
+
+/* When the doors open */
+.intro-open .intro-mark {
+  animation: intro-mark-out 0.5s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+.intro-open .intro-seam {
+  transform: scaleY(1);
+  animation: intro-seam-out 0.35s ease-in 0.1s forwards;
+}
+.intro-open .intro-door-left {
+  animation: intro-door-left 1.4s cubic-bezier(0.55, 0, 0.25, 1) 0.25s forwards;
+}
+.intro-open .intro-door-right {
+  animation: intro-door-right 1.4s cubic-bezier(0.55, 0, 0.25, 1) 0.25s forwards;
+}
+.intro-open .intro-settle {
+  animation: intro-settle 1.8s cubic-bezier(0.25, 0.6, 0.2, 1) 0.25s forwards;
+}
+.intro-open .intro {
+  animation: intro-done 0.01s linear 1.7s forwards;
 }
 .no-intro .intro {
   display: none;
 }
-.no-intro .intro-settle {
-  animation: none;
-}
+
 /* The crest stays exactly centred: the centring is part of every frame. */
 @keyframes intro-mark-in {
-  from { opacity: 0; transform: translate(-50%, -50%) scale(0.94); filter: blur(4px); }
-  to   { opacity: 1; transform: translate(-50%, -50%); filter: none; }
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+  to   { opacity: 1; transform: translate(-50%, -50%); }
 }
 @keyframes intro-mark-out {
   from { opacity: 1; transform: translate(-50%, -50%); }
@@ -195,31 +210,27 @@ body::-webkit-scrollbar {
   to   { transform: scaleY(1); }
 }
 @keyframes intro-seam-out {
-  to { transform: scaleY(1); opacity: 0; }
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
-@keyframes intro-rule {
-  from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
-}
-/* The doors swing inwards, away from you, into the chamber. */
-/* They swing inwards while sliding right off the sides of the screen, so
+/* The doors swing inwards while sliding right off the sides of the screen, so
    nothing is left at the edges. */
 @keyframes intro-door-left {
   0%   { transform: none; opacity: 1; }
   45%  { opacity: 1; }
   72%  { transform: translateX(-105%) rotateY(-50deg); opacity: 0; }
-  100% { transform: translateX(-105%) rotateY(-60deg); opacity: 0; visibility: hidden; }
+  100% { transform: translateX(-105%) rotateY(-60deg); opacity: 0; }
 }
 @keyframes intro-door-right {
   0%   { transform: none; opacity: 1; }
   45%  { opacity: 1; }
   72%  { transform: translateX(105%) rotateY(50deg); opacity: 0; }
-  100% { transform: translateX(105%) rotateY(60deg); opacity: 0; visibility: hidden; }
+  100% { transform: translateX(105%) rotateY(60deg); opacity: 0; }
 }
 @keyframes intro-done {
   to { visibility: hidden; }
 }
 @keyframes intro-settle {
-  from { transform: scale(1.08); filter: brightness(0.6); }
-  to   { transform: none; filter: none; }
+  from { transform: scale(1.06); }
+  to   { transform: none; }
 }
