@@ -13,6 +13,7 @@ import MailingList from "@/components/mailing_list";
 import PartnerStrip from "@/components/partner_strip";
 import SubscribeCalendar from "@/components/subscribe_calendar";
 import Faq from "@/components/faq";
+import Intro from "@/components/intro";
 import { chamberGallery } from "@/lib/gallery";
 import { siteName, siteDescription, siteUrl } from "@/lib/site";
 import { socialLinks } from "@/lib/nav";
@@ -63,6 +64,7 @@ export default function Home() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
+      <Intro/>
       <Navbar/>
       <main>
       <h1 className="sr-only">The King’s Union: the debating society at King’s College London</h1>
