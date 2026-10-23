@@ -4,6 +4,7 @@ import { getAdmin } from "@/lib/admin_auth";
 
 const sections = [
   ["", "Debates", ["debates"]],
+  ["/dashboard", "Dashboard", ["dashboard"]],
   ["/results", "Result cards", ["results"]],
   ["/calendar", "Calendar", ["calendar"]],
   ["/motions", "Motions", ["motions"]],
