@@ -11,12 +11,15 @@ export default function Intro() {
       <div aria-hidden="true" className="intro fixed inset-0 z-[90] [perspective:1800px]">
         <span className="intro-door intro-door-left" />
         <span className="intro-door intro-door-right" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="intro-mark flex flex-col items-center">
-            <img src="/crest-gold.png" alt="" width={239} height={280} className="h-32 sm:h-40 w-auto" />
-            <span className="intro-rule mt-6 block h-px w-24 bg-[#d4af37]" />
-          </div>
-        </div>
+        {/* The gold line where the doors meet: drawn in just before they open */}
+        <span className="intro-seam" />
+        <img
+          src="/crest-gold.png"
+          alt=""
+          width={239}
+          height={280}
+          className="intro-mark absolute left-1/2 top-1/2 h-32 sm:h-40 w-auto"
+        />
       </div>
     </>
   );
