@@ -42,10 +42,26 @@ function MenuIcon() {
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
+  // The header shrinks once you've scrolled down a little and grows back near
+  // the top. The two points are far apart on purpose: shrinking the header
+  // moves the page by about 65px, and with a single switch point that moved
+  // the page back across it, so the header flickered between sizes.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const y = window.scrollY;
+      setScrolled((was) => (was ? y > 12 : y > 140));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
   const iconSize = scrolled ? "w-[18px] h-[18px]" : "w-5 h-5 md:w-6 md:h-6";
