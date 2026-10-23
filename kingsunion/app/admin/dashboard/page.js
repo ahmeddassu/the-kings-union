@@ -116,7 +116,22 @@ export default async function DashboardPage({ searchParams }) {
 
   // Departments in the sheet's tab order, then any others (e.g. Technology).
   const groups = [...new Set([...DEPARTMENTS, ...team.flatMap((p) => p.departments)])];
-  const byDept = groups.map((d) => ({ d, people: team.filter((p) => p.departments.includes(d)) })).filter((g) => g.people.length);
+  // Most senior first in each department, going by the roles in the sheet. A
+  // role naming another department ("Director of Finance") doesn't count here.
+  const RANKS = ["president", "vice president", "chief of staff", "deputy chief of staff", "director", "editor-in-chief", "deic", "deputy", "head", "manager", "bursar", "officer", "associate"];
+  const rankOf = (part) => {
+    const r = part.toLowerCase();
+    if (r.includes("deputy chief of staff")) return RANKS.indexOf("deputy chief of staff");
+    const i = RANKS.findIndex((k) => (k === "president" ? /^president\b/.test(r) : r.includes(k)));
+    return i < 0 ? RANKS.length : i;
+  };
+  const rankIn = (p, d) => {
+    const parts = String(p.role || "").split(",").map((x) => x.trim()).filter(Boolean);
+    const here = parts.filter((x) => !groups.some((g) => g !== d && x.toLowerCase().includes(g.toLowerCase())));
+    return Math.min(RANKS.length, ...(here.length ? here : parts).map(rankOf));
+  };
+  const byRank = (people, d) => people.map((p, i) => [p, i]).sort((a, b) => rankIn(a[0], d) - rankIn(b[0], d) || a[1] - b[1]).map(([p]) => p);
+  const byDept = groups.map((d) => ({ d, people: byRank(team.filter((p) => p.departments.includes(d)), d) })).filter((g) => g.people.length);
   const elsewhere = team.filter((p) => !p.departments.length);
 
   return (
