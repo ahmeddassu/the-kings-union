@@ -234,3 +234,8 @@ body::-webkit-scrollbar {
   from { transform: scale(1.06); }
   to   { transform: none; }
 }
+
+/* The "website not finished" notice, once someone has closed it. */
+.notice-closed .site-notice {
+  display: none;
+}
