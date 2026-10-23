@@ -124,18 +124,16 @@ body::-webkit-scrollbar {
   top: 0;
   bottom: 0;
   width: 50%;
-  background: radial-gradient(ellipse at 50% 45%, #3a0303, #220101 70%);
+  background: #2a0101;
   backface-visibility: hidden;
 }
 .intro-door-left {
   left: 0;
   transform-origin: left center;
-  box-shadow: inset -14px 0 30px -18px rgba(0, 0, 0, 0.8);
 }
 .intro-door-right {
   right: 0;
   transform-origin: right center;
-  box-shadow: inset 14px 0 30px -18px rgba(0, 0, 0, 0.8);
 }
 .intro-mark {
   transform: translate(-50%, -50%);
