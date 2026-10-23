@@ -47,6 +47,7 @@ export const SECTIONS = {
   backups: { label: "Backups", path: "/backups" },
   status: { label: "Status", path: "/status" },
   people: { label: "People", path: "/people" },
+  organigram: { label: "Organigram", path: "/organigram" }, // everyone can view; only the Executive edits
   activity: { label: "Activity", path: "/activity" },
 };
 
@@ -55,10 +56,10 @@ export const TEAMS = {
   // Only set in the code or Vercel (see isSuperEmail), never from inside admin.
   super: { label: "Super admin", can: Object.keys(SECTIONS) },
   executive: { label: "Executive", can: Object.keys(SECTIONS).filter((s) => s !== "activity") },
-  events: { label: "Events and Programming", can: ["dashboard", "debates", "results", "calendar", "motions", "applications", "speakers", "guests", "attendance", "feedback", "posters", "messages"] },
-  kingsway: { label: "Kingsway", can: ["dashboard", "kingsway", "calendar", "stats"] },
-  finance: { label: "Finance", can: ["dashboard", "sponsors", "friends", "messages", "stats"] },
-  growth: { label: "Growth and Marketing", can: ["dashboard", "results", "alerts", "feedback", "friends", "posters", "stats", "calendar"] },
+  events: { label: "Events and Programming", can: ["dashboard", "debates", "results", "calendar", "motions", "applications", "speakers", "guests", "attendance", "feedback", "posters", "messages", "organigram"] },
+  kingsway: { label: "Kingsway", can: ["dashboard", "kingsway", "calendar", "stats", "organigram"] },
+  finance: { label: "Finance", can: ["dashboard", "sponsors", "friends", "messages", "stats", "organigram"] },
+  growth: { label: "Growth and Marketing", can: ["dashboard", "results", "alerts", "feedback", "friends", "posters", "stats", "calendar", "organigram"] },
 };
 
 // ---------- Passwords ----------
