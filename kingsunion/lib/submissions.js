@@ -34,12 +34,14 @@ export const APPLICATION_STATUS = { new: "New", shortlisted: "Shortlisted", decl
 
 export { storeConfigured };
 
-// Slows down spam: a few submissions per address per hour.
-export async function allowSubmission(kind, ip) {
+// Slows down spam: a few submissions per address per hour. Forms people fill
+// in together (e.g. feedback on the university wifi, where many share one
+// address) pass a higher limit.
+export async function allowSubmission(kind, ip, limit = PER_HOUR) {
   const key = k.limit(kind, ip);
   const n = await redis("INCR", key);
   if (n === 1) await redis("EXPIRE", key, 3600);
-  return n <= PER_HOUR;
+  return n <= limit;
 }
 
 // Emails the committee a copy if email is set up; never blocks saving.

@@ -38,6 +38,8 @@ export const SECTIONS = {
   speakers: { label: "Speaker pack", path: "/speaker-pack" },
   guests: { label: "Past speakers", path: "/past-speakers" },
   attendance: { label: "Attendance", path: "/attendance" },
+  feedback: { label: "Feedback", path: "/feedback" },
+  friends: { label: "Friends of the Union", path: "/friends" },
   posters: { label: "Poster QR codes", path: "/posters" },
   sponsors: { label: "Sponsors", path: "/sponsors" },
   stats: { label: "Visitor stats", path: "/stats" },
@@ -52,10 +54,10 @@ export const TEAMS = {
   // Only set in the code or Vercel (see isSuperEmail), never from inside admin.
   super: { label: "Super admin", can: Object.keys(SECTIONS) },
   executive: { label: "Executive", can: Object.keys(SECTIONS).filter((s) => s !== "activity") },
-  events: { label: "Events and Programming", can: ["debates", "results", "calendar", "motions", "applications", "speakers", "guests", "attendance", "posters", "messages"] },
+  events: { label: "Events and Programming", can: ["debates", "results", "calendar", "motions", "applications", "speakers", "guests", "attendance", "feedback", "posters", "messages"] },
   kingsway: { label: "Kingsway", can: ["kingsway", "calendar", "stats"] },
-  finance: { label: "Finance", can: ["sponsors", "messages", "stats"] },
-  growth: { label: "Growth and Marketing", can: ["results", "alerts", "posters", "stats", "calendar"] },
+  finance: { label: "Finance", can: ["sponsors", "friends", "messages", "stats"] },
+  growth: { label: "Growth and Marketing", can: ["results", "alerts", "feedback", "friends", "posters", "stats", "calendar"] },
 };
 
 // ---------- Passwords ----------

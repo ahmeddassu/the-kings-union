@@ -9,7 +9,7 @@ const pages = [
   "", "about", "debates", "term-card", "governance",
   "kingsway", "speak", "support", "contact", "press", "membership",
   "motions", "speak/apply", "get-involved", "welcome", "votes", "privacy",
-  "speakers", "records", "guide",
+  "speakers", "records", "guide", "friends",
 ];
 
 export default async function sitemap() {
