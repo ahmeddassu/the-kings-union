@@ -47,10 +47,71 @@ function LinkBox({ link, name, emailed, onDone }) {
   );
 }
 
+// Tick boxes for the teams someone is in. People can be in several teams and
+// see everything each of them can.
+function TeamPicker({ idPrefix, options, value, onChange, legend }) {
+  const toggle = (key) => onChange(value.includes(key) ? value.filter((t) => t !== key) : [...value, key]);
+  return (
+    <fieldset>
+      <legend className={label}>{legend}</legend>
+      <div className="flex flex-wrap gap-2">
+        {options.map((t) => (
+          <label key={t.key} htmlFor={`${idPrefix}-${t.key}`} className="cursor-pointer">
+            <input
+              id={`${idPrefix}-${t.key}`}
+              type="checkbox"
+              checked={value.includes(t.key)}
+              onChange={() => toggle(t.key)}
+              className="peer sr-only"
+            />
+            <span className="inline-flex min-h-11 items-center gap-2 border border-[#d4af37]/60 px-3 text-sm peer-checked:bg-[#d4af37] peer-checked:text-[#3d0202] peer-checked:font-bold peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-white hover:bg-white/10">
+              <span aria-hidden="true">{value.includes(t.key) ? "✓" : "+"}</span>
+              {t.label}
+            </span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
+// One person's teams: shown as a line, with a button to change them.
+function PersonTeams({ p, assignable, teamLabel, busy, onSave }) {
+  const [editing, setEditing] = useState(false);
+  const [picked, setPicked] = useState(p.teams || [p.team]);
+  if (!editing) {
+    return (
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-sm text-[#d4af37]">{(p.teams || [p.team]).map((t) => teamLabel[t]).join(" + ")}</span>
+        <button type="button" disabled={!!busy} onClick={() => { setPicked(p.teams || [p.team]); setEditing(true); }} className={outline}>
+          Change teams
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="w-full border border-[#d4af37]/40 p-3">
+      <TeamPicker idPrefix={`teams-${p.id}`} options={assignable} value={picked} onChange={setPicked} legend={`Teams for ${p.name}`} />
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="button"
+          disabled={!!busy || !picked.length}
+          onClick={() => onSave(picked, () => setEditing(false))}
+          className={primary}
+        >
+          Save teams
+        </button>
+        <button type="button" onClick={() => setEditing(false)} className={outline}>Cancel</button>
+      </div>
+      {!picked.length && <p className="mt-2 text-sm text-[#f3c4c4]">Choose at least one team.</p>}
+    </div>
+  );
+}
+
 export default function PeopleAdmin({ base, initial, shared: sharedInitial, teams, meId, meIsSuper = false }) {
   const [people, setPeople] = useState(initial);
   const [shared, setShared] = useState(sharedInitial);
-  const [form, setForm] = useState({ name: "", email: "", team: "events" });
+  const [form, setForm] = useState({ name: "", email: "", teams: ["events"] });
   const [link, setLink] = useState(null); // { link, name, emailed }
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
@@ -76,16 +137,17 @@ export default function PeopleAdmin({ base, initial, shared: sharedInitial, team
       const data = await call("/api/admin/people", "POST", { action: "add", ...form }, base);
       setPeople((list) => [...list, data.person].sort((a, b) => a.name.localeCompare(b.name)));
       setLink({ link: data.link, name: data.person.name, emailed: data.emailed });
-      setForm({ name: "", email: "", team: form.team });
+      setForm({ name: "", email: "", teams: form.teams });
     });
   };
 
-  const patch = (p, body, confirmText) => {
+  const patch = (p, body, confirmText, after) => {
     if (confirmText && !window.confirm(confirmText)) return;
     run(`${p.id}`, async () => {
       const data = await call(`/api/admin/people/${p.id}`, "PATCH", body, base);
       replace(data.person);
       if (data.link) setLink({ link: data.link, name: data.person.name, emailed: data.emailed });
+      if (after) after();
     });
   };
 
@@ -140,20 +202,13 @@ export default function PeopleAdmin({ base, initial, shared: sharedInitial, team
                   {p.superAdmin ? (
                     <span className="inline-flex min-h-11 items-center border border-[#d4af37] px-3 text-sm font-bold text-[#d4af37]">Super admin</span>
                   ) : (
-                  <>
-                  <label className="sr-only" htmlFor={`team-${p.id}`}>Team for {p.name}</label>
-                  <select
-                    id={`team-${p.id}`}
-                    value={p.team}
-                    disabled={!!busy}
-                    onChange={(e) => patch(p, { team: e.target.value }, `Move ${p.name} to ${teamLabel[e.target.value]}?`)}
-                    className={`${field} w-auto min-h-11`}
-                  >
-                    {assignable.map((t) => (
-                      <option key={t.key} value={t.key}>{t.label}</option>
-                    ))}
-                  </select>
-                  </>
+                  <PersonTeams
+                    p={p}
+                    assignable={assignable}
+                    teamLabel={teamLabel}
+                    busy={busy}
+                    onSave={(teams, done) => patch(p, { teams }, null, done)}
+                  />
                   )}
                   <button type="button" disabled={!!busy} onClick={() => patch(p, { resetPassword: true }, `Make a new setup link for ${p.name}? Their current password will stop working.`)} className={outline}>
                     {p.status === "invited" ? "New setup link" : "Reset password"}
@@ -176,7 +231,7 @@ export default function PeopleAdmin({ base, initial, shared: sharedInitial, team
 
       <section className="border border-[#d4af37]/60 p-5 sm:p-6">
         <h2 className="title text-2xl font-bold">Add someone</h2>
-        <form onSubmit={add} className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <form onSubmit={add} className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
           <label className="block">
             <span className={label}>Name</span>
             <input required maxLength={80} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={field} />
@@ -185,16 +240,17 @@ export default function PeopleAdmin({ base, initial, shared: sharedInitial, team
             <span className={label}>Email</span>
             <input required type="email" maxLength={160} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={field} />
           </label>
-          <label className="block">
-            <span className={label}>Team</span>
-            <select value={form.team} onChange={(e) => setForm({ ...form, team: e.target.value })} className={field}>
-              {assignable.map((t) => (
-                <option key={t.key} value={t.key}>{t.label}</option>
-              ))}
-            </select>
-          </label>
-          <div className="md:col-span-3">
-            <button type="submit" disabled={!!busy} className={primary}>{busy === "add" ? "Adding…" : "Add and get their setup link"}</button>
+          <div className="md:col-span-2">
+            <TeamPicker
+              idPrefix="new-teams"
+              options={assignable}
+              value={form.teams}
+              onChange={(teams) => setForm({ ...form, teams })}
+              legend="Teams (choose one or more)"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <button type="submit" disabled={!!busy || !form.teams.length} className={primary}>{busy === "add" ? "Adding…" : "Add and get their setup link"}</button>
           </div>
         </form>
       </section>

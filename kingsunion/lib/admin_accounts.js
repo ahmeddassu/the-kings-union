@@ -10,7 +10,7 @@
 //   ku:admin-settings      hash: shared = "off" when the shared password is switched off
 import { randomBytes } from "node:crypto";
 import { redis, pipeline } from "@/lib/store";
-import { TEAMS, hashPassword, checkPassword, effectiveTeam, isSuperEmail } from "@/lib/admin_auth";
+import { TEAMS, hashPassword, checkPassword, teamsOf, isSuperEmail } from "@/lib/admin_auth";
 
 const KEY = "ku:admins";
 const SETUP_DAYS = 7;
@@ -20,7 +20,17 @@ const clean = (v, max) => String(v ?? "").replace(/\s+/g, " ").trim().slice(0, m
 export const MIN_PASSWORD = 10;
 
 // What the People page shows (never the password fingerprint).
-const publicView = ({ hash, salt, ...p }) => ({ ...p, team: effectiveTeam(p), superAdmin: isSuperEmail(p.email), status: p.disabled ? "disabled" : hash ? "active" : "invited" });
+const publicView = ({ hash, salt, ...p }) => {
+  const teams = teamsOf(p);
+  return { ...p, team: teams[0], teams, superAdmin: isSuperEmail(p.email), status: p.disabled ? "disabled" : hash ? "active" : "invited" };
+};
+
+// The teams asked for ({ teams: [...] }, or one { team }), checked. Never "super".
+function chosenTeams(input) {
+  const asked = Array.isArray(input.teams) ? input.teams : input.team !== undefined ? [input.team] : [];
+  return asked.filter((t, i) => TEAMS[t] && t !== "super" && asked.indexOf(t) === i);
+}
+const isExec = (p) => teamsOf(p).some((t) => t === "executive" || t === "super");
 
 export async function listPeople() {
   const raw = (await redis("HVALS", KEY)) || [];
@@ -52,13 +62,13 @@ async function newSetupToken(id) {
 export async function addPerson(input) {
   const name = clean(input.name, 80);
   const email = clean(input.email, 160).toLowerCase();
-  const team = TEAMS[input.team] && input.team !== "super" ? input.team : null;
+  const teams = chosenTeams(input);
   if (!name) throw new Error("Please add their name.");
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("Please add a valid email address.");
-  if (!team) throw new Error("Please choose a team.");
+  if (!teams.length) throw new Error("Please choose at least one team.");
   if (await findByEmail(email)) throw new Error("Someone with that email already has a login.");
   if ((Number(await redis("HLEN", KEY)) || 0) >= 200) throw new Error("That’s the maximum number of logins.");
-  const person = { id: randomBytes(6).toString("hex"), name, email, team, sv: 0, createdAt: Date.now(), disabled: false, lastLogin: null };
+  const person = { id: randomBytes(6).toString("hex"), name, email, team: teams[0], teams, sv: 0, createdAt: Date.now(), disabled: false, lastLogin: null };
   await save(person);
   return { person: publicView(person), token: await newSetupToken(person.id) };
 }
@@ -96,12 +106,12 @@ export async function signIn(email, password) {
 
 async function activeExecutives(exceptId) {
   const raw = (await redis("HVALS", KEY)) || [];
-  return raw.map((r) => JSON.parse(r)).filter((p) => ["executive", "super"].includes(effectiveTeam(p)) && p.hash && !p.disabled && p.id !== exceptId).length;
+  return raw.map((r) => JSON.parse(r)).filter((p) => isExec(p) && p.hash && !p.disabled && p.id !== exceptId).length;
 }
 
 // Someone must always be able to manage logins.
 async function guardLastExecutive(p, sharedOn) {
-  if (["executive", "super"].includes(effectiveTeam(p)) && !sharedOn && (await activeExecutives(p.id)) === 0) {
+  if (isExec(p) && !sharedOn && (await activeExecutives(p.id)) === 0) {
     throw new Error("They’re the only Executive who can sign in. Add another Executive first, or switch the shared password back on.");
   }
 }
@@ -109,7 +119,7 @@ async function guardLastExecutive(p, sharedOn) {
 // Super admins can only be changed by another super admin (and their level
 // only from Vercel).
 function guardSuper(p, actor) {
-  if (isSuperEmail(p.email) && actor?.team !== "super") throw new Error("Only a super admin can change a super admin’s login.");
+  if (isSuperEmail(p.email) && !actor?.teams?.includes("super") && actor?.team !== "super") throw new Error("Only a super admin can change a super admin’s login.");
 }
 
 export async function updatePerson(id, change, sharedOn, actor) {
@@ -118,11 +128,13 @@ export async function updatePerson(id, change, sharedOn, actor) {
   guardSuper(p, actor);
   let updated = { ...p };
   let token = null;
-  if (change.team !== undefined) {
-    if (!TEAMS[change.team] || change.team === "super") throw new Error("Unknown team.");
-    if (isSuperEmail(p.email)) throw new Error("Super admins are set in Vercel (SUPER_ADMIN_EMAILS), not here.");
-    if (change.team !== "executive") await guardLastExecutive(p, sharedOn);
-    updated.team = change.team;
+  if (change.teams !== undefined || change.team !== undefined) {
+    const teams = chosenTeams(change);
+    if (!teams.length) throw new Error("Please choose at least one team.");
+    if (isSuperEmail(p.email)) throw new Error("Super admins are set by the site’s developers, not here.");
+    if (!teams.includes("executive")) await guardLastExecutive(p, sharedOn);
+    updated.teams = teams;
+    updated.team = teams[0];
   }
   if (change.disabled !== undefined) {
     if (change.disabled) await guardLastExecutive(p, sharedOn);

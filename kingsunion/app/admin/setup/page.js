@@ -1,5 +1,5 @@
 import { setupFor, MIN_PASSWORD } from "@/lib/admin_accounts";
-import { TEAMS } from "@/lib/admin_auth";
+import { teamsOf, teamsLabel } from "@/lib/admin_auth";
 import { storeConfigured } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +28,7 @@ export default async function SetupPage({ searchParams }) {
           <form action="/api/admin/setup" method="post">
             <h1 className="title mt-6 text-3xl font-bold">Welcome, {person.name.split(" ")[0]}</h1>
             <p className="mt-2 text-white/70">
-              Choose a password for your King’s Union admin login ({TEAMS[person.team]?.label}).
+              Choose a password for your King’s Union admin login ({teamsLabel(teamsOf(person))}).
             </p>
             <p className="mt-1 text-sm text-white/55 break-all">{person.email}</p>
             <input type="hidden" name="token" value={q.token} />

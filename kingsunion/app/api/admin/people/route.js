@@ -1,7 +1,7 @@
 // Executive: committee logins. GET lists them; POST adds someone
-// ({ action: "add", name, email, team }) or switches the shared password
+// ({ action: "add", name, email, teams: [...] }) or switches the shared password
 // on or off ({ action: "shared", on }).
-import { can, refuse, sharedAllowed, TEAMS } from "@/lib/admin_auth";
+import { can, refuse, sharedAllowed, teamsLabel } from "@/lib/admin_auth";
 import { listPeople, addPerson, setShared } from "@/lib/admin_accounts";
 import { setupLink, emailSetupLink } from "@/lib/setup_link";
 import { logAction } from "@/lib/audit";
@@ -23,7 +23,7 @@ export async function POST(request) {
       const { person, token } = await addPerson(body);
       const link = setupLink(request, token);
       const emailed = await emailSetupLink(person, link);
-      await logAction(admin, `Gave ${person.name} a login (${TEAMS[person.team].label})`);
+      await logAction(admin, `Gave ${person.name} a login (${teamsLabel(person.teams)})`);
       return Response.json({ person, link, emailed });
     }
     if (body.action === "shared") {

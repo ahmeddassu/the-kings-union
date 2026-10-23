@@ -1,6 +1,6 @@
 // Sign in with your own email and password, or (until it's switched off) the
 // shared committee password with the email left blank.
-import { passwordMatches, newSession, sessionCookie, allowLoginAttempt, clearLoginAttempts, clientIp, sharedAllowed, SHARED, TEAMS } from "@/lib/admin_auth";
+import { passwordMatches, newSession, sessionCookie, allowLoginAttempt, clearLoginAttempts, clientIp, sharedAllowed, SHARED, teamsOf, teamsLabel } from "@/lib/admin_auth";
 import { signIn } from "@/lib/admin_accounts";
 import { logAction } from "@/lib/audit";
 import { storeConfigured } from "@/lib/store";
@@ -34,7 +34,8 @@ export async function POST(request) {
 
   await clearLoginAttempts(ip);
   const who = person || SHARED;
-  await logAction({ name: who.name, team: who.team }, `Signed in (${TEAMS[who.team]?.label || who.team})`);
+  const label = teamsLabel(person ? teamsOf(person) : ["executive"]);
+  await logAction({ name: who.name, team: who.team, teamLabel: label }, `Signed in (${label})`);
   const headers = new Headers({ Location: adminHome(request).toString() });
   headers.append("Set-Cookie", sessionCookie(newSession(person)));
   return new Response(null, { status: 303, headers });
