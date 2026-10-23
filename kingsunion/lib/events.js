@@ -159,6 +159,8 @@ export const details = {
     },
     description:
       "In 1843, philosopher and political theorist Karl Marx wrote that “religion is the opium of the masses” – a line that would prove to be one of the most controversial phrases in human history. Suggesting that religion is a man-made response to suffering in society, it encapsulates eternal debates surrounding the existence of God, organised religion and its role in modern society. Is religion merely an illusory source of happiness, or is something deeper and more meaningful present?",
+    venue: "B5 Lecture Theatre, Franklin-Wilkins Building, Waterloo Campus",
+    tickets: "https://luma.com/0wxqx4ij",
   },
   "abolish-private-schools": {
     background: "/events/private-schools.jpg",

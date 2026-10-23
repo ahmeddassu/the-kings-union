@@ -12,6 +12,17 @@ const ADDRESS = {
   addressCountry: "GB",
 };
 
+// Waterloo Campus events (e.g. the Franklin-Wilkins Building) need their own
+// address for Google; everything else is on the Strand.
+const WATERLOO = {
+  "@type": "PostalAddress",
+  streetAddress: "Franklin-Wilkins Building, 150 Stamford Street",
+  addressLocality: "London",
+  postalCode: "SE1 9NH",
+  addressCountry: "GB",
+};
+const addressFor = (venue) => (/waterloo|franklin.?wilkins/i.test(venue || "") ? WATERLOO : ADDRESS);
+
 export function eventSchema(event) {
   const { start, end } = eventTimes(event);
   const page = new URL(`/events/${event.slug}`, siteUrl).toString();
@@ -31,7 +42,7 @@ export function eventSchema(event) {
     location: {
       "@type": "Place",
       name: event.venue ? `${event.venue}, King’s College London` : "King’s College London",
-      address: ADDRESS,
+      address: addressFor(event.venue),
     },
     organizer: { "@type": "Organization", "@id": new URL("/#organization", siteUrl).toString(), name: siteName, url: siteUrl.toString() },
     image: [new URL(image || "/og.jpg", siteUrl).toString()],
