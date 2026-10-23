@@ -21,7 +21,7 @@ const ways = [
   {
     eyebrow: "Join",
     title: "Become a member",
-    text: "£10 a year through KCLSU. Reserved tickets, a vote at the AGM and elections, and priority to speak.",
+    text: "£10 a year through KCLSU. Reserved tickets, front-row seats, priority to speak, and the chance to stand for the committee.",
     href: MEMBERSHIP_URL,
     external: true,
     cta: "Join through KCLSU",

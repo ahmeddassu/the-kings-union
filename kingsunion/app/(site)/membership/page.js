@@ -5,7 +5,7 @@ import { MEMBERSHIP_URL } from "@/lib/nav";
 
 export const metadata = {
   title: "Membership",
-  description: "Join the King’s Union for £10: reserved tickets, a vote at the AGM, priority to speak and members-only socials.",
+  description: "Join the King’s Union for £10: reserved tickets, front-row seats, priority to speak, the members’ group chat and members-only socials.",
 };
 
 const PRICE = "£10";
@@ -16,16 +16,24 @@ const benefits = [
     text: "Every debate has tickets set aside for members only, so you can still get in when a debate is busy.",
   },
   {
+    title: "Front-row seats",
+    text: "Members get front-row seats at our events.",
+  },
+  {
     title: "Priority to speak",
     text: "Members get first chance at the student speaking slots in our debates.",
   },
   {
-    title: "A vote in the Union",
-    text: "Vote at the AGM and in committee elections, and stand for the committee yourself.",
+    title: "A say in the Union",
+    text: "Vote in committee elections, and stand for the committee yourself.",
   },
   {
     title: "Members-only socials",
     text: "Socials, screenings and nights out just for members.",
+  },
+  {
+    title: "The members’ group chat",
+    text: "Access to the members’ group chat.",
   },
 ];
 
@@ -72,7 +80,7 @@ export default function MembershipPage() {
             <h2 className="title text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-tight">
               What you get.
             </h2>
-            <ul className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
+            <ul className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
               {benefits.map((b, i) => (
                 <li key={b.title} className="border-t border-[#d4af37] pt-4">
                   <p className="text-sm text-[#d4af37] tabular-nums">{String(i + 1).padStart(2, "0")}</p>
