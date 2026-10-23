@@ -3,6 +3,7 @@ import Footer from "@/components/footer";
 import { Divisions, Turnout, Topics } from "@/components/vote_charts";
 import { getVoteStats } from "@/lib/vote_stats";
 import { displayDate } from "@/lib/debates";
+import CountUp from "@/components/count_up";
 
 export const revalidate = 300;
 
@@ -66,10 +67,10 @@ export default async function VotesPage() {
             </p>
 
             <div className="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8">
-              <Tile label="Debates held" value={s.debates} />
-              <Tile label="Votes cast" value={s.votes.toLocaleString("en-GB")} note={`across ${s.countedDebates} recorded divisions`} />
-              <Tile label="Motions carried" value={`${s.carried} of ${s.decided}`} note={`${s.defeated} defeated`} />
-              <Tile label="Average House" value={s.average} note="votes per debate" />
+              <Tile label="Debates held" value={<CountUp value={s.debates} />} />
+              <Tile label="Votes cast" value={<CountUp value={s.votes} />} note={`across ${s.countedDebates} recorded divisions`} />
+              <Tile label="Motions carried" value={<><CountUp value={s.carried} /> of {s.decided}</>} note={`${s.defeated} defeated`} />
+              <Tile label="Average House" value={<CountUp value={s.average} />} note="votes per debate" />
             </div>
           </div>
         </section>
@@ -89,13 +90,13 @@ export default async function VotesPage() {
               <Record
                 label="Most decisive"
                 debate={s.decisive}
-                value={s.decisive ? `${Math.max(s.decisive.ayePct, s.decisive.noPct)}%` : ""}
+                value={s.decisive ? <CountUp value={Math.max(s.decisive.ayePct, s.decisive.noPct)} suffix="%" /> : ""}
                 detail={s.decisive ? `${s.decisive.carried ? "for" : "against"} the motion, ${s.decisive.proposition}–${s.decisive.opposition}` : ""}
               />
               <Record
                 label="Biggest House"
                 debate={s.biggest}
-                value={s.biggest ? s.biggest.total : ""}
+                value={s.biggest ? <CountUp value={s.biggest.total} /> : ""}
                 detail="votes cast"
               />
             </div>
