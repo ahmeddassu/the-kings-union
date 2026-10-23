@@ -68,7 +68,7 @@ export default function Home() {
       <Navbar/>
       <main>
       <h1 className="sr-only">The King’s Union: the debating society at King’s College London</h1>
-      <Hero/>
+      <div className="overflow-hidden"><div className="intro-settle"><Hero/></div></div>
       <NextDebate/>
       <JoinBand/>
       <Stats/>

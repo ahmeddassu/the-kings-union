@@ -113,37 +113,113 @@ body::-webkit-scrollbar {
   100% { opacity: 0;   transform: scale(1.06); }
 }
 
-/* Homepage intro: the crest on maroon for a moment, then the curtain lifts
-   onto the page (about 1.5 seconds). Once per visit; off for reduced motion. */
+/* Homepage intro: the crest on maroon, then the chamber doors swing open and
+   the page comes forward, as if walking into the House (about 2.4s).
+   Once per visit; off for reduced motion. */
 .intro {
   display: none;
 }
+.intro-door {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: #2a0101;
+  backface-visibility: hidden;
+}
+.intro-door-left {
+  left: 0;
+  transform-origin: left center;
+}
+.intro-door-right {
+  right: 0;
+  transform-origin: right center;
+}
+.intro-mark {
+  transform: translate(-50%, -50%);
+}
+.intro-seam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  margin-left: -0.5px;
+  background: linear-gradient(to bottom, rgba(212, 175, 55, 0), #d4af37 18%, #d4af37 82%, rgba(212, 175, 55, 0));
+  transform: scaleY(0);
+}
 @media (prefers-reduced-motion: no-preference) {
+  .intro-seam {
+    animation:
+      intro-seam-in 0.55s cubic-bezier(0.6, 0, 0.2, 1) 0.55s forwards,
+      intro-seam-out 0.25s ease-in 1.15s forwards;
+  }
   .intro {
-    display: flex;
-    animation: intro-lift 0.7s cubic-bezier(0.7, 0, 0.3, 1) 1.15s forwards;
+    display: block;
     pointer-events: none;
+    animation: intro-done 0.01s linear 2.45s forwards;
   }
   .intro-mark {
-    animation: intro-mark 0.6s ease-out both;
+    animation:
+      intro-mark-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both,
+      intro-mark-out 0.45s cubic-bezier(0.5, 0, 0.75, 0) 0.95s forwards;
   }
-  .intro-rule {
-    animation: intro-rule 0.7s cubic-bezier(0.6, 0, 0.2, 1) 0.35s both;
-    transform-origin: left center;
+  .intro-door-left {
+    animation: intro-door-left 1.25s cubic-bezier(0.55, 0, 0.25, 1) 1.15s forwards;
+  }
+  .intro-door-right {
+    animation: intro-door-right 1.25s cubic-bezier(0.55, 0, 0.25, 1) 1.15s forwards;
+  }
+  .intro-settle {
+    transform-origin: 50% 40%;
+    animation: intro-settle 1.7s cubic-bezier(0.25, 0.6, 0.2, 1) 1.15s both;
   }
 }
 .no-intro .intro {
   display: none;
 }
-@keyframes intro-mark {
-  from { opacity: 0; transform: scale(0.94); }
-  to   { opacity: 1; transform: none; }
+.no-intro .intro-settle {
+  animation: none;
+}
+/* The crest stays exactly centred: the centring is part of every frame. */
+@keyframes intro-mark-in {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.94); filter: blur(4px); }
+  to   { opacity: 1; transform: translate(-50%, -50%); filter: none; }
+}
+@keyframes intro-mark-out {
+  from { opacity: 1; transform: translate(-50%, -50%); }
+  to   { opacity: 0; transform: translate(-50%, -50%) scale(1.04); }
+}
+@keyframes intro-seam-in {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+@keyframes intro-seam-out {
+  to { transform: scaleY(1); opacity: 0; }
 }
 @keyframes intro-rule {
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
 }
-@keyframes intro-lift {
-  0%   { opacity: 1; transform: none; visibility: visible; }
-  100% { opacity: 0; transform: translateY(-3%); visibility: hidden; }
+/* The doors swing inwards, away from you, into the chamber. */
+/* They swing inwards while sliding right off the sides of the screen, so
+   nothing is left at the edges. */
+@keyframes intro-door-left {
+  0%   { transform: none; opacity: 1; }
+  45%  { opacity: 1; }
+  72%  { transform: translateX(-105%) rotateY(-50deg); opacity: 0; }
+  100% { transform: translateX(-105%) rotateY(-60deg); opacity: 0; visibility: hidden; }
+}
+@keyframes intro-door-right {
+  0%   { transform: none; opacity: 1; }
+  45%  { opacity: 1; }
+  72%  { transform: translateX(105%) rotateY(50deg); opacity: 0; }
+  100% { transform: translateX(105%) rotateY(60deg); opacity: 0; visibility: hidden; }
+}
+@keyframes intro-done {
+  to { visibility: hidden; }
+}
+@keyframes intro-settle {
+  from { transform: scale(1.08); filter: brightness(0.6); }
+  to   { transform: none; filter: none; }
 }
