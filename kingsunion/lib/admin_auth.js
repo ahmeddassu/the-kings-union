@@ -28,6 +28,7 @@ const MAX_ATTEMPTS = 10; // per 15 minutes, per network address
 // Admin sections, with where they live.
 export const SECTIONS = {
   debates: { label: "Debates", path: "" },
+  dashboard: { label: "Dashboard", path: "/dashboard" }, // committee tasks, from the dashboard sheet
   results: { label: "Result cards", path: "/results" },
   calendar: { label: "Calendar", path: "/calendar" },
   motions: { label: "Motions", path: "/motions" },
@@ -54,10 +55,10 @@ export const TEAMS = {
   // Only set in the code or Vercel (see isSuperEmail), never from inside admin.
   super: { label: "Super admin", can: Object.keys(SECTIONS) },
   executive: { label: "Executive", can: Object.keys(SECTIONS).filter((s) => s !== "activity") },
-  events: { label: "Events and Programming", can: ["debates", "results", "calendar", "motions", "applications", "speakers", "guests", "attendance", "feedback", "posters", "messages"] },
-  kingsway: { label: "Kingsway", can: ["kingsway", "calendar", "stats"] },
-  finance: { label: "Finance", can: ["sponsors", "friends", "messages", "stats"] },
-  growth: { label: "Growth and Marketing", can: ["results", "alerts", "feedback", "friends", "posters", "stats", "calendar"] },
+  events: { label: "Events and Programming", can: ["dashboard", "debates", "results", "calendar", "motions", "applications", "speakers", "guests", "attendance", "feedback", "posters", "messages"] },
+  kingsway: { label: "Kingsway", can: ["dashboard", "kingsway", "calendar", "stats"] },
+  finance: { label: "Finance", can: ["dashboard", "sponsors", "friends", "messages", "stats"] },
+  growth: { label: "Growth and Marketing", can: ["dashboard", "results", "alerts", "feedback", "friends", "posters", "stats", "calendar"] },
 };
 
 // ---------- Passwords ----------
