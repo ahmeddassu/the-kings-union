@@ -128,7 +128,7 @@ function readToken(token) {
 // Super admins are the people whose login email is listed here, or in the
 // Vercel setting SUPER_ADMIN_EMAILS (comma-separated), which replaces this list
 // when it's set. Neither can be changed from inside admin.
-const DEFAULT_SUPER_ADMINS = "guy.de_basto@kcl.ac.uk, dassuahmed@gmail.com";
+const DEFAULT_SUPER_ADMINS = "guy.de_basto@kcl.ac.uk, dassuahmed@gmail.com, mustafa.dassu@gmail.com, joshua.h.m.green@gmail.com";
 
 export function isSuperEmail(email) {
   const list = String(process.env.SUPER_ADMIN_EMAILS || DEFAULT_SUPER_ADMINS)
