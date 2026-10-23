@@ -13,7 +13,6 @@ import MailingList from "@/components/mailing_list";
 import PartnerStrip from "@/components/partner_strip";
 import SubscribeCalendar from "@/components/subscribe_calendar";
 import Faq from "@/components/faq";
-import SearchBand from "@/components/search_band";
 import Intro from "@/components/intro";
 import { chamberGallery } from "@/lib/gallery";
 import { siteName, siteDescription, siteUrl } from "@/lib/site";
@@ -71,7 +70,6 @@ export default function Home() {
       <h1 className="sr-only">The King’s Union: the debating society at King’s College London</h1>
       <div className="overflow-hidden"><div className="intro-settle"><Hero/></div></div>
       <NextDebate/>
-      <SearchBand/>
       <JoinBand/>
       <Stats/>
       <WhoWeAre/>

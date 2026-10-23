@@ -30,6 +30,15 @@ function Label({ link }) {
   return link.italic ? <em>{link.label}</em> : link.label;
 }
 
+function SearchIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="M15.5 15.5L21 21" />
+    </svg>
+  );
+}
+
 function MenuIcon() {
   return (
     <svg viewBox="0 0 24 24" className="w-7 h-7" aria-hidden="true">
@@ -131,11 +140,34 @@ export default function Navbar() {
             <a href="/contact" className={linkClass}>
               Contact Us
             </a>
-            <span className="text-[#d4af37]" aria-hidden="true">|</span>
-            <a href="/search" className={linkClass}>
+            {/* Search: a box on wide screens, a link on narrower ones */}
+            <span className="text-[#d4af37] lg:hidden" aria-hidden="true">|</span>
+            <a href="/search" className={`${linkClass} lg:hidden`}>
               Search
             </a>
+            <form action="/search" method="get" role="search" className="hidden lg:flex items-center ml-2">
+              <label htmlFor="header-search" className="sr-only">Search the King’s Union</label>
+              <input
+                id="header-search"
+                name="q"
+                type="search"
+                placeholder="Search"
+                className={`${scrolled ? "h-7 w-36 text-xs" : "h-9 w-44 xl:w-52 text-sm"} border border-[#d4af37]/70 border-r-0 bg-transparent px-3 text-white placeholder:text-white/55 outline-none focus:border-white transition-all duration-300`}
+              />
+              <button
+                type="submit"
+                aria-label="Search"
+                className={`${scrolled ? "h-7 w-7" : "h-9 w-9"} inline-flex items-center justify-center bg-[#d4af37] text-[#3d0202] hover:bg-white transition-all duration-300`}
+              >
+                <SearchIcon />
+              </button>
+            </form>
           </div>
+
+          {/* Search (phone) */}
+          <a href="/search" aria-label="Search" className="md:hidden flex-none p-2 text-[#d4af37] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#d4af37] rounded-md">
+            <SearchIcon className="w-6 h-6" />
+          </a>
 
           {/* Phone menu: a native <details> toggle, so it works even before scripts load */}
           <details className="md:hidden group flex-none">
