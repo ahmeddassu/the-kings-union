@@ -2,6 +2,7 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { getRecords } from "@/lib/records";
 import { displayDate } from "@/lib/debates";
+import CountUp from "@/components/count_up";
 
 export const revalidate = 300;
 
@@ -47,9 +48,9 @@ export default async function RecordsPage() {
   const cards = [];
 
   if (r.biggest)
-    cards.push(<Record key="biggest" label="Biggest House" value={r.biggest.total} detail="votes cast in one division" debate={r.biggest} />);
+    cards.push(<Record key="biggest" label="Biggest House" value={<CountUp value={r.biggest.total} />} detail="votes cast in one division" debate={r.biggest} />);
   if (r.door && (!r.biggest || r.door.slug !== r.biggest.slug || r.door.checkedIn !== r.biggest.total))
-    cards.push(<Record key="door" label="Biggest crowd" value={r.door.checkedIn} detail="people checked in at the door" debate={r.door} />);
+    cards.push(<Record key="door" label="Biggest crowd" value={<CountUp value={r.door.checkedIn} />} detail="people checked in at the door" debate={r.door} />);
   if (r.closest)
     cards.push(
       <Record
@@ -65,15 +66,15 @@ export default async function RecordsPage() {
       <Record
         key="decisive"
         label="Most decisive"
-        value={`${Math.max(r.decisive.ayePct, r.decisive.noPct)}%`}
+        value={<CountUp value={Math.max(r.decisive.ayePct, r.decisive.noPct)} suffix="%" />}
         detail={`${r.decisive.carried ? "for" : "against"} the motion, ${r.decisive.proposition}–${r.decisive.opposition}`}
         debate={r.decisive}
       />
     );
   if (r.mostFor)
-    cards.push(<Record key="for" label="Most votes for a motion" value={r.mostFor.proposition} detail={`Ayes, ${r.mostFor.proposition}–${r.mostFor.opposition}`} debate={r.mostFor} />);
+    cards.push(<Record key="for" label="Most votes for a motion" value={<CountUp value={r.mostFor.proposition} />} detail={`Ayes, ${r.mostFor.proposition}–${r.mostFor.opposition}`} debate={r.mostFor} />);
   if (r.mostAgainst)
-    cards.push(<Record key="against" label="Most votes against" value={r.mostAgainst.opposition} detail={`Noes, ${r.mostAgainst.proposition}–${r.mostAgainst.opposition}`} debate={r.mostAgainst} />);
+    cards.push(<Record key="against" label="Most votes against" value={<CountUp value={r.mostAgainst.opposition} />} detail={`Noes, ${r.mostAgainst.proposition}–${r.mostAgainst.opposition}`} debate={r.mostAgainst} />);
   if (r.streak) {
     const first = r.streak.debates[0];
     const last = r.streak.debates[r.streak.debates.length - 1];
@@ -81,7 +82,7 @@ export default async function RecordsPage() {
       <Record
         key="streak"
         label="Longest run"
-        value={r.streak.debates.length}
+        value={<CountUp value={r.streak.debates.length} />}
         detail={`motions ${r.streak.verdict.toLowerCase()} in a row`}
       >
         <p className="mt-4 font-bold leading-snug">
@@ -98,7 +99,7 @@ export default async function RecordsPage() {
       <Record
         key="term"
         label="Busiest term"
-        value={r.busiestTerm.votes}
+        value={<CountUp value={r.busiestTerm.votes} />}
         detail={`votes cast across ${plural(r.busiestTerm.debates, "division")}`}
       >
         <p className="mt-4 font-bold">{r.busiestTerm.label}</p>
@@ -106,7 +107,7 @@ export default async function RecordsPage() {
     );
   if (r.topTopic)
     cards.push(
-      <Record key="topic" label="Most debated topic" value={r.topTopic.total} detail={`debates, ${r.topTopic.carried} carried and ${r.topTopic.defeated} defeated`}>
+      <Record key="topic" label="Most debated topic" value={<CountUp value={r.topTopic.total} />} detail={`debates, ${r.topTopic.carried} carried and ${r.topTopic.defeated} defeated`}>
         <p className="mt-4 font-bold">{r.topTopic.label}</p>
       </Record>
     );
