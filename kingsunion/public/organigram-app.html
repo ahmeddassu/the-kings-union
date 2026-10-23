@@ -1,0 +1,1451 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Organigram · King’s Union Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: app shell. Header with org name + tabs, one work surface per tab, an editor drawer that slides in from the right (bottom sheet on phones). */
+:root{
+  --bg:#f2f3f7; --surface:#ffffff; --surface-2:#e9ebf2; --fg:#151a2e; --muted:#5a6182;
+  --line:#c6cad9; --accent:#7a1414; --accent-fg:#ffffff; --gold:#a97b12; --danger:#b3261e; --ok:#1d7a4c;
+  --shadow:0 1px 2px rgba(21,26,46,.06),0 4px 14px rgba(21,26,46,.06);
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f111b; --surface:#171a28; --surface-2:#22263a; --fg:#e7e9f3; --muted:#9ba1bf;
+  --line:#3a4060; --accent:#d4af37; --accent-fg:#2a0101; --gold:#e4ba4f; --danger:#ff8f86; --ok:#6fd6a3;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f111b; --surface:#171a28; --surface-2:#22263a; --fg:#e7e9f3; --muted:#9ba1bf;
+  --line:#3a4060; --accent:#d4af37; --accent-fg:#2a0101; --gold:#e4ba4f; --danger:#ff8f86; --ok:#6fd6a3;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--f-body);font-size:14px;line-height:1.45;padding-inline:16px;padding-block:0 24px}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Header */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-block:16px 12px}
+.brand{display:flex;flex-direction:column;min-width:0;flex:1 1 260px}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#org-name{font-family:var(--f-display);font-weight:700;font-size:clamp(22px,3.2vw,30px);letter-spacing:-.01em;border:1px solid transparent;background:transparent;border-radius:8px;padding:2px 6px;margin-left:-7px;width:100%;max-width:560px}
+#org-name:hover:not(:disabled){border-color:var(--line)}
+#org-name:focus{border-color:var(--accent);outline:none;background:var(--surface)}
+.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:12px;flex-wrap:wrap}
+.tab{border:0;background:transparent;padding:7px 14px;border-radius:9px;cursor:pointer;color:var(--muted);font-weight:500}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:var(--shadow)}
+.sync{font-family:var(--f-mono);font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.sync[data-s="saving"]{color:var(--gold);border-color:var(--gold)}
+.sync[data-s="saved"]{color:var(--ok);border-color:color-mix(in oklab,var(--ok) 50%,var(--line))}
+.sync[data-s="error"]{color:var(--danger);border-color:var(--danger)}
+
+/* Buttons & fields */
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn.danger{color:var(--danger);border-color:color-mix(in oklab,var(--danger) 45%,var(--line))}
+.btn.danger.solid{background:var(--danger);color:var(--surface);border-color:var(--danger)}
+.btn.icon{padding:6px 9px;min-width:34px;justify-content:center}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label,.lbl{font-size:11px;font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.inp{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 10px;width:100%;min-width:0}
+.inp:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in oklab,var(--accent) 22%,transparent)}
+textarea.inp{resize:vertical;min-height:64px}
+input[type="color"]{width:38px;height:32px;padding:2px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer;flex:none}
+input[type="color"]:disabled{cursor:not-allowed;opacity:.6}
+
+.view[hidden]{display:none!important}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.toolbar .grow{flex:1 1 180px;min-width:0;max-width:340px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:6px 10px;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface-2);color:var(--fg);font-weight:600}
+.zoomv{font-family:var(--f-mono);font-size:12px;min-width:44px;text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
+.dropzone{border:1.5px dashed var(--accent);color:var(--accent);padding:6px 12px;border-radius:8px;font-weight:500}
+.dropzone.over{background:color-mix(in oklab,var(--accent) 14%,transparent)}
+
+/* Chart */
+.viewport{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:14px;height:calc(100dvh - 190px);min-height:440px;overflow:auto;cursor:grab;
+  background-image:radial-gradient(circle,color-mix(in oklab,var(--line) 70%,transparent) 1px,transparent 1.2px);background-size:22px 22px}
+.viewport.panning{cursor:grabbing;user-select:none}
+.tree{width:max-content;min-width:100%;padding:28px 28px 60px}
+.tree ul{display:flex;justify-content:center;padding:22px 0 0;margin:0;position:relative}
+.tree li{list-style:none;position:relative;padding:22px 7px 0;display:flex;flex-direction:column;align-items:center}
+.tree li::before,.tree li::after{content:"";position:absolute;top:0;right:50%;width:50%;height:22px;border-top:2px solid var(--line)}
+.tree li::after{right:auto;left:50%;border-left:2px solid var(--line)}
+.tree li:only-child::before,.tree li:only-child::after{display:none}
+.tree li:only-child{padding-top:0}
+.tree li:first-child::before,.tree li:last-child::after{border:0 none}
+.tree li:last-child::before{border-right:2px solid var(--line);border-radius:0 8px 0 0}
+.tree li:first-child::after{border-radius:8px 0 0 0}
+.tree ul ul::before{content:"";position:absolute;top:0;left:50%;height:22px;border-left:2px solid var(--line)}
+.tree>ul{padding-top:0;gap:28px}
+.tree>ul>li{padding-top:0}
+.tree>ul>li::before,.tree>ul>li::after{display:none}
+
+.node{--c:#8a90a8;position:relative;width:196px;text-align:left;cursor:pointer;
+  background:color-mix(in oklab,var(--c) 11%,var(--surface));border:1.5px solid color-mix(in oklab,var(--c) 60%,var(--surface));
+  border-radius:12px;padding:10px 12px 12px;display:grid;grid-template-columns:38px 1fr;gap:2px 10px;align-items:start;box-shadow:var(--shadow);transition:transform .12s ease,box-shadow .12s ease}
+.node:hover{transform:translateY(-1px)}
+.tree{position:relative}
+.tree li::before,.tree li::after,.tree ul::before{display:none!important}
+.tree li{z-index:1}
+#links{position:absolute;left:0;top:0;overflow:visible;pointer-events:none;z-index:0}
+#links path{fill:none;stroke:var(--line);stroke-width:2;stroke-linejoin:round}
+#links path.j{stroke:var(--accent);stroke-dasharray:5 4}
+.tree.move .node,.tree.move .jhead{cursor:grab;touch-action:none;user-select:none}
+.tree li.moving{z-index:5}
+.tree li.moving>.node,.tree li.moving>.jhead{cursor:grabbing;box-shadow:0 10px 28px rgba(10,14,30,.22)}
+.moved-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:.7}
+.node.sel{outline:3px solid var(--accent);outline-offset:2px}
+.node.vacant{border-style:dashed;background:var(--surface)}
+.node.dim{opacity:.32}
+.node.hit{box-shadow:0 0 0 4px color-mix(in oklab,var(--gold) 55%,transparent)}
+.node.dropok{outline:3px dashed var(--ok);outline-offset:3px}
+.node.dragging{opacity:.4}
+.av{grid-row:1/span 3;width:38px;height:38px;border-radius:50%;background:var(--c);color:var(--cfg,#fff);display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:14px;letter-spacing:.02em}
+.node.vacant .av{background:transparent;border:1.5px dashed var(--c);color:var(--c)}
+.nm{font-weight:600;font-size:14px;line-height:1.25;overflow-wrap:anywhere}
+.node.vacant .nm{font-style:italic;color:var(--muted);font-weight:500}
+.tt{font-size:12.5px;color:var(--fg);opacity:.85;line-height:1.3;overflow-wrap:anywhere}
+.meta{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--c);color:var(--cfg,#fff);white-space:nowrap}
+.chip.soft{background:var(--surface-2);color:var(--muted);font-weight:500}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:var(--dc,var(--muted))}
+.tog{position:absolute;left:50%;bottom:-11px;transform:translateX(-50%);z-index:2;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;font-family:var(--f-mono);font-size:10.5px;padding:1px 8px;cursor:pointer;line-height:18px}
+.tog:hover{color:var(--fg);border-color:var(--muted)}
+.compact .node{width:150px;grid-template-columns:1fr;padding:8px 10px}
+.compact .av{display:none}
+.compact .meta{margin-top:5px}
+.compact .meta .chip.soft{display:none}
+
+.empty{display:grid;place-items:center;text-align:center;padding:60px 20px;gap:10px;color:var(--muted)}
+.empty h3{font-family:var(--f-display);color:var(--fg);font-size:20px;margin:0}
+.empty .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+
+/* Joint cards: one person, several roles under the same manager */
+.jhead{--c:var(--accent);display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 5px;border-radius:999px;background:var(--surface);border:1.5px solid var(--accent);box-shadow:var(--shadow);cursor:pointer;position:relative;z-index:1;max-width:260px}
+.jhead .av{grid-row:auto;width:30px;height:30px;font-size:12px;flex:none}
+.jhead .jn{font-weight:600;line-height:1.2;overflow-wrap:anywhere}
+.jhead .jc{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);letter-spacing:.03em}
+.jhead.sel{outline:3px solid var(--accent);outline-offset:2px}
+.tree ul.jul{padding-top:14px}
+.tree ul.jul>li{padding-top:14px;padding-inline:3px}
+.tree ul.jul>li::before,.tree ul.jul>li::after{height:14px;border-color:var(--accent);border-top-style:dashed;border-left-style:dashed;border-right-style:dashed}
+.tree ul.jul::before{height:14px;border-left:2px dashed var(--accent)}
+.node.inj{grid-template-columns:1fr}
+.node.inj .av,.node.inj .nm{display:none}
+.node.inj .tt{font-weight:600;font-size:13.5px;opacity:1}
+.via{font-size:11px;color:var(--muted);font-style:italic;line-height:1.3}
+.node.same,.jhead.same{box-shadow:0 0 0 4px color-mix(in oklab,var(--accent) 45%,transparent)}
+.chip.multi{background:color-mix(in oklab,var(--accent) 16%,var(--surface));color:var(--accent);font-weight:600}
+.alsorow{display:flex;flex-wrap:wrap;gap:6px}
+
+/* Drawer */
+#panel{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;bottom:12px;width:min(370px,calc(100vw - 24px));background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 50px rgba(10,14,30,.22);z-index:40;display:flex;flex-direction:column;transform:translateX(calc(100% + 24px));transition:transform .2s ease;visibility:hidden}
+#panel.open{transform:none;visibility:visible}
+.ph{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.ph .av{grid-row:auto;flex:none}
+.ph h2{font-family:var(--f-display);font-size:18px;margin:0;line-height:1.2;overflow-wrap:anywhere}
+.ph .sub{font-size:12px;color:var(--muted)}
+.pb{padding:14px 16px;overflow:auto;display:flex;flex-direction:column;gap:12px;flex:1}
+.pf{padding:12px 16px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.colorrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.confirm{border:1px solid var(--danger);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;background:color-mix(in oklab,var(--danger) 7%,var(--surface))}
+.confirm .row{display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width:640px){
+  #panel{top:auto;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);width:auto;max-height:78dvh;transform:translateY(calc(100% + 24px))}
+  .two{grid-template-columns:1fr}
+  .viewport{height:calc(100dvh - 230px)}
+}
+
+/* Dashboard */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.tile .v{font-family:var(--f-display);font-size:30px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .s{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.meter{height:6px;border-radius:999px;background:var(--surface-2);margin-top:8px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--ok);border-radius:999px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.card h3{font-family:var(--f-display);font-size:16px;margin:0 0 2px}
+.card .hint{font-size:12px;color:var(--muted);margin:0 0 12px}
+.bars{display:flex;flex-direction:column;gap:9px}
+.bar{display:grid;grid-template-columns:minmax(80px,130px) 1fr 54px;gap:10px;align-items:center}
+.bar .k{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .track{height:16px;background:var(--surface-2);border-radius:5px;display:flex;overflow:hidden}
+.bar .f{background:var(--c)}
+.bar .vac{background:repeating-linear-gradient(-45deg,color-mix(in oklab,var(--c) 45%,transparent) 0 4px,transparent 4px 8px)}
+.bar .n{font-family:var(--f-mono);font-size:12px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:12px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:10px;border-radius:3px;display:inline-block;background:var(--muted)}
+.legend i.vac{background:repeating-linear-gradient(-45deg,var(--muted) 0 3px,transparent 3px 6px)}
+.list{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--surface-2);min-width:0}
+.li:first-child{border-top:0}
+.li .grow{flex:1;min-width:0}
+.li .t1{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li .t2{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sw{width:12px;height:12px;border-radius:4px;background:var(--c);flex:none}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* Directory */
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--surface-2);vertical-align:middle}
+th{font-family:var(--f-mono);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);cursor:pointer;user-select:none;white-space:nowrap;background:var(--surface)}
+th .ar{opacity:.6}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:color-mix(in oklab,var(--accent) 6%,transparent)}
+td.vac{color:var(--muted);font-style:italic}
+.count{color:var(--muted);font-size:12px}
+
+/* Lists & colours */
+.rrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--surface-2)}
+.rrow:first-child{border-top:0}
+.rrow>.inp{flex:1 1 140px;width:auto}
+.rrow .num{font-size:12px;color:var(--muted);min-width:58px;text-align:right}
+.rrow .acts{display:flex;gap:4px}
+.rrow .confirm{flex:1 1 100%}
+.addrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:12px}
+.addrow .inp{flex:1 1 150px;width:auto}
+.newrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px;padding:8px;border:1px dashed var(--accent);border-radius:8px;background:color-mix(in oklab,var(--accent) 5%,var(--surface))}
+.newrow .inp{flex:1 1 130px;width:auto}
+.lblrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.linkbtn{border:0;background:none;color:var(--accent);font-size:12px;cursor:pointer;padding:0;font-weight:500}
+.linkbtn:hover{text-decoration:underline}
+.cardhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.cardhead .inp{flex:1 1 160px;width:auto;font-family:var(--f-display);font-weight:700;font-size:16px}
+.check{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.card.flash{box-shadow:0 0 0 3px var(--accent)}
+.preset{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.preset button{width:22px;height:22px;border-radius:6px;border:1px solid var(--line);cursor:pointer;background:var(--c)}
+.fieldsgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:640px){.fieldsgrid{grid-template-columns:1fr}}
+
+/* Bulk add */
+.overlay{position:fixed;inset:0;background:rgba(10,13,28,.45);z-index:50;display:grid;place-items:center;padding:16px}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:16px;width:min(560px,100%);max-height:calc(100dvh - 32px);display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.modal .pb{gap:12px}
+.prev{font-size:13px;color:var(--muted);background:var(--surface-2);border-radius:8px;padding:8px 10px}
+.prev b{color:var(--fg)}
+
+#toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:10px;font-size:13px;z-index:60;max-width:calc(100vw - 32px)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="brand">
+    <span class="eyebrow">Society staff structure · organigram</span>
+    <input id="org-name" aria-label="Organisation name" value="King's Union" maxlength="80">
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="chart" aria-selected="true">Chart</button>
+    <button class="tab" role="tab" data-tab="dash" aria-selected="false">Dashboard</button>
+    <button class="tab" role="tab" data-tab="dir" aria-selected="false">Directory</button>
+    <button class="tab" role="tab" data-tab="ranks" aria-selected="false">Lists &amp; colours</button>
+  </nav>
+  <span class="sync" id="sync" data-s="loading">Connecting…</span>
+</header>
+
+<main>
+  <!-- CHART -->
+  <section class="view" id="v-chart">
+    <div class="toolbar">
+      <input class="inp grow" id="q" type="search" placeholder="Find a name, role or department">
+      <button class="btn primary edit-only" id="add-root">+ Add position</button>
+      <button class="btn edit-only" id="add-bulk">+ Add several</button>
+      <label class="check" for="cb">Colour by</label>
+      <select class="inp" id="cb" style="width:auto"></select>
+      <div class="seg" role="group" aria-label="Card size">
+        <button data-dense="0" aria-pressed="true">Detailed</button>
+        <button data-dense="1" aria-pressed="false">Compact</button>
+      </div>
+      <button class="btn" id="expand">Expand all</button>
+      <button class="btn" id="collapse">Collapse to 2 levels</button>
+      <div class="seg" role="group" aria-label="Zoom">
+        <button id="zout" aria-label="Zoom out">−</button>
+        <span class="zoomv" id="zv">100%</span>
+        <button id="zin" aria-label="Zoom in">+</button>
+      </div>
+      <button class="btn" id="fit">Fit</button>
+      <div class="seg edit-only" role="group" aria-label="What dragging a card does">
+        <button data-dm="move" aria-pressed="true" title="Drag cards to rearrange the layout">Drag to move</button>
+        <button data-dm="reassign" aria-pressed="false" title="Drop a card onto a manager to change who it reports to">Drag to re-assign</button>
+      </div>
+      <button class="btn edit-only" id="reset-layout">Reset layout</button>
+      <span class="dropzone" id="rootdrop" hidden>Drop here to make top level</span>
+    </div>
+    <div class="viewport" id="vp"><div class="tree" id="tree"></div></div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section class="view" id="v-dash" hidden></section>
+
+  <!-- DIRECTORY -->
+  <section class="view" id="v-dir" hidden>
+    <div class="toolbar">
+      <input class="inp grow" id="dq" type="search" placeholder="Search the directory">
+      <select class="inp" id="dr" style="width:auto" aria-label="Filter by rank"></select>
+      <select class="inp" id="dd" style="width:auto" aria-label="Filter by department"></select>
+      <select class="inp" id="dv" style="width:auto" aria-label="Filter by vacancy">
+        <option value="">Filled and vacant</option><option value="filled">Filled only</option><option value="vacant">Vacant only</option>
+      </select>
+      <span class="count" id="dcount"></span>
+      <button class="btn primary edit-only" id="add-root2">+ Add position</button>
+    </div>
+    <div class="tablewrap"><table id="dtable"></table></div>
+  </section>
+
+  <!-- LISTS & COLOURS -->
+  <section class="view" id="v-ranks" hidden>
+    <div class="grid2">
+      <div class="card" id="card-rank">
+        <h3>Ranks</h3>
+        <p class="hint">Top of the list is the most senior. Use + to add several positions at a rank.</p>
+        <div id="ranklist"></div>
+        <div class="addrow edit-only"><input class="inp" id="nr-name" placeholder="New rank, e.g. Coordinator" maxlength="60"><input type="color" id="nr-color" value="#2f7fd1" aria-label="New rank colour"><button class="btn" id="add-rank">Add rank</button></div>
+      </div>
+      <div class="card" id="card-dept">
+        <h3>Departments</h3>
+        <p class="hint">Renaming a department updates everyone in it.</p>
+        <div id="deptlist"></div>
+        <div class="addrow edit-only"><input class="inp" id="nd-name" placeholder="New department, e.g. Sport" maxlength="60"><input type="color" id="nd-color" value="#0e7c86" aria-label="New department colour"><button class="btn" id="add-dept">Add department</button></div>
+      </div>
+      <div id="fieldcards" style="display:contents"></div>
+      <div class="card edit-only">
+        <h3>New dropdown list</h3>
+        <p class="hint">Make your own list, such as Year of study, Campus or Appointment type. It appears as a dropdown on every position, and you can colour the chart by it.</p>
+        <div class="addrow"><input class="inp" id="nfl-name" placeholder="List name" maxlength="60"><button class="btn primary" id="add-field">Create list</button></div>
+      </div>
+      <div class="card">
+        <h3>Your data</h3>
+        <p class="hint">Back up the structure or bring one in from a previous export.</p>
+        <div class="toolbar" style="margin:0">
+          <button class="btn" id="exp-json">Export JSON</button>
+          <button class="btn" id="exp-csv">Export CSV</button>
+          <label class="btn edit-only" for="imp">Import JSON</label>
+          <input type="file" id="imp" accept="application/json,.json" hidden>
+        </div>
+        <div id="impconfirm"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<aside id="panel" aria-label="Edit position"></aside>
+<div class="overlay" id="bulk" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="bulk-h" id="bulk-m"></div></div>
+<div id="toast" hidden></div>
+
+<script>
+(() => {
+"use strict";
+// ---------- Templates (used only when you choose to load them) ----------
+const PALETTE = ["#283a96","#b0306a","#c27a12","#1d7a4c","#6a3fb0","#0e7c86","#c0412b","#56607e","#8a6d1f","#2f7fd1","#d0548a","#4d8b2f"];
+const TEMPLATE_RANKS = [
+  {id:"r-exec",name:"Executive",color:"#283a96",level:0},
+  {id:"r-officer",name:"Senior Officer",color:"#6a3fb0",level:1},
+  {id:"r-committee",name:"Committee",color:"#0e7c86",level:2},
+  {id:"r-sub",name:"Sub-committee",color:"#c27a12",level:3},
+  {id:"r-vol",name:"Volunteer",color:"#56607e",level:4}
+];
+const TEMPLATE_PEOPLE = [
+  ["p-pres","","President","r-exec","Executive",""],
+  ["p-vp","","Vice-President","r-exec","Executive","p-pres"],
+  ["p-sec","","General Secretary","r-officer","Operations","p-pres"],
+  ["p-tre","","Treasurer","r-officer","Finance","p-pres"],
+  ["p-evt","","Head of Events","r-committee","Events","p-vp"],
+  ["p-soc","","Social Secretary","r-sub","Events","p-evt"],
+  ["p-mkt","","Head of Marketing","r-committee","Marketing","p-vp"],
+  ["p-wel","","Welfare Officer","r-committee","Welfare","p-vp"],
+  ["p-ass","","Assistant Treasurer","r-sub","Finance","p-tre"]
+].map((r,i)=>({id:r[0],name:r[1],title:r[2],rank:r[3],dept:r[4],parent:r[5],order:i,email:"",notes:"",color:"",extra:{}}));
+
+// ---------- State ----------
+const state = {people:{}, ranks:{}, fields:{}, settings:{name:"King's Union", deptColors:{}, deptList:[]}};
+const loaded = {people:false, ranks:false, fields:false, settings:false};
+let mode = "loading";          // loading | db | local
+let canWrite = true;
+let db = null, downloads = null;
+const LS = (k,v) => { try { if (v === undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k, JSON.stringify(v)); } catch { return null; } };
+const prefs = Object.assign({tab:"chart", colorBy:"rank", dense:false, dragMode:"move"}, LS("ku-prefs") || {});
+const ui = { selected:null, collapsed:new Set(LS("ku-collapsed")||[]), zoom:1, q:"", dragId:null,
+  sort:{key:"rank",dir:1}, confirmDel:false, confirm:null, pendingImport:null, adding:null, bulk:null };
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = p => p + "-" + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
+const plural = (n, w) => `${n} ${w}${n===1?"":"s"}`;
+function savePrefs(){ LS("ku-prefs", prefs); }
+
+// ---------- Colour helpers ----------
+function contrastOn(hex){
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex||""); if (!m) return "#ffffff";
+  const n = parseInt(m[1],16), ch = [n>>16,(n>>8)&255,n&255].map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});
+  const L = .2126*ch[0]+.7152*ch[1]+.0722*ch[2];
+  return L > .42 ? "#14182a" : "#ffffff";
+}
+const NEUTRAL = "#8a90a8";
+const validHex = c => /^#[0-9a-f]{6}$/i.test(c||"");
+function hash(s){ let h=0; for (const c of String(s)) h=(h*31+c.charCodeAt(0))|0; return Math.abs(h); }
+function deptColor(d){ if (!d) return NEUTRAL; return state.settings.deptColors?.[d] || PALETTE[hash(d)%PALETTE.length]; }
+function rankOf(p){ return state.ranks[p.rank]; }
+function rankColor(p){ return rankOf(p)?.color || NEUTRAL; }
+const fieldsSorted = () => Object.values(state.fields).sort((a,b)=>(a.order??0)-(b.order??0) || (a.name||"").localeCompare(b.name||""));
+const optOf = (p, f) => (f?.options||[]).find(o=>o.id===p.extra?.[f.id]);
+function colorByLabel(){
+  if (prefs.colorBy==="dept") return "department";
+  if (prefs.colorBy.startsWith("f:")) return (state.fields[prefs.colorBy.slice(2)]?.name || "list").toLowerCase();
+  return "rank";
+}
+function autoColor(p){
+  if (prefs.colorBy==="dept") return deptColor(p.dept);
+  if (prefs.colorBy.startsWith("f:")) return optOf(p, state.fields[prefs.colorBy.slice(2)])?.color || NEUTRAL;
+  return rankColor(p);
+}
+function colorFor(p){ return p.color || autoColor(p); }
+function rankLevel(p){ const r = rankOf(p); return r ? r.level : 999; }
+function initials(p){
+  const src = (p.name||"").trim(); if (!src) return "?";
+  const w = src.split(/\s+/); return ((w[0][0]||"") + (w.length>1 ? w[w.length-1][0] : "")).toUpperCase();
+}
+const ranksSorted = () => Object.values(state.ranks).sort((a,b)=>a.level-b.level || a.name.localeCompare(b.name));
+const people = () => Object.values(state.people);
+const isVacant = p => !(p.name||"").trim();
+function depts(){
+  const list = (state.settings.deptList||[]).filter(Boolean);
+  const set = new Set(list);
+  const extra = [...new Set(people().map(p=>(p.dept||"").trim()).filter(d=>d && !set.has(d)))].sort((a,b)=>a.localeCompare(b));
+  return [...list, ...extra];
+}
+
+// ---------- Tree ----------
+function byOrder(a,b){ return (a.order??0)-(b.order??0) || rankLevel(a)-rankLevel(b) || (a.title||"").localeCompare(b.title||""); }
+function structure(){
+  const kids = {}; const all = people();
+  for (const p of all){ const par = p.parent && state.people[p.parent] && p.parent!==p.id ? p.parent : ""; (kids[par] ||= []).push(p); }
+  for (const k in kids) kids[k].sort(byOrder);
+  const seen = new Set(); const walk = id => { for (const c of kids[id]||[]) if (!seen.has(c.id)) { seen.add(c.id); walk(c.id); } };
+  walk("");
+  for (const o of all.filter(p=>!seen.has(p.id)).sort(byOrder)){ if (!seen.has(o.id)){ (kids[""] ||= []).push(o); seen.add(o.id); walk(o.id); } }
+  return kids;
+}
+function descendants(id, kids = structure()){
+  const out = new Set(); const go = x => { for (const c of kids[x]||[]) if (!out.has(c.id)) { out.add(c.id); go(c.id); } }; go(id); return out;
+}
+function depthMap(kids){ const d = {}; const go=(id,l)=>{ for (const c of kids[id]||[]){ d[c.id]=l; go(c.id,l+1);} }; go("",1); return d; }
+
+// ---------- Persistence ----------
+const timers = new Map(), chains = new Map(), dirty = new Set(), deleting = new Set();
+let lastError = null;
+const K = (c,id) => c + "/" + id;
+function save(c, id, delay = 380){
+  if (!canWrite) return;
+  if (mode === "local"){ persistLocal(); return; }
+  if (mode !== "db") return;
+  const k = K(c,id); dirty.add(k);
+  clearTimeout(timers.get(k));
+  timers.set(k, setTimeout(() => flush(c,id), delay));
+  updateSync();
+}
+function flush(c,id){
+  const k = K(c,id); timers.delete(k);
+  const prev = chains.get(k) || Promise.resolve();
+  const p = prev.then(async () => {
+    const rec = c==="settings" ? state.settings : state[c][id];
+    if (!rec) return;
+    const body = JSON.parse(JSON.stringify(rec)); delete body.id;
+    await withRetry(() => db.doc(k).set(body));
+  }).catch(onWriteError).finally(() => {
+    if (chains.get(k) === p){ chains.delete(k); if (!timers.has(k)) dirty.delete(k); }
+    updateSync();
+  });
+  chains.set(k, p);
+}
+function removeDoc(c,id){
+  delete state[c][id];
+  if (!canWrite) return;
+  if (mode === "local"){ persistLocal(); return; }
+  const k = K(c,id); clearTimeout(timers.get(k)); timers.delete(k);
+  deleting.add(k); dirty.add(k);
+  const prev = chains.get(k) || Promise.resolve();
+  const p = prev.then(() => withRetry(() => db.doc(k).delete())).catch(onWriteError).finally(() => {
+    deleting.delete(k); if (chains.get(k) === p){ chains.delete(k); dirty.delete(k); } updateSync();
+  });
+  chains.set(k, p); updateSync();
+}
+async function withRetry(fn){
+  try { return await fn(); }
+  catch (e){
+    if (e && e.code === "unavailable"){ await new Promise(r=>setTimeout(r, 500 + Math.random()*700)); return fn(); }
+    throw e;
+  }
+}
+function onWriteError(e){
+  lastError = e;
+  if (e && e.code === "invalid_argument"){ canWrite = false; toast("You can view this organigram but not change it."); renderAll(); }
+  else if (e && e.code === "quota_exceeded"){ toast("Storage is full. Delete some positions, then try again."); }
+  else toast("A change didn't save. Check your connection and edit again.");
+}
+let localTimer = null;
+function persistLocal(){ clearTimeout(localTimer); localTimer = setTimeout(()=>LS("ku-local-data", state), 250); updateSync(); }
+function updateSync(){
+  const el = $("#sync");
+  if (mode === "loading"){ el.dataset.s="loading"; el.textContent="Connecting…"; return; }
+  if (mode === "local"){ el.dataset.s="local"; el.textContent="Saved in this browser only"; return; }
+  if (!canWrite){ el.dataset.s="view"; el.textContent="View only"; return; }
+  if (dirty.size){ el.dataset.s="saving"; el.textContent="Saving…"; return; }
+  el.dataset.s = lastError ? "error" : "saved"; el.textContent = lastError ? "Last change failed" : "All changes saved";
+  lastError = null;
+}
+let toastT;
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, 3200); }
+
+// ---------- Mutations: people ----------
+function nextOrder(parent){ const sib = people().filter(p=>(p.parent||"")===(parent||"")); return sib.length ? Math.max(...sib.map(s=>s.order??0))+1 : 0; }
+function makePerson(parent = "", fields = {}){
+  const parentP = state.people[parent];
+  const lowerRank = parentP ? ranksSorted().find(r => r.level > rankLevel(parentP)) : null;
+  const p = {id:uid("p"), name:"", title:"New position", rank: (lowerRank||ranksSorted()[0]||{}).id || "", dept: parentP?.dept || "",
+    parent: parent || "", order: nextOrder(parent), email:"", notes:"", color:"", extra:{}, ...fields};
+  state.people[p.id] = p; save("people", p.id, 0);
+  if (parent) ui.collapsed.delete(parent);
+  return p;
+}
+function addPerson(parent = "", fields = {}){
+  const p = makePerson(parent, fields);
+  select(p.id); renderAll();
+  setTimeout(()=>{ const f=$("#f-title"); if (f){ f.focus(); f.select(); } }, 220);
+  return p;
+}
+function setField(id, field, value){
+  const p = state.people[id]; if (!p || p[field] === value) return;
+  p[field] = value; save("people", id); renderViews();
+}
+function setExtra(id, fid, value){
+  const p = state.people[id]; if (!p) return;
+  const extra = {...(p.extra||{})}; if (value) extra[fid] = value; else delete extra[fid];
+  p.extra = extra; save("people", id); renderViews();
+}
+function reparent(id, newParent){
+  const p = state.people[id]; if (!p) return false;
+  newParent = newParent || "";
+  if (newParent === id || (newParent && descendants(id).has(newParent))) { toast("A position can't report to someone in its own team."); return false; }
+  if ((p.parent||"") === newParent) return false;
+  p.parent = newParent; p.order = nextOrder(newParent); p.dx = 0; p.dy = 0;
+  if (newParent) ui.collapsed.delete(newParent);
+  save("people", id, 0); renderAll(); return true;
+}
+function deletePerson(id){
+  const p = state.people[id]; if (!p) return;
+  const kids = people().filter(c=>c.parent===id);
+  for (const c of kids){ c.parent = p.parent || ""; save("people", c.id, 0); }
+  removeDoc("people", id);
+  ui.selected = null; ui.confirmDel = false; renderAll();
+  toast(`Deleted ${p.title || "position"}${kids.length ? ` · ${kids.length} moved up` : ""}`);
+}
+function moveSibling(id, dir){
+  const p = state.people[id]; const kids = structure()[p.parent && state.people[p.parent] ? p.parent : ""] || [];
+  const i = kids.findIndex(k=>k.id===id), j = i+dir; if (j<0 || j>=kids.length) return;
+  [kids[i], kids[j]] = [kids[j], kids[i]];
+  kids.forEach((k,n)=>{ if (k.order !== n){ k.order = n; save("people", k.id, 0); } });
+  renderAll();
+}
+
+// ---------- Mutations: lists ----------
+function createOption(kind, fid, name, color){
+  name = name.trim(); if (!name) return null;
+  if (kind === "rank"){
+    const dup = ranksSorted().find(r=>r.name.toLowerCase()===name.toLowerCase()); if (dup) return dup.id;
+    const lv = Math.max(-1, ...ranksSorted().map(r=>r.level)) + 1;
+    const r = {id:uid("r"), name, color: validHex(color) ? color : PALETTE[lv%PALETTE.length], level:lv};
+    state.ranks[r.id] = r; save("ranks", r.id, 0); return r.id;
+  }
+  if (kind === "dept"){
+    const dup = depts().find(d=>d.toLowerCase()===name.toLowerCase());
+    const list = depts(); if (!dup) list.push(name);
+    state.settings.deptList = list;
+    if (!dup && validHex(color)) state.settings.deptColors = {...state.settings.deptColors, [name]: color};
+    save("settings","org",0); return dup || name;
+  }
+  const f = state.fields[fid]; if (!f) return null;
+  const dup = (f.options||[]).find(o=>o.label.toLowerCase()===name.toLowerCase()); if (dup) return dup.id;
+  const o = {id:uid("o"), label:name, color: validHex(color) ? color : PALETTE[(f.options||[]).length%PALETTE.length]};
+  f.options = [...(f.options||[]), o]; save("fields", fid, 0); return o.id;
+}
+function createField(name){
+  name = name.trim(); if (!name) return null;
+  const order = Math.max(-1, ...fieldsSorted().map(f=>f.order??0)) + 1;
+  const f = {id:uid("f"), name, order, showOnCard:true, options:[]};
+  state.fields[f.id] = f; save("fields", f.id, 0); return f;
+}
+function deleteField(fid){
+  for (const p of people()) if (p.extra && fid in p.extra){ const e = {...p.extra}; delete e[fid]; p.extra = e; save("people", p.id, 0); }
+  removeDoc("fields", fid);
+  if (prefs.colorBy === "f:"+fid){ prefs.colorBy = "rank"; savePrefs(); }
+}
+function deleteOption(fid, oid){
+  const f = state.fields[fid]; if (!f) return;
+  for (const p of people()) if (p.extra?.[fid] === oid){ const e = {...p.extra}; delete e[fid]; p.extra = e; save("people", p.id, 0); }
+  f.options = f.options.filter(o=>o.id!==oid); save("fields", fid, 0);
+}
+function deleteDept(name){
+  for (const p of people()) if ((p.dept||"").trim()===name){ p.dept = ""; save("people", p.id, 0); }
+  state.settings.deptList = depts().filter(d=>d!==name);
+  const dc = {...state.settings.deptColors}; delete dc[name]; state.settings.deptColors = dc;
+  save("settings","org",0);
+}
+function deleteRank(id){
+  for (const p of people()) if (p.rank===id){ p.rank=""; save("people", p.id, 0); }
+  removeDoc("ranks", id);
+}
+function swap(arr, i, j){ if (j<0 || j>=arr.length) return false; [arr[i], arr[j]] = [arr[j], arr[i]]; return true; }
+
+// ---------- Dropdown builder (shared by editor panel and bulk add) ----------
+const NEW = "__new";
+const NOUN = {rank:"rank", dept:"department", field:"option"};
+const EMPTY = {rank:"No rank", dept:"No department", field:"Not set"};
+function pickOptions(kind, fid){
+  if (kind==="rank") return ranksSorted().map(r=>[r.id, r.name]);
+  if (kind==="dept") return depts().map(d=>[d,d]);
+  return (state.fields[fid]?.options||[]).map(o=>[o.id,o.label]);
+}
+function pickOptionsHTML(kind, fid, current){
+  const opts = pickOptions(kind, fid);
+  let html = `<option value="">${EMPTY[kind]}</option>` + opts.map(o=>`<option value="${esc(o[0])}" ${o[0]===current?"selected":""}>${esc(o[1])}</option>`).join("");
+  if (current && !opts.some(o=>o[0]===current) && kind==="dept") html += `<option value="${esc(current)}" selected>${esc(current)}</option>`;
+  if (canWrite) html += `<option value="${NEW}">＋ New ${NOUN[kind]}…</option>`;
+  return html;
+}
+function pickHTML(scope, kind, fid, label, current){
+  const sid = `${scope}-${kind}${fid ? "-"+fid : ""}`;
+  const a = ui.adding;
+  const adding = a && a.scope===scope && a.kind===kind && (a.fid||"")===(fid||"");
+  const n = pickOptions(kind, fid).length;
+  return `<div class="field"><div class="lblrow"><label for="${sid}">${esc(label)}</label>${canWrite ? `<button class="linkbtn" type="button" data-editlist="${kind}${fid ? ":"+fid : ""}">Edit list</button>` : ""}</div>
+    <select class="inp" id="${sid}" data-pick="${kind}" data-fid="${esc(fid||"")}" ${canWrite?"":"disabled"}>${pickOptionsHTML(kind, fid, current)}</select>
+    ${adding ? `<div class="newrow"><input class="inp" id="nf-name-${scope}" placeholder="New ${NOUN[kind]} name" maxlength="60"><input type="color" id="nf-color-${scope}" value="${PALETTE[(n+3)%PALETTE.length]}" aria-label="Colour for the new ${NOUN[kind]}"><button class="btn primary" type="button" data-nf-add="${scope}">Add</button><button class="btn" type="button" data-nf-cancel="${scope}">Cancel</button></div>` : ""}</div>`;
+}
+function currentPick(scope, kind, fid){
+  if (scope==="panel"){ const p = state.people[ui.selected]; if (!p) return ""; return kind==="rank" ? (state.ranks[p.rank]?p.rank:"") : kind==="dept" ? (p.dept||"") : (p.extra?.[fid]||""); }
+  const b = ui.bulk; if (!b) return ""; return kind==="field" ? (b.extra[fid]||"") : (b[kind]||"");
+}
+function applyPick(scope, kind, fid, val){
+  if (scope==="panel"){
+    const id = ui.selected; if (!id) return;
+    if (kind==="rank") setField(id, "rank", val); else if (kind==="dept") setField(id, "dept", val); else setExtra(id, fid, val);
+    renderPanel(false);
+  } else if (ui.bulk){
+    if (kind==="field") ui.bulk.extra[fid] = val; else ui.bulk[kind] = val;
+    updateBulkPreview();
+  }
+}
+function rerenderScope(scope){ scope==="panel" ? renderPanel(true) : renderBulk(); }
+function onPickChange(sel, scope){
+  const kind = sel.dataset.pick, fid = sel.dataset.fid || "";
+  if (sel.value === NEW){
+    sel.value = currentPick(scope, kind, fid);
+    ui.adding = {scope, kind, fid}; rerenderScope(scope);
+    setTimeout(()=>$("#nf-name-"+scope)?.focus(), 30); return;
+  }
+  applyPick(scope, kind, fid, sel.value);
+}
+function confirmNew(scope){
+  const a = ui.adding; if (!a) return;
+  const name = ($("#nf-name-"+scope)?.value || "").trim();
+  if (!name){ toast(`Type a name for the new ${NOUN[a.kind]}.`); $("#nf-name-"+scope)?.focus(); return; }
+  const val = createOption(a.kind, a.fid, name, $("#nf-color-"+scope)?.value);
+  ui.adding = null;
+  if (val) applyPick(scope, a.kind, a.fid, val);
+  rerenderScope(scope); renderViews(); toast(`Added ${name}`);
+}
+function goEditList(spec){
+  const [kind, fid] = spec.split(":");
+  ui.bulk = null; renderBulk();
+  setTab("ranks");
+  const card = $(kind==="rank" ? "#card-rank" : kind==="dept" ? "#card-dept" : "#card-f-"+fid);
+  if (card){ card.scrollIntoView({block:"start", behavior:"smooth"}); card.classList.add("flash"); setTimeout(()=>card.classList.remove("flash"), 1400); }
+}
+
+// ---------- Rendering: chart ----------
+function personKey(p){ return (p.name||"").trim().toLowerCase().replace(/\s+/g," "); }
+function rolesByPerson(){ const m = {}; for (const p of people()){ const k = personKey(p); if (k) (m[k] ||= []).push(p); } return m; }
+// Roles that sit under another role held by the same person are pulled up into that person's joint card.
+let pulled = new Set();
+function listHTML(ch, kids, rm){
+  const used = new Set(), out = [];
+  for (const p of ch){
+    if (used.has(p.id) || pulled.has(p.id)) continue;
+    const k = personKey(p);
+    const grp = k ? ch.filter(c=>personKey(c)===k && !pulled.has(c.id)) : [p];
+    if (k) for (let i = 0; i < grp.length; i++){
+      for (const c of kids[grp[i].id] || []) if (personKey(c)===k && !grp.includes(c)){ grp.push(c); pulled.add(c.id); }
+    }
+    grp.forEach(g=>used.add(g.id));
+    out.push(grp.length > 1 ? jointHTML(grp, kids, rm) : nodeHTML(p, kids, rm));
+  }
+  return out.join("");
+}
+function jointHTML(grp, kids, rm){
+  const p0 = grp[0], k = personKey(p0), total = (rm[k]||grp).length;
+  const sel = grp.some(g=>g.id===ui.selected);
+  const gx = +p0.gdx||0, gy = +p0.gdy||0;
+  return `<li data-oid="j:${esc(p0.id)}" data-dx="${gx}" data-dy="${gy}" ${gx||gy?`style="transform:translate(${gx}px,${gy}px)"`:""}><div class="jhead ${sel?"sel":""}" data-select="${esc(p0.id)}" data-person="${esc(k)}" tabindex="0" role="button" aria-label="${esc(p0.name)}, ${grp.length} roles">
+    <div class="av" style="--c:var(--accent);--cfg:var(--accent-fg)">${esc(initials(p0))}</div>
+    <div><div class="jn">${esc(p0.name)}</div><div class="jc">${grp.length} joint roles${total>grp.length?` · ${total} in total`:""}</div></div></div>
+    <ul class="jul">${grp.map(g=>nodeHTML(g, kids, rm, true)).join("")}</ul></li>`;
+}
+function nodeHTML(p, kids, rm = rolesByPerson(), inJoint = false){
+  const c = colorFor(p), cfg = contrastOn(c), r = rankOf(p);
+  const q = ui.q.toLowerCase();
+  const fl = fieldsSorted();
+  const hit = q && [p.name,p.title,p.dept,r?.name,p.email, ...fl.map(f=>optOf(p,f)?.label)].some(v=>(v||"").toLowerCase().includes(q));
+  const ch = (kids[p.id] || []).filter(c=>!pulled.has(c.id));
+  const collapsed = !q && ui.collapsed.has(p.id) && ch.length;
+  const via = inJoint && pulled.has(p.id) && state.people[p.parent] ? `<div class="via">within ${esc(state.people[p.parent].title || "their other role")}</div>` : "";
+  const cls = ["node", isVacant(p)?"vacant":"", inJoint?"inj":"", ui.selected===p.id?"sel":"", q ? (hit?"hit":"dim") : ""].join(" ");
+  const pk = personKey(p), nroles = pk ? (rm[pk]||[]).length : 0;
+  const multi = !inJoint && nroles > 1 ? `<span class="chip multi" title="${esc((rm[pk]||[]).filter(o=>o.id!==p.id).map(o=>o.title).join(", "))}">${nroles} roles</span>` : "";
+  const total = ch.length ? descendants(p.id, kids).size : 0;
+  const fchips = fl.filter(f=>f.showOnCard).map(f=>{ const o = optOf(p,f); return o ? `<span class="chip" style="--c:${o.color};--cfg:${contrastOn(o.color)}" title="${esc(f.name)}">${esc(o.label)}</span>` : ""; }).join("");
+  const ox = +p.dx||0, oy = +p.dy||0;
+  const drag = canWrite && prefs.dragMode==="reassign" ? 'draggable="true"' : "";
+  return `<li data-oid="${esc(p.id)}" data-dx="${ox}" data-dy="${oy}" ${ox||oy?`style="transform:translate(${ox}px,${oy}px)"`:""}><div class="${cls}" data-id="${esc(p.id)}" data-person="${esc(pk)}" tabindex="0" role="button" aria-label="${esc((p.name||"Vacant")+", "+(p.title||""))}" ${drag} style="--c:${c};--cfg:${cfg}">
+    <div class="av">${esc(isVacant(p) ? "?" : initials(p))}</div>
+    <div class="nm">${esc(isVacant(p) ? "Vacant" : p.name)}</div>
+    <div class="tt">${esc(p.title || "Untitled role")}</div>${via}
+    <div class="meta">${r ? `<span class="chip" style="--c:${r.color};--cfg:${contrastOn(r.color)}">${esc(r.name)}</span>` : `<span class="chip soft">No rank</span>`}${p.dept ? `<span class="chip soft" style="--dc:${deptColor(p.dept)}"><span class="dot"></span>${esc(p.dept)}</span>` : ""}${fchips}${multi}</div>
+    ${ch.length ? `<button class="tog" data-tog="${esc(p.id)}" aria-label="${collapsed?"Show":"Hide"} team">${collapsed ? "+"+total : "−"+ch.length}</button>` : ""}
+  </div>${ch.length && !collapsed ? `<ul>${listHTML(ch,kids,rm)}</ul>` : ""}</li>`;
+}
+function renderChart(){
+  const tree = $("#tree");
+  tree.classList.toggle("compact", !!prefs.dense);
+  if (mode === "loading" || (mode === "db" && !loaded.people)){ tree.innerHTML = `<div class="empty"><h3>Loading the structure…</h3><p>Fetching the latest positions.</p></div>`; return; }
+  const kids = structure(); const roots = kids[""] || [];
+  if (!roots.length){
+    tree.innerHTML = `<div class="empty"><h3>No positions yet</h3><p>Start with the top role, usually the President, then add their direct reports.</p>
+      ${canWrite ? `<div class="row"><button class="btn primary" data-act="first">+ Add the first position</button><button class="btn" data-act="template">Load example committee</button></div>` : ""}</div>`;
+    return;
+  }
+  pulled = new Set();
+  tree.innerHTML = `<ul>${listHTML(roots, kids, rolesByPerson())}</ul>`;
+  tree.style.zoom = ui.zoom;
+  tree.classList.toggle("move", canWrite && prefs.dragMode==="move");
+  drawLinks();
+}
+// Connector lines are drawn from the cards' real positions, so they follow any card you move.
+function drawLinks(){
+  const old = tree.querySelector("#links"); if (old) old.remove();
+  const lis = tree.querySelectorAll("li"); if (!lis.length || tree.offsetParent === null) return;
+  const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.id = "links"; svg.setAttribute("width", tree.scrollWidth); svg.setAttribute("height", tree.scrollHeight);
+  tree.prepend(svg);
+  const ctm = svg.getScreenCTM(); if (!ctm) return;
+  const inv = ctm.inverse();
+  const pt = (x, y) => { const q = svg.createSVGPoint(); q.x = x; q.y = y; return q.matrixTransform(inv); };
+  const box = el => { const r = el.getBoundingClientRect(), a = pt(r.left, r.top), b = pt(r.right, r.bottom); return {x:a.x, y:a.y, w:b.x-a.x, h:b.y-a.y}; };
+  const paths = [];
+  for (const li of lis){
+    const own = li.firstElementChild; const pli = li.parentElement.closest("li");
+    if (!own || !pli || !tree.contains(pli)) continue;
+    const a = box(pli.firstElementChild), b = box(own);
+    const x1 = a.x + a.w/2, y1 = a.y + a.h, x2 = b.x + b.w/2, y2 = b.y;
+    const j = li.parentElement.classList.contains("jul");
+    const my = j ? y1 + (y2 - y1)/2 : (y2 - y1 > 44 ? y2 - 22 : y1 + Math.max(10, (y2 - y1)/2));
+    paths.push(`<path class="${j?"j":""}" d="M${x1.toFixed(1)} ${y1.toFixed(1)} V${my.toFixed(1)} H${x2.toFixed(1)} V${y2.toFixed(1)}"/>`);
+  }
+  svg.innerHTML = paths.join("");
+}
+function renderColorBy(){
+  const sel = $("#cb"); if (document.activeElement === sel) return;
+  const opts = [["rank","Rank"],["dept","Department"], ...fieldsSorted().map(f=>["f:"+f.id, f.name])];
+  if (!opts.some(o=>o[0]===prefs.colorBy)) prefs.colorBy = "rank";
+  sel.innerHTML = opts.map(o=>`<option value="${esc(o[0])}">${esc(o[1])}</option>`).join("");
+  sel.value = prefs.colorBy;
+}
+
+// ---------- Rendering: dashboard ----------
+function barsHTML(rows){
+  const max = Math.max(1, ...rows.map(r=>r.total));
+  return `<div class="bars">${rows.map(r=>`<div class="bar" style="--c:${r.color}">
+    <span class="k" title="${esc(r.label)}">${esc(r.label)}</span>
+    <span class="track" role="img" aria-label="${esc(r.label)}: ${r.filled} filled, ${r.total-r.filled} vacant">
+      <i class="f" style="width:${r.filled/max*100}%"></i><i class="vac" style="width:${(r.total-r.filled)/max*100}%"></i></span>
+    <span class="n">${r.filled}/${r.total}</span></div>`).join("") || `<p class="hint">Nothing to show yet.</p>`}</div>`;
+}
+const rowFor = (label, color, members) => ({label, color, total:members.length, filled:members.filter(p=>!isVacant(p)).length});
+function renderDash(){
+  const el = $("#v-dash"); const all = people();
+  if (!all.length){ el.innerHTML = `<div class="card empty"><h3>The dashboard fills in as you add positions</h3><p>Head to the Chart tab to add your first role.</p></div>`; return; }
+  const kids = structure(); const depth = depthMap(kids);
+  const filled = all.filter(p=>!isVacant(p)).length, vacant = all.length - filled;
+  const levels = Math.max(...Object.values(depth));
+  const dl = depts();
+  const spans = all.map(p=>({p, n:(kids[p.id]||[]).length, t: descendants(p.id,kids).size})).filter(s=>s.n).sort((a,b)=>b.n-a.n || b.t-a.t);
+  const rankRows = ranksSorted().map(r=>rowFor(r.name, r.color, all.filter(p=>p.rank===r.id)));
+  const unr = all.filter(p=>!state.ranks[p.rank]); if (unr.length) rankRows.push(rowFor("No rank", NEUTRAL, unr));
+  const deptRows = dl.map(d=>rowFor(d, deptColor(d), all.filter(p=>(p.dept||"").trim()===d))).filter(r=>r.total).sort((a,b)=>b.total-a.total);
+  const nod = all.filter(p=>!(p.dept||"").trim()); if (nod.length) deptRows.push(rowFor("No department", NEUTRAL, nod));
+  const fieldCards = fieldsSorted().map(f=>{
+    const rows = (f.options||[]).map(o=>rowFor(o.label, o.color, all.filter(p=>p.extra?.[f.id]===o.id)));
+    const none = all.filter(p=>!optOf(p,f)); if (none.length) rows.push(rowFor("Not set", NEUTRAL, none));
+    return `<div class="card"><h3>Positions by ${esc(f.name.toLowerCase())}</h3><p class="hint">From your custom list.</p>${barsHTML(rows)}</div>`;
+  }).join("");
+  const vacList = all.filter(isVacant).sort((a,b)=>rankLevel(a)-rankLevel(b) || (a.title||"").localeCompare(b.title||""));
+  const pct = Math.round(filled/all.length*100);
+  el.innerHTML = `
+  <div class="tiles">
+    <div class="tile"><div class="lbl">Positions</div><div class="v">${all.length}</div><div class="s">across ${plural(levels,"level")}</div></div>
+    <div class="tile"><div class="lbl">People</div><div class="v">${Object.keys(rolesByPerson()).length}</div><div class="s">${(()=>{ const m = Object.values(rolesByPerson()).filter(r=>r.length>1).length; return m ? (m===1?"1 person":m+" people")+" with more than one role" : "one role each"; })()}</div></div>
+    <div class="tile"><div class="lbl">Filled</div><div class="v">${filled}</div><div class="meter"><i style="width:${pct}%"></i></div><div class="s">${pct}% of roles have a name</div></div>
+    <div class="tile"><div class="lbl">Vacant</div><div class="v" style="color:${vacant?"var(--gold)":"var(--ok)"}">${vacant}</div><div class="s">${vacant ? "roles still to recruit" : "every role is filled"}</div></div>
+    <div class="tile"><div class="lbl">Departments</div><div class="v">${dl.length}</div><div class="s">${plural(ranksSorted().length,"rank")} defined</div></div>
+    <div class="tile"><div class="lbl">Largest team</div><div class="v">${spans[0]?.n ?? 0}</div><div class="s">${spans[0] ? "report to " + esc(spans[0].p.title || spans[0].p.name) : "no reporting lines yet"}</div></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>Positions by rank</h3><p class="hint">Solid is filled, striped is vacant.</p>${barsHTML(rankRows)}</div>
+    <div class="card"><h3>Positions by department</h3><p class="hint">Sorted by size.</p>${barsHTML(deptRows)}</div>
+    ${fieldCards}
+    <div class="card"><h3>Vacancies</h3><p class="hint">${vacList.length ? "Open a role to assign someone." : "No open roles right now."}</p>
+      <div class="list">${vacList.slice(0,12).map(p=>`<div class="li" style="--c:${colorFor(p)}"><span class="sw"></span><div class="grow"><div class="t1">${esc(p.title||"Untitled role")}</div><div class="t2">${esc([rankOf(p)?.name, p.dept, p.parent && state.people[p.parent] ? "reports to " + (state.people[p.parent].title||"") : ""].filter(Boolean).join(" · "))}</div></div><button class="btn" data-open="${esc(p.id)}">${canWrite?"Assign":"View"}</button></div>`).join("")}
+      ${vacList.length>12?`<p class="hint" style="margin:8px 0 0">and ${vacList.length-12} more in the Directory.</p>`:""}</div></div>
+    <div class="card"><h3>Span of control</h3><p class="hint">Direct reports, with whole team size beside it.</p>
+      <div class="list">${spans.slice(0,8).map(s=>`<div class="li" style="--c:${colorFor(s.p)}"><span class="sw"></span><div class="grow"><div class="t1">${esc(s.p.title||"Untitled role")}</div><div class="t2">${esc(isVacant(s.p)?"Vacant":s.p.name)}</div></div><span class="num">${s.n} direct · ${s.t} total</span></div>`).join("") || `<p class="hint">Add reporting lines to see team sizes.</p>`}</div></div>
+  </div>`;
+}
+
+// ---------- Rendering: directory ----------
+function renderDir(){
+  const rs = ranksSorted(), dl = depts(), fl = fieldsSorted();
+  const fill = (sel, first, opts) => { const v = sel.value; sel.innerHTML = `<option value="">${first}</option>` + opts.map(o=>`<option value="${esc(o[0])}">${esc(o[1])}</option>`).join(""); sel.value = opts.some(o=>o[0]===v) ? v : ""; };
+  fill($("#dr"), "All ranks", rs.map(r=>[r.id,r.name])); fill($("#dd"), "All departments", dl.map(d=>[d,d]));
+  const q = $("#dq").value.toLowerCase(), fr = $("#dr").value, fd = $("#dd").value, fv = $("#dv").value;
+  let rows = people().filter(p=>(!fr||p.rank===fr) && (!fd||(p.dept||"").trim()===fd) && (!fv || (fv==="vacant")===isVacant(p))
+    && (!q || [p.name,p.title,p.dept,p.email,rankOf(p)?.name, ...fl.map(f=>optOf(p,f)?.label)].some(v=>(v||"").toLowerCase().includes(q))));
+  const {key,dir} = ui.sort;
+  const val = p => key==="rank" ? rankLevel(p) : key==="parent" ? (state.people[p.parent]?.title||"￿").toLowerCase()
+    : key.startsWith("f:") ? (optOf(p, state.fields[key.slice(2)])?.label || "￿").toLowerCase() : (p[key]||"").toLowerCase() || "￿";
+  rows.sort((a,b)=>{ const x=val(a), y=val(b); return (x<y?-1:x>y?1:0)*dir || (a.title||"").localeCompare(b.title||""); });
+  const cols = [["name","Name"],["title","Role"],["rank","Rank"],["dept","Department"], ...fl.map(f=>["f:"+f.id, f.name]), ["parent","Reports to"],["email","Email"]];
+  $("#dcount").textContent = `${rows.length} of ${people().length}`;
+  $("#dtable").innerHTML = `<thead><tr>${cols.map(([k,l])=>`<th data-sort="${esc(k)}">${esc(l)} <span class="ar">${key===k?(dir>0?"↑":"↓"):""}</span></th>`).join("")}</tr></thead>
+  <tbody>${rows.map(p=>{ const r=rankOf(p); return `<tr data-open="${esc(p.id)}">
+    <td class="${isVacant(p)?"vac":""}">${esc(isVacant(p)?"Vacant":p.name)}</td><td>${esc(p.title)}</td>
+    <td>${r?`<span class="chip" style="--c:${r.color};--cfg:${contrastOn(r.color)}">${esc(r.name)}</span>`:`<span class="chip soft">No rank</span>`}</td>
+    <td>${p.dept?`<span class="chip soft" style="--dc:${deptColor(p.dept)}"><span class="dot"></span>${esc(p.dept)}</span>`:""}</td>
+    ${fl.map(f=>{ const o = optOf(p,f); return `<td>${o?`<span class="chip" style="--c:${o.color};--cfg:${contrastOn(o.color)}">${esc(o.label)}</span>`:""}</td>`; }).join("")}
+    <td>${esc(state.people[p.parent]?.title || "—")}</td><td>${esc(p.email||"")}</td></tr>`; }).join("") ||
+    `<tr><td colspan="${cols.length}" class="vac">${people().length ? "No one matches these filters." : "No positions yet. Add the first one above."}</td></tr>`}</tbody>`;
+}
+
+// ---------- Rendering: lists & colours ----------
+function confirmHTML(key, msg, yes){
+  return ui.confirm===key ? `<div class="confirm"><span>${msg}</span><div class="row"><button class="btn danger solid" data-a="cf-yes" data-k="${esc(key)}">${yes}</button><button class="btn" data-a="cf-no">Cancel</button></div></div>` : "";
+}
+function rowActs(kind, k, f, i, len){
+  if (!canWrite) return "";
+  const a = `data-k="${esc(k)}" data-f="${esc(f||"")}"`;
+  return `<span class="acts"><button class="btn icon" data-a="${kind}-mv" data-d="-1" ${a} ${i===0?"disabled":""} aria-label="Move up">↑</button><button class="btn icon" data-a="${kind}-mv" data-d="1" ${a} ${i===len-1?"disabled":""} aria-label="Move down">↓</button><button class="btn icon" data-a="${kind}-add" ${a} title="Add positions with this value" aria-label="Add positions with this value">+</button><button class="btn icon danger" data-a="${kind}-del" ${a} aria-label="Delete">×</button></span>`;
+}
+function renderLists(){
+  const dis = canWrite ? "" : "disabled";
+  const all = people();
+  const rs = ranksSorted();
+  $("#ranklist").innerHTML = rs.map((r,i)=>{ const n = all.filter(p=>p.rank===r.id).length;
+    return `<div class="rrow"><input type="color" id="rc-${r.id}" value="${esc(validHex(r.color)?r.color:NEUTRAL)}" data-e="rk-color" data-k="${r.id}" aria-label="${esc(r.name)} colour" ${dis}>
+    <input class="inp" id="rn-${r.id}" value="${esc(r.name)}" data-e="rk-name" data-k="${r.id}" aria-label="Rank name" ${dis}>
+    <span class="num">${plural(n,"role")}</span>${rowActs("rk", r.id, "", i, rs.length)}
+    ${confirmHTML("rk:"+r.id, `Delete <b>${esc(r.name)}</b>? ${plural(n,"position")} will have no rank.`, "Delete rank")}</div>`;
+  }).join("") || `<p class="hint">No ranks yet. Add one below.</p>`;
+  const dl = depts();
+  $("#deptlist").innerHTML = dl.map((d,i)=>{ const n = all.filter(p=>(p.dept||"").trim()===d).length; const h = hash(d);
+    return `<div class="rrow"><input type="color" id="dc-${h}" value="${esc(deptColor(d))}" data-e="dp-color" data-k="${esc(d)}" aria-label="${esc(d)} colour" ${dis}>
+    <input class="inp" id="dn-${h}" value="${esc(d)}" data-e="dp-name" data-k="${esc(d)}" aria-label="Department name" ${dis}>
+    <span class="num">${plural(n,"role")}</span>${rowActs("dp", d, "", i, dl.length)}
+    ${confirmHTML("dp:"+d, `Delete <b>${esc(d)}</b>? ${plural(n,"position")} will have no department.`, "Delete department")}</div>`;
+  }).join("") || `<p class="hint">No departments yet. Add one below.</p>`;
+  $("#fieldcards").innerHTML = fieldsSorted().map(f=>{
+    const opts = f.options || [];
+    return `<div class="card" id="card-f-${f.id}">
+      <div class="cardhead"><input class="inp" id="fn-${f.id}" value="${esc(f.name)}" data-e="fd-name" data-k="${f.id}" aria-label="List name" ${dis}>
+        <label class="check"><input type="checkbox" id="fs-${f.id}" data-e="fd-show" data-k="${f.id}" ${f.showOnCard?"checked":""} ${dis}> Show on cards</label>
+        ${canWrite ? `<button class="btn danger" data-a="fd-del" data-k="${f.id}">Delete list</button>` : ""}</div>
+      <p class="hint">Custom dropdown list.</p>
+      ${confirmHTML("fd:"+f.id, `Delete the <b>${esc(f.name)}</b> list? Its values are removed from every position.`, "Delete list")}
+      <div>${opts.map((o,i)=>{ const n = all.filter(p=>p.extra?.[f.id]===o.id).length;
+        return `<div class="rrow"><input type="color" id="oc-${o.id}" value="${esc(validHex(o.color)?o.color:NEUTRAL)}" data-e="op-color" data-k="${o.id}" data-f="${f.id}" aria-label="${esc(o.label)} colour" ${dis}>
+        <input class="inp" id="on-${o.id}" value="${esc(o.label)}" data-e="op-label" data-k="${o.id}" data-f="${f.id}" aria-label="Option name" ${dis}>
+        <span class="num">${plural(n,"role")}</span>${rowActs("op", o.id, f.id, i, opts.length)}
+        ${confirmHTML("op:"+f.id+":"+o.id, `Delete <b>${esc(o.label)}</b>? It is cleared from ${plural(n,"position")}.`, "Delete option")}</div>`;
+      }).join("") || `<p class="hint">No options yet. Add the first below.</p>`}</div>
+      ${canWrite ? `<div class="addrow"><input class="inp" id="no-${f.id}" placeholder="New option" maxlength="60" data-enter="op-new" data-f="${f.id}"><input type="color" id="noc-${f.id}" value="${PALETTE[(opts.length+5)%PALETTE.length]}" aria-label="New option colour"><button class="btn" data-a="op-new" data-f="${f.id}">Add option</button></div>` : ""}
+    </div>`;
+  }).join("");
+  const imp = ui.pendingImport;
+  $("#impconfirm").innerHTML = imp ? `<div class="confirm" style="margin-top:12px"><span>Replace the whole structure with <b>${imp.people.length}</b> positions, <b>${imp.ranks.length}</b> ranks and <b>${imp.fields.length}</b> custom lists from the file? The current chart will be removed.</span><div class="row"><button class="btn danger solid" id="imp-yes">Replace structure</button><button class="btn" id="imp-no">Cancel</button></div></div>` : "";
+}
+
+// ---------- Rendering: editor panel ----------
+function presetHTML(){ return `<div class="preset">${PALETTE.map(c=>`<button type="button" style="--c:${c}" data-preset="${c}" aria-label="Use colour ${c}" ${canWrite?"":"disabled"}></button>`).join("")}</div>`; }
+function select(id){ ui.selected = id; ui.confirmDel = false; if (ui.adding?.scope==="panel") ui.adding = null; renderPanel(true); }
+function renderPanel(full){
+  const panel = $("#panel"); const p = state.people[ui.selected];
+  if (!p){ panel.classList.remove("open"); panel.dataset.for = ""; return; }
+  panel.classList.add("open");
+  const c = colorFor(p);
+  if (!full && panel.dataset.for === p.id){
+    for (const [f, sel] of [["name","#f-name"],["title","#f-title"],["email","#f-email"],["notes","#f-notes"]]){
+      const el = $(sel); if (el && document.activeElement !== el && el.value !== (p[f]||"")) el.value = p[f]||"";
+    }
+    $("#ph-h").textContent = isVacant(p) ? "Vacant" : p.name;
+    $("#ph-s").textContent = p.title || "Untitled role";
+    const a = $("#ph-av"); a.style.setProperty("--c", c); a.style.setProperty("--cfg", contrastOn(c)); a.textContent = isVacant(p)?"?":initials(p);
+    panel.querySelectorAll("select[data-pick]").forEach(sel=>{ if (document.activeElement !== sel) sel.innerHTML = pickOptionsHTML(sel.dataset.pick, sel.dataset.fid, currentPick("panel", sel.dataset.pick, sel.dataset.fid)); });
+    fillParent(p);
+    const fc = $("#f-color"); if (fc && document.activeElement!==fc) fc.value = validHex(c) ? c : NEUTRAL;
+    const fu = $("#f-usedef"); if (fu) fu.checked = !p.color;
+    return;
+  }
+  panel.dataset.for = p.id;
+  const dis = canWrite ? "" : "disabled";
+  const nkids = people().filter(k=>k.parent===p.id).length;
+  const fl = fieldsSorted();
+  panel.innerHTML = `
+    <div class="ph"><div class="av" id="ph-av" style="--c:${c};--cfg:${contrastOn(c)}">${esc(isVacant(p)?"?":initials(p))}</div>
+      <div style="flex:1;min-width:0"><h2 id="ph-h">${esc(isVacant(p)?"Vacant":p.name)}</h2><div class="sub" id="ph-s">${esc(p.title||"Untitled role")}</div></div>
+      <button class="btn icon" id="p-close" aria-label="Close editor">×</button></div>
+    <div class="pb">
+      <div class="field"><label for="f-name">Name</label><input class="inp" id="f-name" value="${esc(p.name)}" placeholder="Leave empty if vacant" ${dis}></div>
+      ${(()=>{ const k = personKey(p); const others = k ? (rolesByPerson()[k]||[]).filter(o=>o.id!==p.id) : []; return others.length ? `<div class="field"><span class="lbl">Also holds</span><div class="alsorow">${others.map(o=>`<button class="btn" type="button" data-goto="${esc(o.id)}">${esc(o.title||"Untitled role")}</button>`).join("")}</div></div>` : ""; })()}
+      <div class="field"><label for="f-title">Role title</label><input class="inp" id="f-title" value="${esc(p.title)}" placeholder="e.g. Treasurer" ${dis}></div>
+      ${pickHTML("panel","rank","","Rank", currentPick("panel","rank",""))}
+      ${pickHTML("panel","dept","","Department", currentPick("panel","dept",""))}
+      ${fl.map(f=>pickHTML("panel","field",f.id,f.name, currentPick("panel","field",f.id))).join("")}
+      <div class="field"><label for="f-parent">Reports to</label><select class="inp" id="f-parent" ${dis}></select></div>
+      <div class="field"><label for="f-email">Email</label><input class="inp" id="f-email" type="email" value="${esc(p.email)}" placeholder="name@example.com" ${dis}></div>
+      <div class="field"><label for="f-notes">Notes</label><textarea class="inp" id="f-notes" placeholder="Responsibilities, term dates, handover notes" ${dis}>${esc(p.notes)}</textarea></div>
+      <div class="field"><span class="lbl">Card colour</span>
+        <div class="colorrow"><input type="color" id="f-color" value="${esc(validHex(c)?c:NEUTRAL)}" aria-label="Card colour" ${dis}>
+          <label class="check" for="f-usedef"><input type="checkbox" id="f-usedef" ${p.color?"":"checked"} ${dis}> Use ${esc(colorByLabel())} colour</label></div>
+        ${presetHTML()}</div>
+      ${canWrite ? `<div class="field"><span class="lbl">Position among peers</span><div class="toolbar" style="margin:0"><button class="btn" id="p-left">← Move left</button><button class="btn" id="p-right">Move right →</button></div></div>` : ""}
+      ${canWrite && (+p.dx||+p.dy||+p.gdx||+p.gdy) ? `<div class="field"><span class="lbl">Layout</span><div class="toolbar" style="margin:0"><button class="btn" id="p-unmove">Put back in automatic position</button></div></div>` : ""}
+      <div id="delzone">${ui.confirmDel ? `<div class="confirm"><span>Delete <b>${esc(p.title||"this position")}</b>?${nkids ? ` Its ${plural(nkids,"direct report")} will move up to ${esc(state.people[p.parent]?.title || "the top level")}.` : ""}</span><div class="row"><button class="btn danger solid" id="p-del-yes">Delete position</button><button class="btn" id="p-del-no">Cancel</button></div></div>` : ""}</div>
+    </div>
+    ${canWrite ? `<div class="pf"><button class="btn primary" id="p-addkid">+ Direct report</button><button class="btn" id="p-addpeer">+ Peer</button><button class="btn" id="p-addmany">+ Several</button><button class="btn danger" id="p-del" style="margin-left:auto">Delete</button></div>` : ""}`;
+  fillParent(p);
+}
+function parentOptionsHTML(excludeId, current){
+  const bad = excludeId ? descendants(excludeId) : new Set(); if (excludeId) bad.add(excludeId);
+  const opts = people().filter(o=>!bad.has(o.id)).sort((a,b)=>rankLevel(a)-rankLevel(b)||(a.title||"").localeCompare(b.title||""));
+  return `<option value="">— Top level —</option>` + opts.map(o=>`<option value="${esc(o.id)}" ${o.id===current?"selected":""}>${esc((o.title||"Untitled") + (isVacant(o)?"":" · "+o.name))}</option>`).join("");
+}
+function fillParent(p){
+  const ps = $("#f-parent"); if (!ps || document.activeElement === ps) return;
+  ps.innerHTML = parentOptionsHTML(p.id, state.people[p.parent] ? p.parent : "");
+}
+
+// ---------- Bulk add ----------
+function openBulk(pre = {}){
+  if (!canWrite) return;
+  ui.adding = null;
+  ui.bulk = {count:3, title:"", numbered:true, rank:"", dept:"", parent:"", extra:{}, ...pre, extra:{...(pre.extra||{})}};
+  renderBulk();
+  setTimeout(()=>$("#b-title")?.focus(), 30);
+}
+function renderBulk(){
+  const ov = $("#bulk"), m = $("#bulk-m"), b = ui.bulk;
+  if (!b){ ov.hidden = true; m.innerHTML = ""; return; }
+  ov.hidden = false;
+  m.innerHTML = `<div class="ph"><div style="flex:1"><h2 id="bulk-h">Add several positions</h2><div class="sub">Each one starts vacant. Fill the names in later.</div></div><button class="btn icon" data-b="close" aria-label="Close">×</button></div>
+    <div class="pb">
+      <div class="two">
+        <div class="field"><label for="b-count">How many</label><input class="inp" id="b-count" type="number" min="1" max="30" value="${b.count}"></div>
+        <div class="field"><label for="b-title">Role title</label><input class="inp" id="b-title" value="${esc(b.title)}" placeholder="e.g. Events Officer" maxlength="80"></div>
+      </div>
+      <label class="check" for="b-num"><input type="checkbox" id="b-num" ${b.numbered?"checked":""}> Number the titles (Events Officer 1, Events Officer 2…)</label>
+      <div class="two">${pickHTML("bulk","rank","","Rank", b.rank)}${pickHTML("bulk","dept","","Department", b.dept)}</div>
+      <div class="field"><label for="b-parent">Reports to</label><select class="inp" id="b-parent">${parentOptionsHTML("", b.parent)}</select></div>
+      ${fieldsSorted().length ? `<div class="fieldsgrid">${fieldsSorted().map(f=>pickHTML("bulk","field",f.id,f.name,b.extra[f.id]||"")).join("")}</div>` : ""}
+      <div class="prev" id="b-prev"></div>
+    </div>
+    <div class="pf"><button class="btn" data-b="close">Cancel</button><button class="btn primary" data-b="go" id="b-go" style="margin-left:auto">Add positions</button></div>`;
+  updateBulkPreview();
+}
+function bulkTitles(){
+  const b = ui.bulk; const n = Math.min(30, Math.max(1, parseInt(b.count,10) || 1));
+  const base = (b.title || "").trim() || "New position";
+  return Array.from({length:n}, (_,i)=> b.numbered && n>1 ? `${base} ${i+1}` : base);
+}
+function updateBulkPreview(){
+  const el = $("#b-prev"); if (!el || !ui.bulk) return;
+  const b = ui.bulk, t = bulkTitles();
+  const bits = [state.ranks[b.rank] ? `at <b>${esc(state.ranks[b.rank].name)}</b>` : "", b.dept ? `in <b>${esc(b.dept)}</b>` : "",
+    state.people[b.parent] ? `reporting to <b>${esc(state.people[b.parent].title||"Untitled")}</b>` : "at the top level"].filter(Boolean).join(", ");
+  el.innerHTML = `Adds ${plural(t.length,"vacant position")}: <b>${esc(t.slice(0,3).join(", "))}${t.length>3?", …":""}</b> ${bits}.`;
+  const go = $("#b-go"); if (go) go.textContent = `Add ${plural(t.length,"position")}`;
+}
+function createBulk(){
+  const b = ui.bulk; if (!b) return;
+  const titles = bulkTitles(); const made = [];
+  for (const title of titles) made.push(makePerson(b.parent, {title, rank:b.rank, dept:b.dept, extra:{...b.extra}}));
+  ui.bulk = null; renderBulk();
+  setTab("chart"); renderAll();
+  toast(`Added ${plural(made.length,"position")}`);
+  requestAnimationFrame(()=>{ const n = $("#tree").querySelector(`.node[data-id="${CSS.escape(made[0].id)}"]`); n?.scrollIntoView({block:"center",inline:"center",behavior:"smooth"}); });
+}
+
+// ---------- Render orchestration ----------
+function renderViews(){
+  document.querySelectorAll(".edit-only").forEach(e=>e.hidden = !canWrite);
+  const on = document.activeElement;
+  const nm = $("#org-name"); nm.disabled = !canWrite; if (on !== nm) nm.value = state.settings.name || "King's Union";
+  renderColorBy();
+  renderChart();
+  if (prefs.tab==="dash") renderDash();
+  if (prefs.tab==="dir") renderDir();
+  if (prefs.tab==="ranks" && !(on && on.closest && on.closest("#v-ranks") && on.matches("input:not([type=checkbox])"))) renderLists();
+  renderPanel(false);
+}
+function renderAll(){ renderViews(); renderPanel(true); updateSync(); }
+let rafPending = false;
+function scheduleRender(){ if (rafPending) return; rafPending = true; requestAnimationFrame(()=>{ rafPending=false; renderViews(); updateSync(); }); }
+
+function setTab(t){
+  prefs.tab = t; savePrefs();
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===t));
+  for (const v of ["chart","dash","dir","ranks"]) $("#v-"+v).hidden = v!==t;
+  renderViews();
+  if (t==="ranks") renderLists();
+}
+
+// ---------- Events: header & tabs ----------
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click", ()=>setTab(b.dataset.tab)));
+$("#org-name").addEventListener("input", e=>{ state.settings.name = e.target.value; save("settings","org",600); });
+$("#org-name").addEventListener("keydown", e=>{ if (e.key==="Enter") e.target.blur(); });
+
+// ---------- Events: chart toolbar ----------
+$("#q").addEventListener("input", e=>{ ui.q = e.target.value.trim(); renderChart(); });
+$("#add-root").addEventListener("click", ()=>addPerson(""));
+$("#add-root2").addEventListener("click", ()=>addPerson(""));
+$("#add-bulk").addEventListener("click", ()=>openBulk({parent: ui.selected && state.people[ui.selected] ? ui.selected : ""}));
+$("#cb").addEventListener("change", e=>{ prefs.colorBy = e.target.value; savePrefs(); e.target.blur(); renderAll(); });
+document.querySelectorAll("[data-dense]").forEach(b=>b.addEventListener("click", ()=>{
+  prefs.dense = b.dataset.dense==="1"; savePrefs();
+  document.querySelectorAll("[data-dense]").forEach(x=>x.setAttribute("aria-pressed", x===b)); renderChart();
+}));
+function setZoom(z){ ui.zoom = Math.min(1.6, Math.max(.3, Math.round(z*100)/100)); $("#tree").style.zoom = ui.zoom; $("#zv").textContent = Math.round(ui.zoom*100)+"%"; }
+$("#zin").addEventListener("click", ()=>setZoom(ui.zoom+.1));
+$("#zout").addEventListener("click", ()=>setZoom(ui.zoom-.1));
+$("#fit").addEventListener("click", ()=>{
+  const t = $("#tree"), vp = $("#vp"); t.style.zoom = 1;
+  setZoom(Math.min(1, (vp.clientWidth-8)/t.scrollWidth, (vp.clientHeight-8)/t.scrollHeight));
+  vp.scrollLeft = (vp.scrollWidth - vp.clientWidth)/2; vp.scrollTop = 0;
+});
+$("#expand").addEventListener("click", ()=>{ ui.collapsed.clear(); LS("ku-collapsed",[]); renderChart(); });
+$("#collapse").addEventListener("click", ()=>{
+  const kids = structure(), d = depthMap(kids); ui.collapsed = new Set(people().filter(p=>d[p.id]>=2 && (kids[p.id]||[]).length).map(p=>p.id));
+  LS("ku-collapsed",[...ui.collapsed]); renderChart();
+});
+
+// ---------- Events: chart surface ----------
+const tree = $("#tree"), vp = $("#vp");
+tree.addEventListener("click", e=>{
+  const tog = e.target.closest("[data-tog]");
+  if (tog){ e.stopPropagation(); const id = tog.dataset.tog; ui.collapsed.has(id) ? ui.collapsed.delete(id) : ui.collapsed.add(id); LS("ku-collapsed",[...ui.collapsed]); renderChart(); return; }
+  const act = e.target.closest("[data-act]");
+  if (act){ if (act.dataset.act==="first") addPerson(""); else loadTemplate(); return; }
+  const j = e.target.closest("[data-select]"); if (j){ select(j.dataset.select); renderChart(); return; }
+  const n = e.target.closest(".node"); if (n){ select(n.dataset.id); renderChart(); }
+});
+tree.addEventListener("keydown", e=>{ const n = e.target.closest(".node,[data-select]"); if (n && (e.key==="Enter"||e.key===" ")){ e.preventDefault(); select(n.dataset.id || n.dataset.select); renderChart(); } });
+tree.addEventListener("mouseover", e=>{
+  const el = e.target.closest("[data-person]"); const k = el?.dataset.person;
+  tree.querySelectorAll(".same").forEach(x=>x.classList.remove("same"));
+  if (k && (rolesByPerson()[k]||[]).length > 1) tree.querySelectorAll(`[data-person="${CSS.escape(k)}"]`).forEach(x=>x.classList.add("same"));
+});
+tree.addEventListener("mouseleave", ()=>tree.querySelectorAll(".same").forEach(x=>x.classList.remove("same")));
+let pan = null;
+vp.addEventListener("pointerdown", e=>{
+  if (e.pointerType!=="mouse" || e.button!==0 || e.target.closest(".node,.jhead,button,.empty")) return;
+  pan = {x:e.clientX, y:e.clientY, l:vp.scrollLeft, t:vp.scrollTop}; vp.classList.add("panning"); vp.setPointerCapture(e.pointerId);
+});
+vp.addEventListener("pointermove", e=>{ if (!pan) return; vp.scrollLeft = pan.l-(e.clientX-pan.x); vp.scrollTop = pan.t-(e.clientY-pan.y); });
+const endPan = ()=>{ pan=null; vp.classList.remove("panning"); };
+vp.addEventListener("pointerup", endPan); vp.addEventListener("pointercancel", endPan);
+vp.addEventListener("wheel", e=>{ if (e.ctrlKey || e.metaKey){ e.preventDefault(); setZoom(ui.zoom * (e.deltaY<0 ? 1.08 : .92)); } }, {passive:false});
+let mv = null, justMoved = false;
+tree.addEventListener("click", e=>{ if (justMoved){ justMoved = false; e.stopPropagation(); e.preventDefault(); } }, true);
+tree.addEventListener("pointerdown", e=>{
+  if (!canWrite || prefs.dragMode!=="move" || e.button!==0 || e.target.closest(".tog")) return;
+  const own = e.target.closest(".node,.jhead"); if (!own) return;
+  const li = own.parentElement;
+  mv = {li, own, x:e.clientX, y:e.clientY, bx:+li.dataset.dx||0, by:+li.dataset.dy||0, on:false, id:e.pointerId};
+});
+tree.addEventListener("pointermove", e=>{
+  if (!mv || e.pointerId!==mv.id) return;
+  const dx = (e.clientX-mv.x)/ui.zoom, dy = (e.clientY-mv.y)/ui.zoom;
+  if (!mv.on){ if (Math.hypot(dx,dy) < 5) return; mv.on = true; mv.li.classList.add("moving"); try { mv.own.setPointerCapture(e.pointerId); } catch {} }
+  e.preventDefault();
+  const nx = Math.round(mv.bx+dx), ny = Math.round(mv.by+dy);
+  mv.li.dataset.dx = nx; mv.li.dataset.dy = ny; mv.li.style.transform = `translate(${nx}px,${ny}px)`;
+  if (!mv.raf) mv.raf = requestAnimationFrame(()=>{ if (mv) mv.raf = 0; drawLinks(); });
+});
+function endMove(){
+  if (!mv) return; const m = mv; mv = null;
+  if (!m.on) return;
+  justMoved = true; setTimeout(()=>{ justMoved = false; }, 0);
+  m.li.classList.remove("moving");
+  const oid = m.li.dataset.oid, nx = +m.li.dataset.dx||0, ny = +m.li.dataset.dy||0;
+  const joint = oid.startsWith("j:"), p = state.people[joint ? oid.slice(2) : oid]; if (!p) return;
+  if (joint){ p.gdx = nx; p.gdy = ny; } else { p.dx = nx; p.dy = ny; }
+  save("people", p.id, 0); drawLinks(); renderPanel(true);
+}
+tree.addEventListener("pointerup", endMove);
+tree.addEventListener("pointercancel", endMove);
+new ResizeObserver(()=>{ if (!mv) drawLinks(); }).observe(tree);
+document.fonts?.ready.then(()=>drawLinks());
+document.querySelectorAll("[data-dm]").forEach(b=>b.addEventListener("click", ()=>{
+  prefs.dragMode = b.dataset.dm; savePrefs();
+  document.querySelectorAll("[data-dm]").forEach(x=>x.setAttribute("aria-pressed", x===b)); renderChart();
+  toast(prefs.dragMode==="move" ? "Drag cards to rearrange the layout." : "Drop a card onto a manager to change who it reports to.");
+}));
+let resetArmed = false;
+$("#reset-layout").addEventListener("click", e=>{
+  const moved = people().filter(p=>+p.dx||+p.dy||+p.gdx||+p.gdy);
+  if (!moved.length){ toast("Every card is already in its automatic position."); return; }
+  if (!resetArmed){ resetArmed = true; e.target.textContent = `Reset ${plural(moved.length,"card")}? Click again`; setTimeout(()=>{ resetArmed=false; e.target.textContent="Reset layout"; }, 4000); return; }
+  resetArmed = false; e.target.textContent = "Reset layout";
+  for (const p of moved){ p.dx = 0; p.dy = 0; p.gdx = 0; p.gdy = 0; save("people", p.id, 0); }
+  renderAll(); toast("Layout reset");
+});
+tree.addEventListener("dragstart", e=>{
+  const n = e.target.closest(".node"); if (!n || !canWrite) return;
+  ui.dragId = n.dataset.id; n.classList.add("dragging"); e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", ui.dragId);
+  $("#rootdrop").hidden = false;
+});
+tree.addEventListener("dragend", ()=>{ ui.dragId=null; $("#rootdrop").hidden = true; document.querySelectorAll(".dropok,.dragging").forEach(x=>x.classList.remove("dropok","dragging")); });
+tree.addEventListener("dragover", e=>{
+  const n = e.target.closest(".node"); if (!n || !ui.dragId) return;
+  const t = n.dataset.id; if (t===ui.dragId || descendants(ui.dragId).has(t)) return;
+  e.preventDefault(); document.querySelectorAll(".dropok").forEach(x=>x!==n && x.classList.remove("dropok")); n.classList.add("dropok");
+});
+tree.addEventListener("dragleave", e=>{ const n = e.target.closest(".node"); if (n && !n.contains(e.relatedTarget)) n.classList.remove("dropok"); });
+tree.addEventListener("drop", e=>{ const n = e.target.closest(".node"); if (!n || !ui.dragId) return; e.preventDefault(); const id = ui.dragId; ui.dragId=null; $("#rootdrop").hidden=true; if (reparent(id, n.dataset.id)) toast(`Now reports to ${state.people[n.dataset.id].title||"that role"}`); });
+const rd = $("#rootdrop");
+rd.addEventListener("dragover", e=>{ if (ui.dragId){ e.preventDefault(); rd.classList.add("over"); } });
+rd.addEventListener("dragleave", ()=>rd.classList.remove("over"));
+rd.addEventListener("drop", e=>{ e.preventDefault(); rd.classList.remove("over"); const id=ui.dragId; ui.dragId=null; rd.hidden=true; if (id) reparent(id, ""); });
+
+// ---------- Events: shared "new option" rows ----------
+function wireNewRows(root, scope){
+  root.addEventListener("keydown", e=>{
+    if (e.target.id === "nf-name-"+scope){ if (e.key==="Enter"){ e.preventDefault(); confirmNew(scope); } if (e.key==="Escape"){ e.stopPropagation(); ui.adding=null; rerenderScope(scope); } }
+  });
+}
+
+// ---------- Events: panel ----------
+const panel = $("#panel");
+wireNewRows(panel, "panel");
+panel.addEventListener("input", e=>{
+  const id = ui.selected; if (!id) return; const t = e.target;
+  const map = {"f-name":"name","f-title":"title","f-email":"email","f-notes":"notes"};
+  if (map[t.id]) setField(id, map[t.id], t.value);
+  if (t.id==="f-color"){ setField(id, "color", t.value); $("#f-usedef").checked = false; }
+});
+panel.addEventListener("change", e=>{
+  const id = ui.selected; if (!id) return; const t = e.target;
+  if (t.dataset.pick) onPickChange(t, "panel");
+  if (t.id==="f-parent") reparent(id, t.value);
+  if (t.id==="f-usedef"){ setField(id, "color", t.checked ? "" : $("#f-color").value); renderPanel(false); }
+});
+panel.addEventListener("click", e=>{
+  const id = ui.selected; const t = e.target.closest("button"); if (!t) return;
+  if (t.id==="p-close"){ ui.selected=null; ui.adding=null; renderPanel(true); renderChart(); return; }
+  if (t.dataset.editlist){ goEditList(t.dataset.editlist); return; }
+  if (t.dataset.goto){ select(t.dataset.goto); renderChart(); return; }
+  if (t.dataset.nfAdd){ confirmNew("panel"); return; }
+  if (t.dataset.nfCancel){ ui.adding=null; renderPanel(true); return; }
+  if (t.dataset.preset){ setField(id, "color", t.dataset.preset); renderPanel(true); return; }
+  const p = state.people[id];
+  if (t.id==="p-addkid") addPerson(id);
+  if (t.id==="p-addpeer") addPerson(p?.parent || "", {rank: p?.rank || "", dept: p?.dept || "", extra:{...(p?.extra||{})}});
+  if (t.id==="p-addmany") openBulk({parent:id, dept:p?.dept||"", rank:(ranksSorted().find(r=>r.level > rankLevel(p))||{}).id || ""});
+  if (t.id==="p-unmove"){ p.dx = 0; p.dy = 0; p.gdx = 0; p.gdy = 0; save("people", id, 0); renderAll(); return; }
+  if (t.id==="p-left") moveSibling(id,-1);
+  if (t.id==="p-right") moveSibling(id,1);
+  if (t.id==="p-del"){ ui.confirmDel = true; renderPanel(true); $("#p-del-yes")?.focus(); }
+  if (t.id==="p-del-no"){ ui.confirmDel = false; renderPanel(true); }
+  if (t.id==="p-del-yes") deletePerson(id);
+});
+
+// ---------- Events: bulk dialog ----------
+const bulk = $("#bulk");
+wireNewRows(bulk, "bulk");
+bulk.addEventListener("click", e=>{
+  if (e.target === bulk){ ui.bulk = null; ui.adding = null; renderBulk(); return; }
+  const t = e.target.closest("button"); if (!t) return;
+  if (t.dataset.b==="close"){ ui.bulk = null; ui.adding = null; renderBulk(); }
+  if (t.dataset.b==="go") createBulk();
+  if (t.dataset.editlist) goEditList(t.dataset.editlist);
+  if (t.dataset.nfAdd) confirmNew("bulk");
+  if (t.dataset.nfCancel){ ui.adding=null; renderBulk(); }
+});
+bulk.addEventListener("input", e=>{
+  const t = e.target, b = ui.bulk; if (!b) return;
+  if (t.id==="b-count") b.count = t.value;
+  if (t.id==="b-title") b.title = t.value;
+  updateBulkPreview();
+});
+bulk.addEventListener("change", e=>{
+  const t = e.target, b = ui.bulk; if (!b) return;
+  if (t.dataset.pick) onPickChange(t, "bulk");
+  if (t.id==="b-num"){ b.numbered = t.checked; updateBulkPreview(); }
+  if (t.id==="b-parent"){ b.parent = t.value; updateBulkPreview(); }
+});
+bulk.addEventListener("keydown", e=>{ if (e.key==="Enter" && (e.target.id==="b-title" || e.target.id==="b-count")){ e.preventDefault(); createBulk(); } });
+document.addEventListener("keydown", e=>{
+  if (e.key!=="Escape" || e.target.closest("textarea")) return;
+  if (ui.bulk){ ui.bulk=null; ui.adding=null; renderBulk(); return; }
+  if (ui.selected && !e.target.closest("input,select")){ ui.selected=null; renderPanel(true); renderChart(); }
+});
+
+// ---------- Events: dashboard & directory ----------
+function openPerson(id){ setTab("chart"); select(id); ui.q=""; $("#q").value=""; renderChart();
+  requestAnimationFrame(()=>{ const n = tree.querySelector(`.node[data-id="${CSS.escape(id)}"]`); n?.scrollIntoView({block:"center",inline:"center",behavior:"smooth"}); }); }
+$("#v-dash").addEventListener("click", e=>{ const b = e.target.closest("[data-open]"); if (b) openPerson(b.dataset.open); });
+$("#dtable").addEventListener("click", e=>{
+  const th = e.target.closest("th[data-sort]");
+  if (th){ const k = th.dataset.sort; ui.sort = {key:k, dir: ui.sort.key===k ? -ui.sort.dir : 1}; renderDir(); return; }
+  const tr = e.target.closest("tr[data-open]"); if (tr){ select(tr.dataset.open); }
+});
+for (const s of ["#dq","#dr","#dd","#dv"]) $(s).addEventListener("input", renderDir);
+
+// ---------- Events: lists & colours ----------
+const vr = $("#v-ranks");
+vr.addEventListener("input", e=>{
+  const t = e.target, k = t.dataset.k, f = t.dataset.f;
+  switch (t.dataset.e){
+    case "rk-color": state.ranks[k].color = t.value; save("ranks", k); break;
+    case "rk-name": state.ranks[k].name = t.value; save("ranks", k, 600); break;
+    case "dp-color": state.settings.deptColors = {...state.settings.deptColors, [k]: t.value}; save("settings","org"); break;
+    case "op-color": { const o = state.fields[f]?.options.find(o=>o.id===k); if (o){ o.color = t.value; save("fields", f); } break; }
+    case "op-label": { const o = state.fields[f]?.options.find(o=>o.id===k); if (o){ o.label = t.value; save("fields", f, 600); } break; }
+    case "fd-name": state.fields[k].name = t.value; save("fields", k, 600); break;
+    default: return;
+  }
+  renderChart(); renderColorBy(); renderPanel(false);
+});
+vr.addEventListener("change", e=>{
+  const t = e.target, k = t.dataset.k;
+  if (t.dataset.e==="dp-name"){
+    const from = k, to = t.value.trim();
+    if (!to || to===from){ t.value = from; return; }
+    if (depts().some(d=>d!==from && d.toLowerCase()===to.toLowerCase())){ toast(`${to} already exists. Pick another name.`); t.value = from; return; }
+    for (const p of people()) if ((p.dept||"").trim()===from){ p.dept = to; save("people", p.id, 0); }
+    state.settings.deptList = depts().map(d=>d===from ? to : d);
+    const dc = {...state.settings.deptColors}; if (dc[from]){ dc[to] = dc[from]; delete dc[from]; } state.settings.deptColors = dc;
+    save("settings","org",0); toast(`Renamed ${from} to ${to}`); renderAll(); renderLists(); return;
+  }
+  if (t.dataset.e==="fd-show"){ state.fields[k].showOnCard = t.checked; save("fields", k, 0); renderChart(); return; }
+  if (t.type==="color" || t.dataset.e==="rk-name" || t.dataset.e==="op-label" || t.dataset.e==="fd-name"){ renderAll(); renderLists(); }
+});
+vr.addEventListener("keydown", e=>{
+  if (e.key!=="Enter") return; const t = e.target;
+  if (t.id==="nr-name") { e.preventDefault(); $("#add-rank").click(); }
+  if (t.id==="nd-name") { e.preventDefault(); $("#add-dept").click(); }
+  if (t.id==="nfl-name") { e.preventDefault(); $("#add-field").click(); }
+  if (t.dataset.enter==="op-new"){ e.preventDefault(); vr.querySelector(`button[data-a="op-new"][data-f="${t.dataset.f}"]`)?.click(); }
+  if (t.matches("input[data-e]")) t.blur();
+});
+vr.addEventListener("click", e=>{
+  const b = e.target.closest("button"); if (!b) return;
+  const k = b.dataset.k, f = b.dataset.f, d = +b.dataset.d;
+  if (b.id==="add-rank"){ const n = $("#nr-name"); const v = n.value.trim(); if (!v){ toast("Type a name for the new rank."); n.focus(); return; } createOption("rank","",v,$("#nr-color").value); n.value=""; renderAll(); renderLists(); toast(`Added ${v}`); return; }
+  if (b.id==="add-dept"){ const n = $("#nd-name"); const v = n.value.trim(); if (!v){ toast("Type a name for the new department."); n.focus(); return; } createOption("dept","",v,$("#nd-color").value); n.value=""; renderAll(); renderLists(); toast(`Added ${v}`); return; }
+  if (b.id==="add-field"){ const n = $("#nfl-name"); const v = n.value.trim(); if (!v){ toast("Type a name for the new list."); n.focus(); return; } const fl = createField(v); n.value=""; renderAll(); renderLists(); toast(`Created ${v}. Add its options below.`); setTimeout(()=>{ $("#card-f-"+fl.id)?.scrollIntoView({block:"center",behavior:"smooth"}); $("#no-"+fl.id)?.focus(); }, 40); return; }
+  switch (b.dataset.a){
+    case "rk-mv": { const rs = ranksSorted(); const i = rs.findIndex(r=>r.id===k); if (swap(rs, i, i+d)) rs.forEach((r,n)=>{ if (r.level!==n){ r.level=n; save("ranks", r.id, 0); } }); break; }
+    case "dp-mv": { const dl = depts(); const i = dl.indexOf(k); if (swap(dl, i, i+d)){ state.settings.deptList = dl; save("settings","org",0); } break; }
+    case "op-mv": { const fl = state.fields[f]; const arr = [...fl.options]; const i = arr.findIndex(o=>o.id===k); if (swap(arr, i, i+d)){ fl.options = arr; save("fields", f, 0); } break; }
+    case "rk-add": openBulk({rank:k}); return;
+    case "dp-add": openBulk({dept:k}); return;
+    case "op-add": openBulk({extra:{[f]:k}}); return;
+    case "rk-del": ui.confirm = "rk:"+k; break;
+    case "dp-del": ui.confirm = "dp:"+k; break;
+    case "op-del": ui.confirm = "op:"+f+":"+k; break;
+    case "fd-del": ui.confirm = "fd:"+k; break;
+    case "cf-no": ui.confirm = null; break;
+    case "cf-yes": {
+      const key = b.dataset.k; const kind = key.slice(0,2);
+      if (kind==="rk") deleteRank(key.slice(3));
+      if (kind==="dp") deleteDept(key.slice(3));
+      if (kind==="fd") deleteField(key.slice(3));
+      if (kind==="op"){ const [fid, oid] = key.slice(3).split(":"); deleteOption(fid, oid); }
+      ui.confirm = null; toast("Deleted"); break;
+    }
+    case "op-new": {
+      const n = $("#no-"+f); const v = n.value.trim(); if (!v){ toast("Type a name for the new option."); n.focus(); return; }
+      createOption("field", f, v, $("#noc-"+f).value); renderAll(); renderLists(); toast(`Added ${v}`); setTimeout(()=>$("#no-"+f)?.focus(), 30); return;
+    }
+    default:
+      if (b.id==="exp-json") exportFile("json");
+      if (b.id==="exp-csv") exportFile("csv");
+      if (b.id==="imp-no"){ ui.pendingImport=null; renderLists(); }
+      if (b.id==="imp-yes") applyImport();
+      return;
+  }
+  renderAll(); renderLists();
+});
+
+// ---------- Import / export ----------
+function snapshotData(){ return {organisation: state.settings.name, exported: new Date().toISOString(), deptList: depts(), deptColors: state.settings.deptColors||{}, ranks: ranksSorted(), fields: fieldsSorted(), people: people().sort(byOrder)}; }
+async function exportFile(kind){
+  const slug = (state.settings.name||"organigram").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "organigram";
+  let data, filename;
+  if (kind==="json"){ data = JSON.stringify(snapshotData(), null, 2); filename = slug + "-organigram.json"; }
+  else {
+    const q = v => `"${String(v??"").replace(/"/g,'""')}"`; const fl = fieldsSorted();
+    data = [["Name","Role","Rank","Department",...fl.map(f=>f.name),"Reports to","Email","Notes"].map(q).join(","),
+      ...people().sort((a,b)=>rankLevel(a)-rankLevel(b)).map(p=>[isVacant(p)?"Vacant":p.name, p.title, rankOf(p)?.name||"", p.dept, ...fl.map(f=>optOf(p,f)?.label||""), state.people[p.parent]?.title||"", p.email, p.notes].map(q).join(","))].join("\n");
+    filename = slug + "-directory.csv";
+  }
+  if (!downloads){ try { await navigator.clipboard.writeText(data); toast("Downloads aren't available here, so the data was copied to your clipboard."); } catch { toast("Downloads aren't available in this view."); } return; }
+  try { await downloads.save({filename, data}); toast("Saved " + filename); }
+  catch (e){ if (e?.code !== "declined") toast("The file couldn't be saved. Try again in a moment."); }
+}
+$("#imp").addEventListener("change", async e=>{
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const j = JSON.parse(await f.text());
+    if (!Array.isArray(j.people)) throw new Error("no people");
+    ui.pendingImport = {name: j.organisation, deptColors: j.deptColors||{}, deptList: Array.isArray(j.deptList)?j.deptList:[], ranks: Array.isArray(j.ranks)?j.ranks:[], fields: Array.isArray(j.fields)?j.fields:[], people: j.people};
+    renderLists();
+  } catch { toast("That file isn't an organigram export. Use a JSON file exported from this page."); }
+});
+function applyImport(){
+  const imp = ui.pendingImport; ui.pendingImport = null; if (!imp) return;
+  for (const id of Object.keys(state.people)) removeDoc("people", id);
+  for (const id of Object.keys(state.ranks)) removeDoc("ranks", id);
+  for (const id of Object.keys(state.fields)) removeDoc("fields", id);
+  replaceWith(imp);
+  toast(`Imported ${plural(imp.people.length,"position")}`);
+}
+function replaceWith({ranks=[], fields=[], people:ppl=[], name, deptColors, deptList}){
+  const clean = (o, keys) => Object.fromEntries(keys.map(k=>[k, o[k] ?? (k==="level"||k==="order" ? 0 : "")]));
+  for (const r of ranks){ if (!r.id) continue; state.ranks[r.id] = {id:r.id, ...clean(r,["name","color","level"])}; save("ranks", r.id, 0); }
+  for (const f of fields){ if (!f.id) continue; state.fields[f.id] = {id:f.id, name:f.name||"List", order:f.order??0, showOnCard:!!f.showOnCard,
+    options:(Array.isArray(f.options)?f.options:[]).filter(o=>o&&o.id).map(o=>({id:o.id, label:o.label||"", color:o.color||NEUTRAL}))}; save("fields", f.id, 0); }
+  for (const p of ppl){ if (!p.id) continue; state.people[p.id] = {id:p.id, ...clean(p,["name","title","rank","dept","parent","order","email","notes","color"]), dx:+p.dx||0, dy:+p.dy||0, gdx:+p.gdx||0, gdy:+p.gdy||0, extra: (p.extra && typeof p.extra==="object") ? p.extra : {}}; save("people", p.id, 0); }
+  if (name) state.settings.name = name;
+  if (deptColors) state.settings.deptColors = deptColors;
+  if (deptList) state.settings.deptList = deptList;
+  save("settings","org",0);
+  ui.selected = null; ui.collapsed.clear(); renderAll(); renderLists();
+}
+function loadTemplate(){ replaceWith({ranks:TEMPLATE_RANKS, people:TEMPLATE_PEOPLE, deptList:["Executive","Operations","Finance","Events","Marketing","Welfare"]}); toast("Example committee loaded. Click any card to rename it."); }
+
+// ---------- Boot ----------
+document.querySelectorAll("[data-dense]").forEach(x=>x.setAttribute("aria-pressed", (x.dataset.dense==="1")===!!prefs.dense));
+document.querySelectorAll("[data-dm]").forEach(x=>x.setAttribute("aria-pressed", x.dataset.dm===prefs.dragMode));
+setTab(prefs.tab);
+updateSync();
+
+// ---------- Website backend ----------
+// On the Union website this page runs inside admin → Organigram. Its data lives
+// in the Union database and is read and written through /api/admin/organigram,
+// which checks the admin sign-in. Everyone with access can view; the Executive
+// can edit. Changes from other people appear within about 15 seconds.
+const API = "/api/admin/organigram";
+let lastPull = null;
+const listeners = {people:[], ranks:[], fields:[], settings:[]};
+function emit(){
+  const docs = lastPull?.docs || {};
+  for (const c of ["people","ranks","fields"]){
+    const arr = Object.entries(docs).filter(([k])=>k.startsWith(c+"/")).map(([k,v])=>({id:k.slice(c.length+1), data:()=>v}));
+    listeners[c].forEach(fn=>fn({docs:arr}));
+  }
+  const s = docs["settings/org"];
+  listeners.settings.forEach(fn=>fn({exists:!!s, data:()=>s}));
+}
+function signedOut(){
+  canWrite = false; mode = "db";
+  $("#tree").innerHTML = `<div class="empty"><h3>Please sign in again</h3><p>Your admin sign-in has expired. Reload the admin page to sign back in.</p></div>`;
+  updateSync(); $("#sync").textContent = "Signed out";
+}
+let pullFails = 0;
+async function pull(){
+  try {
+    const r = await fetch(API, {cache:"no-store", credentials:"same-origin"});
+    if (r.status === 401 || r.status === 403){ signedOut(); return false; }
+    if (!r.ok) throw new Error(String(r.status));
+    lastPull = await r.json(); pullFails = 0;
+    if (canWrite !== !!lastPull.canEdit){ canWrite = !!lastPull.canEdit; scheduleRender(); }
+    emit(); return true;
+  } catch {
+    if (++pullFails === 2) toast("Live updates paused. Check your connection.");
+    return false;
+  }
+}
+async function write(method, body){
+  const r = await fetch(API, {method, credentials:"same-origin", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)});
+  if (r.ok) return;
+  const msg = (await r.json().catch(()=>null))?.error || "";
+  const err = new Error(msg || "Couldn't save");
+  err.code = r.status === 403 ? "invalid_argument" : r.status === 413 ? "quota_exceeded" : r.status >= 500 ? "unavailable" : "failed";
+  if (r.status === 401) signedOut();
+  throw err;
+}
+db = {
+  collection: c => ({ onSnapshot: fn => { listeners[c].push(fn); if (lastPull) emit(); } }),
+  doc: k => ({
+    set: body => write("PUT", {path:k, data:body}),
+    delete: () => write("DELETE", {path:k}),
+    onSnapshot: fn => { listeners.settings.push(fn); if (lastPull) emit(); },
+  }),
+};
+downloads = { save: async ({filename, data}) => {
+  const url = URL.createObjectURL(new Blob([data], {type: filename.endsWith(".json") ? "application/json" : "text/csv"}));
+  const a = document.createElement("a"); a.href = url; a.download = filename; document.body.append(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+} };
+function applySnap(col, snap){
+  const next = {};
+  for (const d of snap.docs){
+    const k = K(col, d.id); if (deleting.has(k)) continue;
+    next[d.id] = dirty.has(k) && state[col][d.id] ? state[col][d.id] : {...d.data(), id:d.id};
+  }
+  for (const id of Object.keys(state[col])) if (!next[id] && dirty.has(K(col,id)) && !deleting.has(K(col,id))) next[id] = state[col][id];
+  state[col] = next;
+}
+(async () => {
+  mode = "db"; canWrite = false;
+  db.collection("people").onSnapshot(s=>{ applySnap("people", s); loaded.people = true; if (ui.selected && !state.people[ui.selected]) ui.selected=null; scheduleRender(); });
+  db.collection("ranks").onSnapshot(s=>{ applySnap("ranks", s); loaded.ranks = true; scheduleRender(); });
+  db.collection("fields").onSnapshot(s=>{ applySnap("fields", s); loaded.fields = true; scheduleRender(); });
+  db.doc("settings/org").onSnapshot(d=>{
+    if (d.exists && !dirty.has("settings/org")) state.settings = {name:"King's Union", deptColors:{}, deptList:[], ...d.data()};
+    loaded.settings = true; scheduleRender();
+  });
+  renderAll();
+  if (!(await pull()) && !lastPull && $("#sync").textContent !== "Signed out"){
+    $("#tree").innerHTML = `<div class="empty"><h3>The organigram couldn't load</h3><p>Check your connection, then reload the page.</p></div>`;
+  }
+  setInterval(()=>{ if (!document.hidden && !dirty.size && !mv && !ui.dragId) pull(); }, 15000);
+  document.addEventListener("visibilitychange", ()=>{ if (!document.hidden && !dirty.size) pull(); });
+})();
+})();
+</script>
+
+</body></html>

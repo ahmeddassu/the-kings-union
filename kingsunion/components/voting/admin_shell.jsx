@@ -22,6 +22,7 @@ const sections = [
   ["/backups", "Backups", ["backups"]],
   ["/status", "Status", ["status"]],
   ["/people", "People", ["people"]],
+  ["/organigram", "Organigram", ["organigram"]],
   ["/activity", "Activity", ["activity"]],
 ];
 
