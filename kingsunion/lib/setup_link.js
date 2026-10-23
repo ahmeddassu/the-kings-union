@@ -1,7 +1,7 @@
 // The setup link for a new committee member (or a password reset), on the
 // admin address the Executive is using, and an email with it if email is set up.
 import nodemailer from "nodemailer";
-import { TEAMS } from "@/lib/admin_auth";
+import { teamsOf, teamsLabel } from "@/lib/admin_auth";
 
 export function setupLink(request, token) {
   const url = new URL(request.url);
@@ -27,7 +27,7 @@ export async function emailSetupLink(person, link, reset = false) {
           "",
           reset
             ? "Here’s a link to choose a new password for your King’s Union admin login:"
-            : `You’ve been given a King’s Union admin login (${TEAMS[person.team]?.label}). Choose your password here:`,
+            : `You’ve been given a King’s Union admin login (${teamsLabel(teamsOf(person))}). Choose your password here:`,
           "",
           link,
           "",

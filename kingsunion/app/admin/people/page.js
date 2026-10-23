@@ -21,11 +21,11 @@ export default async function PeoplePage() {
       <p className="text-xs uppercase tracking-widest text-[#d4af37]">Executive and super admins</p>
       <h1 className="title mt-2 text-4xl sm:text-5xl font-bold">People</h1>
       <p className="mt-3 max-w-2xl text-white/70">
-        Everyone on the committee gets their own login, and each team only sees its own parts of admin. When someone
+        Everyone on the committee gets their own login, and each team only sees its own parts of admin. Someone in more than one team (for example Finance and Events and Programming) sees everything each of their teams can. When someone
         leaves, turn their login off. Everything people do is recorded in the Activity log, which only super admins can see.
       </p>
       <div className="mt-8">
-        <PeopleAdmin base={base} initial={people} shared={shared} teams={teams} meId={me?.id} meIsSuper={me?.team === "super"} />
+        <PeopleAdmin base={base} initial={people} shared={shared} teams={teams} meId={me?.id} meIsSuper={me?.teams?.includes("super")} />
       </div>
     </AdminShell>
   );

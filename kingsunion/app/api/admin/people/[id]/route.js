@@ -1,6 +1,6 @@
-// Executive: change someone's team ({ team }), turn their login off or on
+// Executive: change someone's teams ({ teams: [...] }), turn their login off or on
 // ({ disabled }), give them a new setup link ({ resetPassword: true }), or remove them.
-import { can, refuse, sharedAllowed, TEAMS } from "@/lib/admin_auth";
+import { can, refuse, sharedAllowed, teamsLabel } from "@/lib/admin_auth";
 import { updatePerson, removePerson, listPeople } from "@/lib/admin_accounts";
 import { setupLink, emailSetupLink } from "@/lib/setup_link";
 import { logAction } from "@/lib/audit";
@@ -23,7 +23,7 @@ export async function PATCH(request, { params }) {
       emailed = await emailSetupLink(person, link, true);
       await logAction(admin, `Made a new setup link for ${person.name}`);
     }
-    if (body.team !== undefined) await logAction(admin, `Moved ${person.name} to ${TEAMS[person.team].label}`);
+    if (body.teams !== undefined || body.team !== undefined) await logAction(admin, `Changed ${person.name}’s teams to ${teamsLabel(person.teams)}`);
     if (body.disabled !== undefined) await logAction(admin, `${body.disabled ? "Turned off" : "Turned back on"} ${person.name}’s login`);
     return Response.json({ person, link, emailed });
   } catch (err) {

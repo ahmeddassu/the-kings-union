@@ -136,8 +136,21 @@ export function isSuperEmail(email) {
   return Boolean(email) && list.includes(String(email).toLowerCase());
 }
 
-// The team someone actually has (a super admin email outranks their stored team).
-export const effectiveTeam = (person) => (isSuperEmail(person.email) ? "super" : TEAMS[person.team] ? person.team : "events");
+// The teams someone is in. People can be in several (e.g. Finance and Events
+// and Programming) and see everything each of their teams can. A super admin
+// email outranks the stored teams. Older logins stored one `team`.
+export function teamsOf(person) {
+  if (isSuperEmail(person.email)) return ["super"];
+  const list = (Array.isArray(person.teams) && person.teams.length ? person.teams : [person.team]).filter(
+    (t, i, all) => TEAMS[t] && t !== "super" && all.indexOf(t) === i
+  );
+  return list.length ? list : ["events"];
+}
+
+// Their main team (the first one), e.g. for checks that only need one.
+export const effectiveTeam = (person) => teamsOf(person)[0];
+
+export const teamsLabel = (teams) => teams.map((t) => TEAMS[t]?.label || t).join(" + ");
 
 export const SHARED = { id: "shared", name: "Shared committee login", email: "", team: "executive" };
 
@@ -147,7 +160,7 @@ export async function sharedAllowed() {
   return (await redis("HGET", "ku:admin-settings", "shared")) !== "off";
 }
 
-// Who is signed in: { id, name, team, teamLabel, can(section) } or null.
+// Who is signed in: { id, name, team (main), teams, teamLabel, can(section) } or null.
 export const getAdmin = cache(async () => {
   const tok = readToken((await cookies()).get(ADMIN_COOKIE)?.value);
   if (!tok) return null;
@@ -161,9 +174,19 @@ export const getAdmin = cache(async () => {
     user = JSON.parse(raw);
     if (user.disabled || (user.sv || 0) !== tok.sv || !user.hash) return null;
   }
-  const team = user.id === "shared" ? "executive" : effectiveTeam(user);
-  const allowed = new Set(TEAMS[team].can);
-  return { id: user.id, name: user.name, email: user.email, team, teamLabel: TEAMS[team].label, shared: user.id === "shared", sections: [...allowed], can: (s) => allowed.has(s) };
+  const teams = user.id === "shared" ? ["executive"] : teamsOf(user);
+  const allowed = new Set(teams.flatMap((t) => TEAMS[t].can));
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    team: teams[0],
+    teams,
+    teamLabel: teamsLabel(teams),
+    shared: user.id === "shared",
+    sections: [...allowed],
+    can: (s) => allowed.has(s),
+  };
 });
 
 export async function isAdmin() {

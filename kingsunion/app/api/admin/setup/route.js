@@ -1,6 +1,6 @@
 // Sets a new committee member's password from their one-off setup link, then signs them in.
 import { completeSetup } from "@/lib/admin_accounts";
-import { newSession, sessionCookie, allowLoginAttempt, clientIp } from "@/lib/admin_auth";
+import { newSession, sessionCookie, allowLoginAttempt, clientIp, teamsOf, teamsLabel } from "@/lib/admin_auth";
 import { logAction } from "@/lib/audit";
 import { storeConfigured } from "@/lib/store";
 
@@ -21,7 +21,7 @@ export async function POST(request) {
   if (password !== String(form.get("confirm") || "")) return back("mismatch");
   try {
     const person = await completeSetup(token, password);
-    await logAction(person, "Set their password");
+    await logAction({ ...person, team: teamsOf(person)[0], teamLabel: teamsLabel(teamsOf(person)) }, "Set their password");
     const headers = new Headers({ Location: adminUrl(request, "/").toString() });
     headers.append("Set-Cookie", sessionCookie(newSession(person)));
     return new Response(null, { status: 303, headers });
