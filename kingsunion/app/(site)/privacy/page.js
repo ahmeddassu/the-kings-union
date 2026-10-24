@@ -99,7 +99,8 @@ export default function PrivacyPage() {
               events you came to. We use it to see how many people come, and to recognise regulars, for example by
               giving them priority when tickets are in demand. We rely on our legitimate interest in running the
               society. The record is only seen by the committee, is never shared or sold, and is deleted after two
-              years. Only totals (how many people came) are ever published.
+              years. Only totals (how many people came) are ever published. To check people in at the door, the
+              committee may also hold the event’s guest list (names and emails) for up to 30 days.
             </p>
 
             <h2 className={h2}>Cookies and settings saved in your browser</h2>

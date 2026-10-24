@@ -134,12 +134,19 @@ async function prune(index) {
   return keep;
 }
 
-export async function saveAttendance({ slug, title, date }, text, by = "") {
-  if (!isSlug(slug)) throw new Error("Please choose the event.");
-  if (date < cutoff()) throw new Error("That event is more than two years ago, so its attendance isn’t kept.");
+export async function saveAttendance(event, text, by = "") {
   const { guests, registered } = readGuestList(text);
   if (!guests.length)
     throw new Error("No one in this file is marked as checked in. Check guests in on Luma at the door, then download the list again.");
+  return saveGuests(event, { guests, registered, by });
+}
+
+// Stores who came to an event: `guests` is [{ e: email, n: name }]. Used by
+// the Luma upload above and by door check-in (lib/door.js), which can also
+// count walk-ins who gave no email.
+export async function saveGuests({ slug, title, date }, { guests, registered = 0, walkIns = 0, by = "", source = "luma" }) {
+  if (!isSlug(slug)) throw new Error("Please choose the event.");
+  if (date < cutoff()) throw new Error("That event is more than two years ago, so its attendance isn’t kept.");
   await redis("SET", guestsKey(slug), JSON.stringify(guests));
   const index = (await readIndex()).filter((d) => d.slug !== slug);
   const entry = {
@@ -147,7 +154,9 @@ export async function saveAttendance({ slug, title, date }, text, by = "") {
     title: String(title || "").slice(0, 200),
     date,
     registered: Math.max(registered, guests.length),
-    checkedIn: guests.length,
+    checkedIn: guests.length + walkIns,
+    ...(walkIns ? { walkIns } : {}),
+    source,
     importedAt: new Date().toISOString(),
     by: String(by || "").slice(0, 80),
   };
@@ -156,6 +165,19 @@ export async function saveAttendance({ slug, title, date }, text, by = "") {
   await redis("SET", INDEX, JSON.stringify(index));
   refresh();
   return entry;
+}
+
+// How many recorded events each email has come to (for flagging regulars at
+// the door), leaving out one event.
+export async function visitCounts(exceptSlug = "") {
+  const index = await readIndex();
+  const counts = new Map();
+  for (const d of index) {
+    if (d.slug === exceptSlug) continue;
+    const raw = await redis("GET", guestsKey(d.slug));
+    for (const g of raw ? JSON.parse(raw) : []) counts.set(g.e, (counts.get(g.e) || 0) + 1);
+  }
+  return counts;
 }
 
 export async function deleteAttendance(slug) {
