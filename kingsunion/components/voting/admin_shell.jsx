@@ -12,6 +12,7 @@ const groups = [
       ["", "Debates", ["debates"]],
       ["/calendar", "Calendar", ["calendar"]],
       ["/results", "Result cards", ["results"]],
+      ["/door", "Door check-in", ["attendance"]],
       ["/attendance", "Attendance", ["attendance"]],
       ["/feedback", "Feedback", ["feedback"]],
       ["/motions", "Motions", ["motions"]],
