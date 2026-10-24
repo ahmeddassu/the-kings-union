@@ -163,6 +163,34 @@ export function icsCalendar(events, siteUrl) {
   ].map(fold).join("\r\n");
 }
 
+// A private calendar (the committee calendar): `entries` are
+// { uid, title, date, time, endTime, location, description, url }.
+export function icsPrivate(entries, name) {
+  return [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//King's Union//Committee//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    `X-WR-CALNAME:${esc(name)}`,
+    "X-WR-TIMEZONE:Europe/London",
+    "REFRESH-INTERVAL;VALUE=DURATION:PT1H",
+    "X-PUBLISHED-TTL:PT1H",
+    ...entries.flatMap((e) => [
+      "BEGIN:VEVENT",
+      `UID:${e.uid}@kingsunion-committee`,
+      `DTSTAMP:${stamp(new Date())}`,
+      ...timeLines({ date: e.date, time: e.time, endTime: e.endTime, allDay: !e.time, durationMinutes: e.minutes || 60 }),
+      `SUMMARY:${esc(e.title)}`,
+      e.location ? `LOCATION:${esc(e.location)}` : null,
+      e.url ? `URL:${e.url}` : null,
+      e.description ? `DESCRIPTION:${esc(e.description)}` : null,
+      "END:VEVENT",
+    ].filter(Boolean)),
+    "END:VCALENDAR",
+  ].map(fold).join("\r\n");
+}
+
 // Calendar lines over 75 characters are split onto continuation lines.
 function fold(line) {
   const parts = [];

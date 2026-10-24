@@ -2,7 +2,7 @@
 
 // The committee task board (admin → Dashboard). Everything saves as soon as
 // it's changed; the list refreshes every 30 seconds so everyone sees the same.
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import usePoll from "@/components/voting/use_poll";
 
 const STATUSES = [
@@ -325,6 +325,18 @@ export default function TaskBoard({ base, initial, departments, homeDept, myName
 
   const canEdit = (d) => exec || myDepts.includes(d);
 
+  // Opened from a notification (?task=EAP0007): show that task.
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("task");
+    const t = id && tasks.find((x) => x.id === id);
+    if (!t) return;
+    setDept(t.dept);
+    setStatusFilter("all");
+    setOpen(t.id);
+    setTimeout(() => [`task-${t.id}`, `m-task-${t.id}`].map((x) => document.getElementById(x)).find((el) => el?.offsetParent)?.scrollIntoView({ block: "center" }), 50);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const call = async (body) => {
     const res = await fetch("/api/admin/tasks", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     if (res.status === 401) {
@@ -581,7 +593,7 @@ export default function TaskBoard({ base, initial, departments, homeDept, myName
                 <FragmentRow key={t.id} open={open === t.id} colSpan={showDeptCol ? 8 : 7}
                   details={<Details key={`${t.id}-${t.updatedAt}`} task={t} editable={editable} departments={exec ? departments : departments.filter((d) => myDepts.includes(d) || d === t.dept)} onSave={(f) => update(t, f, true)} onDelete={() => remove(t)} onClose={() => setOpen(null)} />}
                 >
-                  <tr className={`border-b border-white/10 align-middle ${open === t.id ? "bg-white/[0.06]" : "hover:bg-white/[0.03]"} ${t.status === "complete" ? "text-white/60" : ""}`}>
+                  <tr id={`task-${t.id}`} className={`scroll-mt-24 border-b border-white/10 align-middle ${open === t.id ? "bg-white/[0.06]" : "hover:bg-white/[0.03]"} ${t.status === "complete" ? "text-white/60" : ""}`}>
                     <td className="px-3 py-2 font-mono text-xs text-white/55">{t.id}</td>
                     <td className="px-3 py-2">
                       <button type="button" onClick={() => setOpen(open === t.id ? null : t.id)} className={`text-left leading-snug hover:text-[#d4af37] ${t.status === "complete" ? "" : "font-semibold"}`}>
@@ -631,7 +643,7 @@ export default function TaskBoard({ base, initial, departments, homeDept, myName
           const people = peopleFor(leaders, t.dept);
           const state = saving[t.id];
           return (
-            <li key={t.id} className="rounded-sm border border-white/15 bg-[#2a0101]">
+            <li key={t.id} id={`m-task-${t.id}`} className="rounded-sm border border-white/15 bg-[#2a0101]">
               <div className="p-3">
                 <button type="button" onClick={() => setOpen(open === t.id ? null : t.id)} aria-expanded={open === t.id} className={`text-left leading-snug ${t.status === "complete" ? "text-white/60" : "font-semibold"}`}>
                   {t.title}

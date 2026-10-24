@@ -10,6 +10,8 @@
 //   POST { action: "import" }                 copy new tasks from the sheet (Executive)
 import { can, refuse } from "@/lib/admin_auth";
 import { logAction } from "@/lib/audit";
+import { notifyTaskChange } from "@/lib/notifications";
+import { listTeam } from "@/lib/team";
 import {
   dashboardData, listTasks, createTask, updateTask, deleteTask, findTask, setLeaders, importFromSheet,
   canEdit, isExec, tasksCsv, myDepartments, STATUSES,
@@ -77,6 +79,7 @@ export async function POST(request) {
       if (!canEdit(admin, myDepts, dept)) return bad("You can only add tasks to your own department.", 403);
       const task = await createTask(body.task || {}, admin);
       await logAction(admin, `Added task ${task.id} (${task.dept}): ${task.title.slice(0, 120)}`);
+      await notifyTaskChange(null, task, admin, await listTeam().catch(() => []));
       return Response.json({ task });
     }
 
@@ -95,6 +98,7 @@ export async function POST(request) {
       const { before, task } = await updateTask(current.id, changes, admin);
       const what = describe(before, task);
       if (what) await logAction(admin, `Changed task ${task.id}: ${what}`);
+      await notifyTaskChange(before, task, admin, await listTeam().catch(() => []));
       return Response.json({ task });
     }
   } catch (err) {
