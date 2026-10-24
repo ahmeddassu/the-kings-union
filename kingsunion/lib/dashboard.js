@@ -165,23 +165,45 @@ export async function getDashboard() {
   return { departments, team, errors: [...new Set(errors)] };
 }
 
-// Whether `name` (an admin's name) is one of a task's owners. Matches on the
-// full name, ignoring case, accents and extra spaces.
+// ---------- Matching admin logins to people in the sheet ----------
+//
+// Names don't have to be typed identically in both places. Someone's admin
+// login matches their Team Structure row if the emails match, or the full names
+// match (ignoring case, accents and spacing), or the first and last names match
+// ("Maya Thompson" ↔ "Maya Cecilia Thompson").
 const plain = (s) =>
   String(s || "")
     .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
+    .replace(/[^a-z' -]/g, "")
     .replace(/\s+/g, " ")
     .trim();
-export const isOwner = (task, name) => Boolean(name) && task.owners.some((o) => plain(o) === plain(name));
+const firstLast = (s) => {
+  const w = plain(s).split(" ").filter(Boolean);
+  return w.length > 1 ? `${w[0]} ${w[w.length - 1]}` : w[0] || "";
+};
+export const sameName = (a, b) => Boolean(plain(a)) && (plain(a) === plain(b) || firstLast(a) === firstLast(b));
+
+// The Team Structure rows that are this admin (someone can have several, one
+// per department), or [] if they aren't in the sheet.
+export function rowsFor(admin, team) {
+  const email = String(admin.email || "").toLowerCase();
+  const byEmail = email ? team.filter((p) => p.email && p.email.toLowerCase() === email) : [];
+  const name = byEmail[0]?.name || admin.name;
+  return team.filter((p) => byEmail.includes(p) || sameName(p.name, name));
+}
+
+// Whether a task is theirs: their login name or their name in the sheet is
+// in Owner/s.
+export const isOwner = (task, names) => names.some((n) => task.owners.some((o) => sameName(o, n)));
 
 // The departments someone belongs to: from their admin teams, plus any listed
 // next to their name in Team Structure (e.g. Legal & Governance, which has no
 // admin team of its own).
 export function departmentsOf(admin, team) {
   const own = admin.teams.map((t) => TEAM_DEPARTMENT[t]).filter(Boolean);
-  const listed = team.filter((p) => plain(p.name) === plain(admin.name)).flatMap((p) => p.departments);
+  const listed = rowsFor(admin, team).flatMap((p) => p.departments);
   return [...new Set([...own, ...listed])];
 }
 
