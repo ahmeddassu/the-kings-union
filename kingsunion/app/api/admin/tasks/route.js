@@ -62,7 +62,7 @@ export async function POST(request) {
       if (!isExec(admin)) return bad("Only the Executive can do that.", 403);
       if (action === "leaders") {
         const names = await setLeaders(body.dept, body.names);
-        await logAction(admin, `Set the task owners for ${body.dept}: ${names.join(", ") || "none"}`);
+        await logAction(admin, `Set the task owners for ${body.dept === "*" ? "every department" : body.dept}: ${names.join(", ") || "none"}`);
         return Response.json({ names });
       }
       const added = await importFromSheet();

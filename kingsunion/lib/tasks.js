@@ -9,7 +9,7 @@
 //   ku:task-leaders     hash: department → JSON list of names (owner/supervisor choices)
 //   ku:tasks-imported   set once the sheet's tasks have been copied in
 import { redis, pipeline } from "@/lib/store";
-import { DEPARTMENTS, getDashboard, departmentsOf } from "@/lib/dashboard";
+import { DEPARTMENTS, getDashboard, departmentsOf, sameName } from "@/lib/dashboard";
 import { getTeam } from "@/lib/team";
 
 const KEY = "ku:tasks";
@@ -98,23 +98,32 @@ export function defaultLeaders(team, dept) {
   return [...new Set(names)];
 }
 
+// Owners and supervisors for every department (saved under "*"), as well as
+// each department's own leaders. Until the Executive changes it, that's the
+// President, the Chief of Staff and the Deputy Chief of Staff.
+export const EVERY = "*";
+const DEFAULT_EVERYWHERE = ["Mustafa Dassu", "Guy de Basto", "Maya Thompson"];
+
+// Each department's own list, plus EVERY: the people available in all of them.
 export async function getLeaders(team) {
   const saved = toMap(await redis("HGETALL", LEADERS));
-  const out = {};
-  for (const d of DEPARTMENTS) {
-    let list = null;
+  const read = (k) => {
     try {
-      list = saved[d] ? JSON.parse(saved[d]) : null;
+      const list = saved[k] ? JSON.parse(saved[k]) : null;
+      return Array.isArray(list) ? list : null;
     } catch {
-      list = null;
+      return null;
     }
-    out[d] = Array.isArray(list) ? list : defaultLeaders(team, d);
-  }
+  };
+  // Use the team directory's spelling of each default name ("Maya Cecilia Thompson").
+  const everywhere = read(EVERY) || DEFAULT_EVERYWHERE.map((n) => team.find((p) => sameName(p.name, n))?.name || n);
+  const out = { [EVERY]: everywhere };
+  for (const d of DEPARTMENTS) out[d] = read(d) || defaultLeaders(team, d).filter((n) => !everywhere.some((e) => sameName(e, n)));
   return out;
 }
 
 export async function setLeaders(dept, names) {
-  if (!DEPARTMENTS.includes(dept)) throw new Error("Choose a department.");
+  if (dept !== EVERY && !DEPARTMENTS.includes(dept)) throw new Error("Choose a department.");
   const list = [...new Set((Array.isArray(names) ? names : []).map((n) => oneLine(n, 80)).filter(Boolean))].slice(0, 30);
   await redis("HSET", LEADERS, dept, JSON.stringify(list));
   return list;
