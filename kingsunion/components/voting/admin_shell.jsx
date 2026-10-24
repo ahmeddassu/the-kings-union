@@ -1,34 +1,63 @@
 // Header and frame for the admin pages. Shows only the sections the signed-in
 // person's team can use.
 import { getAdmin } from "@/lib/admin_auth";
+import AdminNav from "@/components/voting/admin_nav";
 
-const sections = [
-  ["", "Debates", ["debates"]],
-  ["/dashboard", "Dashboard", ["dashboard"]],
-  ["/results", "Result cards", ["results"]],
-  ["/calendar", "Calendar", ["calendar"]],
-  ["/motions", "Motions", ["motions"]],
-  ["/messages", "Messages", ["messages", "kingsway"]],
-  ["/alerts", "Ticket alerts", ["alerts"]],
-  ["/applications", "Speaker applications", ["applications"]],
-  ["/speaker-pack", "Speaker pack", ["speakers"]],
-  ["/past-speakers", "Past speakers", ["guests"]],
-  ["/attendance", "Attendance", ["attendance"]],
-  ["/feedback", "Feedback", ["feedback"]],
-  ["/friends", "Friends", ["friends"]],
-  ["/posters", "Poster QR codes", ["posters"]],
-  ["/sponsors", "Sponsors", ["sponsors"]],
-  ["/stats", "Visitor stats", ["stats"]],
-  ["/backups", "Backups", ["backups"]],
-  ["/status", "Status", ["status"]],
-  ["/people", "People", ["people"]],
-  ["/organigram", "Organigram", ["organigram"]],
-  ["/activity", "Activity", ["activity"]],
+// Grouped into menus. Each entry: [path, name, sections that can see it].
+const groups = [
+  { label: "Dashboard", items: [["/dashboard", "Dashboard", ["dashboard"]]] },
+  {
+    label: "Debates",
+    items: [
+      ["", "Debates", ["debates"]],
+      ["/calendar", "Calendar", ["calendar"]],
+      ["/results", "Result cards", ["results"]],
+      ["/attendance", "Attendance", ["attendance"]],
+      ["/feedback", "Feedback", ["feedback"]],
+      ["/motions", "Motions", ["motions"]],
+    ],
+  },
+  {
+    label: "Speakers",
+    items: [
+      ["/applications", "Speaker applications", ["applications"]],
+      ["/speaker-pack", "Speaker pack", ["speakers"]],
+      ["/past-speakers", "Past speakers", ["guests"]],
+    ],
+  },
+  {
+    label: "Outreach",
+    items: [
+      ["/messages", "Messages", ["messages", "kingsway"]],
+      ["/alerts", "Ticket alerts", ["alerts"]],
+      ["/friends", "Friends", ["friends"]],
+      ["/posters", "Poster QR codes", ["posters"]],
+      ["/sponsors", "Sponsors", ["sponsors"]],
+    ],
+  },
+  {
+    label: "Committee",
+    items: [
+      ["/organigram", "Organigram", ["organigram"]],
+      ["/people", "People", ["people"]],
+      ["/activity", "Activity", ["activity"]],
+    ],
+  },
+  {
+    label: "Website",
+    items: [
+      ["/stats", "Visitor stats", ["stats"]],
+      ["/status", "Status", ["status"]],
+      ["/backups", "Backups", ["backups"]],
+    ],
+  },
 ];
 
 export default async function AdminShell({ base, children, wide = false, current = "" }) {
   const admin = await getAdmin();
-  const visible = sections.filter(([, , need]) => need.some((s) => admin?.can(s)));
+  const visible = groups
+    .map((g) => ({ label: g.label, items: g.items.filter(([, , need]) => need.some((s) => admin?.can(s))).map(([path, name]) => [path, name]) }))
+    .filter((g) => g.items.length);
   return (
     <>
       <header className="border-b border-[#d4af37]/60">
@@ -61,20 +90,7 @@ export default async function AdminShell({ base, children, wide = false, current
             </form>
           </div>
         </div>
-        <nav aria-label="Admin sections" className="px-4 sm:px-6 md:px-8 flex gap-1 overflow-x-auto">
-          {visible.map(([path, name]) => (
-            <a
-              key={name}
-              href={`${base}${path}` || "/"}
-              aria-current={current === path ? "page" : undefined}
-              className={`inline-flex min-h-11 shrink-0 items-center border-b-2 px-3 text-sm ${
-                current === path ? "border-[#d4af37] text-white font-bold" : "border-transparent text-white/65 hover:text-white"
-              }`}
-            >
-              {name}
-            </a>
-          ))}
-        </nav>
+        <AdminNav base={base} groups={visible} current={current} />
       </header>
       {admin?.shared && (
         <p className="border-b border-[#d4af37]/30 bg-[#2a0101] px-4 sm:px-6 md:px-8 py-2 text-sm text-white/75">
