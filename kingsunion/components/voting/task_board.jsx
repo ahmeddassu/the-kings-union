@@ -54,6 +54,10 @@ const firstLast = (s) => {
 const sameName = (a, b) => Boolean(plain(a)) && (plain(a) === plain(b) || firstLast(a) === firstLast(b));
 const involves = (t, names) => names.some((n) => String(t.owner).split(",").some((o) => sameName(o, n)) || sameName(t.supervisor, n));
 
+// Who can own or supervise a department's tasks: the people available in every
+// department, then that department's own leaders.
+const peopleFor = (leaders, dept) => [...new Set([...(leaders["*"] || []), ...(leaders[dept] || [])])];
+
 // ---------- Small pieces ----------
 
 function StatusSelect({ value, onChange, disabled, id, label }) {
@@ -210,7 +214,7 @@ function NewTask({ departments, defaultDept, leaders, onCreate, onCancel }) {
     setBusy(false);
     if (ok) setForm((f) => ({ ...f, title: "", deadline: "", owner: "", supervisor: "" }));
   };
-  const people = leaders[form.dept] || [];
+  const people = peopleFor(leaders, form.dept);
   const lab = "block text-xs font-semibold uppercase tracking-wider text-white/55";
   return (
     <form onSubmit={submit} className="mt-4 grid gap-3 rounded-sm border border-[#d4af37]/60 bg-[#2a0101] p-4 md:grid-cols-[2fr_1fr_1fr] lg:grid-cols-[3fr_1.2fr_1fr_1fr_1fr_1fr_auto] lg:items-end">
@@ -252,9 +256,11 @@ function NewTask({ departments, defaultDept, leaders, onCreate, onCancel }) {
 
 // ---------- Owners and supervisors (Executive) ----------
 
-function LeadersPanel({ departments, leaders, teamNames, onSave, onClose }) {
-  const [dept, setDept] = useState(departments[0]);
-  const [picked, setPicked] = useState(leaders[departments[0]] || []);
+function LeadersPanel({ departments: depts, leaders, teamNames, onSave, onClose }) {
+  const departments = ["*", ...depts];
+  const tabName = (d) => (d === "*" ? "Every department" : d);
+  const [dept, setDept] = useState("*");
+  const [picked, setPicked] = useState(leaders["*"] || []);
   const [saving, setSaving] = useState(false);
   const choose = (d) => {
     setDept(d);
@@ -267,7 +273,7 @@ function LeadersPanel({ departments, leaders, teamNames, onSave, onClose }) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="font-bold">Owners and supervisors</p>
-          <p className="text-sm text-white/65">Who appears in the Owner and Supervisor dropdowns for each department’s tasks.</p>
+          <p className="text-sm text-white/65">Who appears in the Owner and Supervisor dropdowns. People under “Every department” appear for every task.</p>
         </div>
         <button type="button" onClick={onClose} className={ghost}>Done</button>
       </div>
@@ -275,12 +281,12 @@ function LeadersPanel({ departments, leaders, teamNames, onSave, onClose }) {
         {departments.map((d) => (
           <button key={d} type="button" role="tab" aria-selected={d === dept} onClick={() => choose(d)}
             className={`${btn} h-8 ${d === dept ? "bg-white text-[#2a0101]" : "border border-white/20 text-white/75 hover:bg-white/10"}`}>
-            {d}
+            {tabName(d)}
           </button>
         ))}
       </div>
       <fieldset className="mt-4">
-        <legend className="sr-only">People who can own or supervise {dept} tasks</legend>
+        <legend className="sr-only">People who can own or supervise {tabName(dept)} tasks</legend>
         <div className="grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-4">
           {names.map((n) => (
             <label key={n} className="flex min-h-9 cursor-pointer items-center gap-2 text-sm">
@@ -291,7 +297,7 @@ function LeadersPanel({ departments, leaders, teamNames, onSave, onClose }) {
         </div>
       </fieldset>
       <button type="button" disabled={saving} onClick={async () => { setSaving(true); await onSave(dept, picked); setSaving(false); }} className={`${primary} mt-4`}>
-        {saving ? "Saving…" : `Save for ${dept}`}
+        {saving ? "Saving…" : `Save for ${tabName(dept)}`}
       </button>
     </div>
   );
@@ -395,7 +401,7 @@ export default function TaskBoard({ base, initial, departments, homeDept, myName
     try {
       const data = await call({ action: "leaders", dept: d, names });
       if (data) setLeaders((l) => ({ ...l, [d]: data.names }));
-      setMessage(`Saved the owners and supervisors for ${d}.`);
+      setMessage(`Saved the owners and supervisors for ${d === "*" ? "every department" : d}.`);
     } catch (err) {
       setMessage(err.message);
     }
@@ -569,7 +575,7 @@ export default function TaskBoard({ base, initial, departments, homeDept, myName
           <tbody>
             {shown.map((t) => {
               const editable = canEdit(t.dept);
-              const people = leaders[t.dept] || [];
+              const people = peopleFor(leaders, t.dept);
               const state = saving[t.id];
               return (
                 <FragmentRow key={t.id} open={open === t.id} colSpan={showDeptCol ? 8 : 7}
@@ -622,7 +628,7 @@ export default function TaskBoard({ base, initial, departments, homeDept, myName
       <ul className="mt-1 space-y-2 md:hidden">
         {shown.map((t) => {
           const editable = canEdit(t.dept);
-          const people = leaders[t.dept] || [];
+          const people = peopleFor(leaders, t.dept);
           const state = saving[t.id];
           return (
             <li key={t.id} className="rounded-sm border border-white/15 bg-[#2a0101]">
