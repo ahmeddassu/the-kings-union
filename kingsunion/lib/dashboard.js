@@ -150,8 +150,12 @@ export async function getDashboard() {
     return { name, loaded: results[i].status === "fulfilled", tasks };
   });
 
-  const teamRows = results[DEPARTMENTS.length].status === "fulfilled" ? results[DEPARTMENTS.length].value : [];
-  const team = teamRows
+  const team = teamFrom(results[DEPARTMENTS.length].status === "fulfilled" ? results[DEPARTMENTS.length].value : []);
+  return { departments, team, errors: [...new Set(errors)] };
+}
+
+function teamFrom(rows) {
+  return rows
     .filter((r) => r.name)
     .map((r) => ({
       name: r.name,
@@ -161,8 +165,16 @@ export async function getDashboard() {
       whatsapp: r.whatsappnumber || "",
       email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.contactemail || "") ? r.contactemail : "",
     }));
+}
 
-  return { departments, team, errors: [...new Set(errors)] };
+// Just Team Structure (who's who), for the dashboard now that tasks live in
+// the website.
+export async function getTeam() {
+  try {
+    return { team: teamFrom(await fetchTab("Team Structure")), error: "" };
+  } catch (err) {
+    return { team: [], error: err?.message || "Couldn’t read the sheet" };
+  }
 }
 
 // ---------- Matching admin logins to people in the sheet ----------
