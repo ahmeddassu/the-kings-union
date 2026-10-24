@@ -14,6 +14,7 @@ import { randomBytes } from "node:crypto";
 import { redis, pipeline } from "@/lib/store";
 import { TEAMS, teamsOf } from "@/lib/admin_auth";
 import { sameName } from "@/lib/dashboard";
+import { pushTo } from "@/lib/push";
 
 const KEEP = 100;
 const listKey = (id) => `ku:notes:${id}`;
@@ -43,8 +44,20 @@ async function send(ids, note) {
     ["LTRIM", listKey(id), 0, KEEP - 1],
   ]);
   await pipeline(commands);
+  // And a pop-up on any phone or computer they've turned notifications on for.
+  await pushTo(unique, { title: TITLES[note.kind] || "King’s Union admin", body: note.text, href: note.href || "" });
   return unique.length;
 }
+
+const TITLES = {
+  task: "New task",
+  review: "Ready for review",
+  improve: "Needs improvement",
+  overdue: "Overdue task",
+  done: "Task complete",
+  inbox: "New for your team",
+  calendar: "Committee calendar",
+};
 
 // Everyone whose team can use any of `sections` (e.g. "applications").
 export async function notifySections(sections, note, actor = null) {
