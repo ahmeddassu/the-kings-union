@@ -2,6 +2,8 @@
 // person's team can use.
 import { getAdmin } from "@/lib/admin_auth";
 import AdminNav from "@/components/voting/admin_nav";
+import NotificationBell from "@/components/voting/notification_bell";
+import { getNotes } from "@/lib/notifications";
 
 // Grouped into menus. Each entry: [path, name, sections that can see it].
 const groups = [
@@ -39,6 +41,7 @@ const groups = [
   {
     label: "Committee",
     items: [
+      ["/committee-calendar", "Committee calendar", ["dashboard"]],
       ["/organigram", "Organigram", ["organigram"]],
       ["/people", "People", ["people"]],
       ["/activity", "Activity", ["activity"]],
@@ -56,6 +59,7 @@ const groups = [
 
 export default async function AdminShell({ base, children, wide = false, current = "" }) {
   const admin = await getAdmin();
+  const notes = admin && !admin.shared ? await getNotes(admin).catch(() => null) : null;
   const visible = groups
     .map((g) => ({ label: g.label, items: g.items.filter(([, , need]) => need.some((s) => admin?.can(s))).map(([path, name]) => [path, name]) }))
     .filter((g) => g.items.length);
@@ -70,6 +74,7 @@ export default async function AdminShell({ base, children, wide = false, current
             </span>
           </a>
           <div className="flex flex-wrap items-center gap-2">
+            {notes && <NotificationBell base={base} initial={notes} />}
             {admin && (
               <span className="text-sm text-white/70 text-right leading-tight">
                 {admin.name}

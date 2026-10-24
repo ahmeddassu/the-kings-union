@@ -1,6 +1,7 @@
 // Receives the "Suggest a motion" form (works without JavaScript).
 import { clientIp } from "@/lib/admin_auth";
 import { addMotion, allowSubmission, storeConfigured } from "@/lib/submissions";
+import { notifySections } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,7 @@ export async function POST(request) {
       email: form.get("email"),
       speak: form.get("speak") === "yes",
     });
+    await notifySections("motions", { kind: "inbox", text: `New motion suggested: This House ${String(form.get("motion") || "").trim().slice(0, 120)}`, href: "/motions" });
     return back(request, "sent=1");
   } catch (err) {
     if (err.message === "missing") return back(request, "error=missing");

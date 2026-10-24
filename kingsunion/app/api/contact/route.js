@@ -13,6 +13,7 @@ import { clientIp } from "@/lib/admin_auth";
 import { storeConfigured } from "@/lib/store";
 import { allowSubmission, addMotion } from "@/lib/submissions";
 import { saveMessage, addAlert } from "@/lib/inbox";
+import { notifySections } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
@@ -106,6 +107,10 @@ export async function POST(request) {
       }
       await save();
       saved = true;
+      const who = String(name || "someone").slice(0, 80);
+      if (team === "union") await notifySections("messages", { kind: "inbox", text: `New message from ${who}: ${String(subject).slice(0, 100)}`, href: "/messages" });
+      if (team === "kingsway") await notifySections("kingsway", { kind: "inbox", text: `New Kingsway writer application from ${who}`, href: "/messages" });
+      if (team === "motion") await notifySections("motions", { kind: "inbox", text: `New motion suggested by ${who}`, href: "/motions" });
     } catch (err) {
       console.error("Couldn't save form submission:", err);
     }

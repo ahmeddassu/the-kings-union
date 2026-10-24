@@ -2,6 +2,7 @@
 import { clientIp } from "@/lib/admin_auth";
 import { addApplication, allowSubmission, storeConfigured } from "@/lib/submissions";
 import { upcomingDebates } from "@/lib/upcoming";
+import { notifySections } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,7 @@ export async function POST(request) {
       },
       await upcomingDebates()
     );
+    await notifySections("applications", { kind: "inbox", text: `New application to speak from ${String(field("name") || "someone").trim().slice(0, 80)}`, href: "/applications" });
     return back(request, "sent=1");
   } catch (err) {
     if (err.message === "missing") return back(request, "error=missing");
