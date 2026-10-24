@@ -1,16 +1,15 @@
-// The committee dashboard (admin → Dashboard), read from the "King's Union
-// Dashboard" Google Sheet.
+// Shared helpers for the committee dashboard (admin → Dashboard): the
+// departments, matching admin logins to people, and who may see whose contact
+// details (only people in the same department, plus the Executive and super
+// admins; see contactsFor).
 //
-// The committee keeps working in the sheet as before; admin shows each
-// department's tasks, what's overdue, and who's on the committee. Changes show
-// up within about two minutes. The sheet must be shared as "Anyone with the
-// link: Viewer". Each department is a tab with the columns Task ID, Task
-// Description, Progress, Deadline, Owner/s, Supervisor and Deliverable/s
-// (Unit and Comments are optional). Rows without a description are skipped.
-//
-// The Team Structure tab gives Who's who. Contact details (WhatsApp number and
-// email) are only shown to people in the same department, and to the Executive
-// and super admins; everyone else sees names and roles (see contactsFor).
+// Everything now lives in the website: tasks in lib/tasks.js and the team in
+// lib/team.js. The committee's old "King's Union Dashboard" Google Sheet is
+// only read once, to copy its tasks and Team Structure across (it must be
+// shared as "Anyone with the link: Viewer" until the dashboard has been
+// opened once after this change). The sheet's tabs had the columns Task ID,
+// Task Description, Progress, Deadline, Owner/s, Supervisor, Deliverable/s,
+// Unit and Comments.
 export const DASHBOARD_SHEET_ID =
   process.env.DASHBOARD_SHEET_ID || "1XdREoml_Hsb2yHMP_XUYbL5OjwGWcL5tWaqedvirSxg";
 
@@ -167,9 +166,9 @@ function teamFrom(rows) {
     }));
 }
 
-// Just Team Structure (who's who), for the dashboard now that tasks live in
-// the website.
-export async function getTeam() {
+// Just the sheet's Team Structure tab: used once, to copy the team into the
+// website (lib/team.js).
+export async function getSheetTeam() {
   try {
     return { team: teamFrom(await fetchTab("Team Structure")), error: "" };
   } catch (err) {

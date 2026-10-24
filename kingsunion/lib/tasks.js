@@ -1,7 +1,7 @@
 // Committee tasks (admin → Dashboard). Tasks used to be kept in the "King's
 // Union Dashboard" Google Sheet; they were copied in once (importFromSheet) and
-// now live here, so the dashboard's dropdowns can save straight away. Team
-// Structure (who's who) is still read from the sheet.
+// now live here, so the dashboard's dropdowns can save straight away. The
+// team directory lives in the website too (lib/team.js).
 //
 // Keys:
 //   ku:tasks            hash: task id → JSON task
@@ -9,7 +9,8 @@
 //   ku:task-leaders     hash: department → JSON list of names (owner/supervisor choices)
 //   ku:tasks-imported   set once the sheet's tasks have been copied in
 import { redis, pipeline } from "@/lib/store";
-import { DEPARTMENTS, getDashboard, getTeam, departmentsOf } from "@/lib/dashboard";
+import { DEPARTMENTS, getDashboard, departmentsOf } from "@/lib/dashboard";
+import { getTeam } from "@/lib/team";
 
 const KEY = "ku:tasks";
 const SEQ = "ku:task-seq";
