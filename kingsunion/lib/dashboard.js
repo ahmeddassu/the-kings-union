@@ -30,6 +30,7 @@ export const TEAM_DEPARTMENT = {
   growth: "Growth & Marketing",
   finance: "Finance",
   kingsway: "Kingsway",
+  legal: "Legal & Governance",
 };
 
 const REFRESH_SECONDS = 120;
