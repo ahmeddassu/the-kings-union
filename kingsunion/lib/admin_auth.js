@@ -60,6 +60,7 @@ export const TEAMS = {
   kingsway: { label: "Kingsway", can: ["dashboard", "kingsway", "calendar", "stats", "organigram"] },
   finance: { label: "Finance", can: ["dashboard", "sponsors", "friends", "messages", "stats", "organigram"] },
   growth: { label: "Growth and Marketing", can: ["dashboard", "results", "alerts", "feedback", "friends", "posters", "stats", "calendar", "organigram"] },
+  legal: { label: "Legal and Governance", can: ["dashboard", "calendar", "organigram"] },
 };
 
 // ---------- Passwords ----------
