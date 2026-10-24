@@ -10,6 +10,7 @@ import { eventTimes } from "@/lib/calendar";
 import { ticketStatus } from "@/lib/tickets";
 import Countdown from "@/components/countdown";
 import TicketBadge, { ticketButtonText } from "@/components/ticket_badge";
+import WaitlistBox from "@/components/waitlist_mock";
 
 // New rows added to the sheet get a page without a redeploy.
 export const dynamicParams = true;
@@ -73,7 +74,8 @@ export default async function EventPage({ params }) {
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/London" });
   const hasHappened = event.date < today;
   const { start, end } = eventTimes(event);
-  const status = hasHappened ? null : await ticketStatus(event);
+  const status = hasHappened ? null : process.env.WAITLIST_MOCK ? { key: "soldout", label: "Sold out" } : await ticketStatus(event);
+  const soldOut = status?.key === "soldout";
 
   return (
     <>
@@ -161,7 +163,8 @@ export default async function EventPage({ params }) {
               </p>
             )}
 
-            {!hasHappened && event.tickets && (
+            {!hasHappened && soldOut && <WaitlistBox title={event.title} />}
+            {!hasHappened && event.tickets && !soldOut && (
               <a
                 href={event.tickets}
                 target="_blank"
@@ -283,13 +286,12 @@ export default async function EventPage({ params }) {
             <div className="h-20 md:hidden" aria-hidden="true" />
             <div className="md:hidden fixed inset-x-0 bottom-0 z-40 border-t border-[#d4af37] bg-[#3d0202]/95 backdrop-blur px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
               <a
-                href={event.tickets}
-                target="_blank"
+                href={soldOut ? "#waitlist" : event.tickets}
+                target={soldOut ? undefined : "_blank"}
                 rel="noopener noreferrer"
                 className="flex min-h-12 items-center justify-center gap-3 bg-[#d4af37] text-[#3d0202] text-lg font-bold"
               >
-                {status && <TicketBadge status={status} onGold />}
-                {ticketButtonText(status)}
+                {soldOut ? "Sold out · Join the waitlist" : <>{status && <TicketBadge status={status} onGold />}{ticketButtonText(status)}</>}
               </a>
             </div>
           </>
